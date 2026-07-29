@@ -1,0 +1,180 @@
+# CLAUDE.md
+
+Guidance for Claude Code working in this repository. The app is **nanisoft.com** — a
+multilingual documentation + product-landing site built on the Next.js 16 + Nextra 4
+starter. It is deployed to **Cloudflare Workers** (via OpenNext) on the custom domain
+**www.nanisoft.com**. There is no database / backend at this time.
+
+## Tech Stack & Versions
+
+- Next.js 16, React 19, App Router
+- Nextra 4 (`nextra` + `nextra-theme-docs` 4) — MDX docs framework
+- Tailwind CSS 4 (CSS-based config, no `tailwind.config.js`)
+- TypeScript, Shadcn UI / Radix primitives, Aceternity registry, Iconify, lucide-react
+- `next-sitemap` (sitemap + robots), `pagefind` (static search index)
+- Node 20+, pnpm 9+ (this repo currently uses pnpm)
+
+## Commands
+
+```bash
+pnpm dev      # next dev --turbopack -p 8000  (local dev server)
+pnpm build    # next build  (postbuild also runs next-sitemap + pagefind)
+pnpm lint     # eslint --fix .
+pnpm start    # next start -p 7000  (production server, not used for Cloudflare)
+```
+
+Cloudflare build/deploy scripts (see Deployment below):
+
+```bash
+pnpm cloudflare-build   # opennextjs-cloudflare build
+pnpm preview            # cloudflare-build && opennextjs-cloudflare preview
+pnpm deploy             # cloudflare-build && wrangler deploy
+```
+
+For runtime changes, verify with the narrowest useful command — usually `pnpm lint`,
+or `pnpm build` when routing/metadata/static params change. `pnpm build` runs the
+`postbuild` step (sitemap + pagefind) so it exercises those integrations too.
+
+## Project Structure
+
+```
+next.config.ts                 Nextra config + Next i18n + OpenNext dev init
+src/app/[lang]/layout.tsx      Localized Nextra shell (Navbar/Banner/Search/Footer)
+src/app/[lang]/[[...mdxPath]]/page.tsx   Catch-all MDX route
+src/app/[lang]/_components/    ThirdPartyScripts (analytics)
+src/app/[lang]/styles/         index.css (Tailwind 4 + tokens + Nextra overrides), overrides.css
+src/app/_dictionaries/         get-dictionary.ts (dynamic dictionary import)
+src/content/{zh,en}/           Localized MDX content trees (mirrored) + _meta.tsx
+src/i18n/                      index.ts (typed dictionaries), zh.ts, en.ts, ai-demo.ts
+src/hooks/                     useServerLocale.ts, useLocale.ts
+src/widgets/                   navbar-extras, locale-toggle, theme-toggle, auth-button, mobile-menu-auth
+src/components/                HomepageHero, AIDemoLanding, auth/, ui/ (Shadcn), CustomFooter, ...
+src/lib/utils.ts               cn() helper
+public/                        static assets (img/)
+components.json                Shadcn config + Aceternity registry
+next-sitemap.config.mjs        siteUrl from SITE_URL, generates robots.txt
+wrangler.jsonc                 Cloudflare Worker config
+```
+
+Path alias: `@/*` → `src/*` (see `tsconfig.json`).
+
+## Architecture
+
+### Routing & i18n
+- `next.config.ts` declares `locales: ['zh', 'en']`, `defaultLocale: 'zh'`, and
+  `unstable_shouldAddLocaleToLinks: true` so Nextra links keep their locale prefix.
+- The App Router segment `src/app/[lang]` makes language explicit in the URL.
+- MDX content is **mirrored** under `src/content/zh` and `src/content/en`. When you
+  add a page, create the MDX + `_meta.tsx` entry in **every** supported language.
+- `src/app/[lang]/[[...mdxPath]]/page.tsx` is the catch-all Nextra route.
+  `generateStaticParamsFor('mdxPath')` supplies params; `importPage()` loads the
+  localized MDX module; `generateMetadata` delegates to MDX page metadata.
+- Typed dictionary access: `src/i18n/index.ts` builds `i18nConfig` from `zh` + `en`
+  with typed dotted keys (`NestedKeyOf`), runtime lookup (`getNestedValue`), and
+  `interpolateString`. `useServerLocale(lang)` (server) and `useLocale()` (client)
+  return `{ currentLocale, t }`.
+- Rule: **shared UI copy goes in `src/i18n` dictionaries; long-form page content goes
+  in `src/content/{lang}` MDX.** Don't hard-code product copy in components.
+
+### Nextra shell
+- `src/app/[lang]/layout.tsx` composes `Layout`, `Navbar`, `Banner`, `Search`,
+  `Footer`, `LastUpdated` from `nextra-theme-docs` / `nextra/components`, passing
+  localized `pageMap`, `i18n`, `toc`, `lastUpdated`, `footer`, `navbar`, `nextThemes`.
+- `_meta.tsx` files control navigation and page-level chrome: `display: 'hidden'`
+  for hidden pages, `theme.layout: 'full'` for landing/login pages, plus `toc`,
+  `navbar`, `footer`, `timestamp`, `copyPage`. Titles may be React nodes.
+- `src/widgets/navbar-extras.tsx` injects locale/theme/auth/mobile-auth widgets.
+- Rule: extend the shell through Nextra component props first; reach for DOM
+  selectors only when Nextra exposes no slot (e.g. `mobile-menu-auth.tsx`).
+
+### MDX
+- `src/mdx-components.ts` is the central MDX component override point (customizes
+  code blocks with `Pre` / `withIcons`). Keep route logic thin — build page
+  experiences in React components and render them from MDX entries.
+
+### Styling & UI
+- `src/app/[lang]/styles/index.css` imports Tailwind 4, Nextra styles, plugins
+  (Iconify, typography) and defines `@theme` tokens + Shadcn-compatible CSS vars.
+  `@custom-variant dark` makes dark mode follow the `.dark` class.
+- `components.json` points Shadcn at that CSS file, aliases `@/components`,
+  `@/lib`, `@/components/ui`, `@/hooks`, and registers the Aceternity registry.
+- Rule: preserve token names used by Shadcn primitives unless updating all consumers.
+
+### Auth (demo only — replace before production)
+- `src/components/auth/login-form.tsx` writes `auth:userEmail` to `localStorage`.
+- `src/widgets/auth-button.tsx` reads that key and listens for `storage` +
+  custom `auth:changed` events. Components delay user-specific UI until mounted
+  to avoid hydration mismatch. Fake Google login uses a timeout + hard-coded email.
+- Treat as a UI flow demo. Replace with real sessions/cookies/OAuth before production.
+
+## Common Workflows
+
+- **Add a docs page:** add `.mdx` under `src/content/{zh,en}/docs` for every locale,
+  update the nearest `_meta.tsx`, run `pnpm lint` (+ `pnpm build` if routing changed).
+- **Add a top-level page:** add localized MDX + `_meta.tsx` records; for full-screen
+  product pages set `theme.layout: 'full'`; build UI in `src/components/<Feature>`
+  and render from MDX.
+- **Add/rename a language:** update `next.config.ts`, add a dictionary in
+  `src/i18n/`, register it in `i18nConfig`, add dynamic import in
+  `get-dictionary.ts`, mirror MDX + `_meta.tsx`, update Nextra `Layout` `i18n`
+  options, and replace the two-locale `LocaleToggle` with a menu if >2 locales.
+- **Add a landing section:** add copy to both dictionaries, update copy shapes,
+  add a section component near `HomepageHero`/`AIDemoLanding`, keep it responsive
+  and dark-mode safe, run `pnpm lint`.
+- **Add Shadcn/Radix/Aceternity components:** use existing `components.json` aliases,
+  drop primitives in `src/components/ui`, align styling with tokens, prefer lucide
+  icons, run `pnpm lint`.
+- **Brand/theme/metadata:** edit `layout.tsx` (metadataBase, title, favicon),
+  `CustomFooter`, `styles/index.css` tokens, `src/i18n` copy, `public/img/favicon.svg`,
+  and set `SITE_URL` in `next-sitemap.config.mjs`.
+
+## Environment
+
+- `SITE_URL` — canonical site URL, used by `next-sitemap.config.mjs` for the sitemap
+  and robots. Set to `https://www.nanisoft.com` in production/CI. Locally it lives in
+  `.env`; for local Worker dev use `.dev.vars` (copy from `.dev.vars.example`).
+- Analytics IDs in `src/app/[lang]/_components/ThirdPartyScripts.tsx` (Google
+  Analytics + Baidu) are currently hard-coded starter placeholders — replace or
+  remove before production.
+
+## Deployment — Cloudflare Workers (OpenNext)
+
+The site deploys to **Cloudflare Workers** via `@opennextjs/cloudflare` (the modern
+unified Cloudflare runtime for Next.js), not the legacy Pages product. CI/CD runs
+through `.github/workflows/deploy.yml` (lint + build on PRs, build + `wrangler deploy`
+on pushes to `main`).
+
+Required **GitHub repository secrets**:
+- `CLOUDFLARE_API_TOKEN` — Cloudflare API token (use the "Edit Cloudflare Workers"
+  template). Used by `wrangler deploy` in CI.
+- `CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID.
+
+(There is no Supabase / database — the starter template's Supabase env was removed.)
+
+Custom domain **www.nanisoft.com** is configured on the Worker in the Cloudflare
+dashboard (Workers & Pages → the worker → Settings → Domains & Routes → add custom
+domain). The zone must be on the same Cloudflare account. `SITE_URL` and the Next.js
+`metadataBase` are set to `https://www.nanisoft.com`.
+
+Build flow: `pnpm cloudflare-build` runs `opennextjs-cloudflare build`, producing
+`.open-next/` (gitignored). `wrangler deploy` uploads the Worker from
+`.open-next/worker.js` using the config in `wrangler.jsonc`.
+
+> Note: the starter is on Next.js 16. The OpenNext build uses
+> `--dangerouslyUseUnsupportedNextVersion` as a guard while OpenNext catches up to
+> Next 16. If a future `@opennextjs/cloudflare` release supports Next 16 natively,
+> that flag can be removed from the `cloudflare-build` script.
+
+## Gotchas
+
+- `src/widgets/locale-toggle.tsx` is hard-coded to two locales and imports the
+  internal Next path `next/dist/client/add-base-path`.
+- `src/widgets/mobile-menu-auth.tsx` uses DOM selectors against Nextra mobile nav
+  markup — recheck selectors when upgrading Nextra.
+- Nextra override classes in `src/app/[lang]/styles/index.css` may break when
+  Nextra markup changes.
+- `pagefind` output (`public/_pagefind`, gitignored) is generated by `postbuild`;
+  confirm the deployment target expects it.
+- Replace before production: `localStorage` auth, `auth:changed` event, fake Google
+  login, static metadata / repo links / footer links, the `SITE_URL` fallback, and
+  the starter analytics IDs.
