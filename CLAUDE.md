@@ -182,6 +182,11 @@ in `wrangler.jsonc`. OpenNext also requires `open-next.config.ts` in the repo ro
 
 ## Gotchas
 
+- **Lint is pre-existing-broken & non-blocking in CI.** `@antfu/eslint-config@8.2.0`
+  predates the `eslint-plugin-react-hooks@7.x` rewrite, so the `react-hooks` plugin
+  isn't registered and `pnpm lint` errors out. The CI `lint` step is
+  `continue-on-error: true`; `pnpm build` still gates. To fix for real, align the two
+  (bump `@antfu/eslint-config` to v9, or pin `eslint-plugin-react-hooks` to v5).
 - `src/widgets/locale-toggle.tsx` is hard-coded to two locales and imports the
   internal Next path `next/dist/client/add-base-path`.
 - `src/widgets/mobile-menu-auth.tsx` uses DOM selectors against Nextra mobile nav
