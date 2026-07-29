@@ -1,0 +1,7 @@
+# Cloudflare Worker runtime vars for local preview (`pnpm preview` -> wrangler dev).
+# Copy to .dev.vars:  cp .dev.vars.example .dev.vars
+#
+# This site has no server-side secrets or database. SITE_URL is read only at
+# build time by next-sitemap (via .env / the CI env), not at Worker runtime, so
+# there are no values to populate here yet. Add server-side secrets here when
+# the app gains a backend, then push them with `wrangler secret put <NAME>`.

@@ -1,0 +1,16 @@
+{
+  // Deploy the Next.js app to Cloudflare Workers via @opennextjs/cloudflare.
+  // `opennextjs-cloudflare build` produces the .open-next/ directory referenced below.
+  "name": "nanisoft-website",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+  // Custom domain www.nanisoft.com is wired on the Worker in the Cloudflare
+  // dashboard (Workers & Pages -> this worker -> Settings -> Domains & Routes ->
+  // Add custom domain). The nanisoft.com zone must be on the same account.
+  // SITE_URL and the Next.js metadataBase are set to https://www.nanisoft.com.
+}

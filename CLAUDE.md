@@ -38,7 +38,7 @@ or `pnpm build` when routing/metadata/static params change. `pnpm build` runs th
 ## Project Structure
 
 ```
-next.config.ts                 Nextra config + Next i18n + OpenNext dev init
+next.config.ts                 Nextra config + Next i18n (no runtime bindings yet)
 src/app/[lang]/layout.tsx      Localized Nextra shell (Navbar/Banner/Search/Footer)
 src/app/[lang]/[[...mdxPath]]/page.tsx   Catch-all MDX route
 src/app/[lang]/_components/    ThirdPartyScripts (analytics)
@@ -53,7 +53,8 @@ src/lib/utils.ts               cn() helper
 public/                        static assets (img/)
 components.json                Shadcn config + Aceternity registry
 next-sitemap.config.mjs        siteUrl from SITE_URL, generates robots.txt
-wrangler.jsonc                 Cloudflare Worker config
+wrangler.jsonc                 Cloudflare Worker config (name, main, assets)
+open-next.config.ts            OpenNext Cloudflare config (defineCloudflareConfig)
 ```
 
 Path alias: `@/*` → `src/*` (see `tsconfig.json`).
@@ -156,10 +157,24 @@ dashboard (Workers & Pages → the worker → Settings → Domains & Routes → 
 domain). The zone must be on the same Cloudflare account. `SITE_URL` and the Next.js
 `metadataBase` are set to `https://www.nanisoft.com`.
 
-Build flow: `pnpm cloudflare-build` runs `opennextjs-cloudflare build`, producing
-`.open-next/` (gitignored). `wrangler deploy` uploads the Worker from
-`.open-next/worker.js` using the config in `wrangler.jsonc`.
+Build flow: `pnpm cloudflare-build` runs `opennextjs-cloudflare build`, which
+internally runs `pnpm build` (i.e. `next build` **and** the `postbuild` sitemap +
+pagefind step) then bundles the Worker into `.open-next/` (gitignored).
+`wrangler deploy` uploads the Worker from `.open-next/worker.js` using the config
+in `wrangler.jsonc`. OpenNext also requires `open-next.config.ts` in the repo root
+(default `defineCloudflareConfig()`).
 
+> **Next.js 16 + middleware caveat:** the Nextra locale `proxy` (`src/proxy.ts`)
+> was removed for Cloudflare. Next.js 16 runs the proxy (formerly middleware) on
+> the **Node.js runtime only** — the `runtime` config option throws in a proxy
+> file — and `@opennextjs/cloudflare` does not support Node.js middleware. In-site
+> links already carry a locale prefix (`unstable_shouldAddLocaleToLinks`) and the
+> `LocaleToggle` widget switches locales client-side, so navigation is intact; a
+> `redirects` rule in `next.config.ts` sends bare `/` → `/zh` (the default locale).
+> What's lost: automatic `Accept-Language` negotiation. If that's needed later,
+> either wait for OpenNext Node-middleware support or implement locale routing as
+> a Worker-level hook.
+>
 > Note: the starter is on Next.js 16. The OpenNext build uses
 > `--dangerouslyUseUnsupportedNextVersion` as a guard while OpenNext catches up to
 > Next 16. If a future `@opennextjs/cloudflare` release supports Next 16 natively,

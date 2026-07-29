@@ -22,7 +22,12 @@
     "build": "next build",
     "postbuild": "next-sitemap --config next-sitemap.config.mjs && pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start -p 7000",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "cloudflare-build": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
+    "preview": "pnpm cloudflare-build && opennextjs-cloudflare preview",
+    "deploy": "pnpm cloudflare-build && wrangler deploy",
+    "upload": "pnpm cloudflare-build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -61,6 +66,7 @@
     "@iconify/json": "^2.2.487",
     "@iconify/tailwind4": "^1.2.3",
     "@next/third-parties": "16.2.9",
+    "@opennextjs/cloudflare": "^1.20.2",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
@@ -81,6 +87,7 @@
     "react-responsive": "^10.0.1",
     "sass": "^1.101.0",
     "tailwindcss": "^4.3.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.114.0"
   }
 }
