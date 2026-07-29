@@ -12,7 +12,7 @@ starter. It is deployed to **Cloudflare Workers** (via OpenNext) on the custom d
 - Tailwind CSS 4 (CSS-based config, no `tailwind.config.js`)
 - TypeScript, Shadcn UI / Radix primitives, Aceternity registry, Iconify, lucide-react
 - `next-sitemap` (sitemap + robots), `pagefind` (static search index)
-- Node 20+, pnpm 9+ (this repo currently uses pnpm)
+- Node 24+, pnpm 11+ (this repo currently uses pnpm 11 via corepack)
 
 ## Commands
 

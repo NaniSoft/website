@@ -14,7 +14,7 @@
     "url": "https://github.com/pdsuwwz/nextjs-nextra-starter/issues"
   },
   "engines": {
-    "node": ">=22.13",
+    "node": ">=24",
     "pnpm": ">=11.x"
   },
   "packageManager": "pnpm@11.18.0",

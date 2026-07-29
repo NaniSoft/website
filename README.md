@@ -40,8 +40,8 @@ English | 中文
 ## Prerequisites
 
 - React 19.x
-- Node >= 20.x
-- Pnpm 9.x
+- Node >= 24.x
+- Pnpm 11.x
 - **VS Code plugin `dbaeumer.vscode-eslint` >= v3.0.5 (pre-release)**
 
 ## Installation and Running
