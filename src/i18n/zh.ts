@@ -126,7 +126,7 @@ export default {
       },
       {
         title: '3. 发布上线',
-        description: '一键部署到 Netlify 或 Vercel。',
+        description: '一键部署到 Cloudflare Workers。',
       },
     ],
     ctaTitle: '适用场景',

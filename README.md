@@ -1,65 +1,21 @@
-<!-- <p style="text-align:center;" align="center"><a href="https://github.com/pdsuwwz/nextjs-nextra-starter"><picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://i.stardots.io/wisdom/1747723353145.png"  width="100%" align="center" style="margin-bottom:20px;">
-  <source media="(prefers-color-scheme: light)" srcset="https://i.stardots.io/wisdom/1747723353146.png" width="100%" align="center" style="margin-bottom:20px;">
-  <img alt="color mode" src="https://i.stardots.io/wisdom/1747723353146.png" width="100%" align="center" style="margin-bottom:20px;">
-</picture></a><br /><br /></p> -->
+# Nanisoft
 
-# Nextjs Nextra Starter
+The website for **nanisoft.com** — a multilingual documentation + product-landing
+site built on the Next.js 16 + Nextra 4 starter. Deployed to **Cloudflare Workers**
+(via OpenNext) at [www.nanisoft.com](https://www.nanisoft.com).
 
-English | [中文](README.md)
+English | 中文
 
-[![Deploy](https://img.shields.io/badge/passing-black?style=flat&logo=Netlify&label=Netlify&color=3bb92c&labelColor=black)](https://github.com/pdsuwwz/nextjs-nextra-starter/deployments)
-[![GitHub Workflow Status (branch)](https://img.shields.io/badge/passing-black?style=flat&label=build&color=3bb92c)](https://github.com/pdsuwwz/nextjs-nextra-starter/deployments/Production)
-[![thanks](https://badgen.net/badge/thanks/♥/pink)](https://github.com/pdsuwwz)
-[![License](https://img.shields.io/github/license/pdsuwwz/nextjs-nextra-starter?color=466fe8)](https://github.com/pdsuwwz/nextjs-nextra-starter/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/pdsuwwz/nextjs-nextra-starter?color=466fe8)](./LICENSE)
 
-🔥 A Next.js 16 starter for indie developers and small teams: Tailwind CSS 4, React 19, Nextra 4, TypeScript, Shadcn UI, Radix UI, Aceternity UI, Sass, ESLint 9, Iconify, and i18n multilingual support. Built for Blog, Docs, and AI SaaS landing pages with responsive layout, dark mode, login page, and frontend auth examples. Deploy-ready for Vercel and Netlify.
+🔥 A Next.js 16 starter for indie developers and small teams: Tailwind CSS 4, React 19, Nextra 4, TypeScript, Shadcn UI, Radix UI, Aceternity UI, Sass, ESLint 9, Iconify, and i18n multilingual support. Built for Blog, Docs, and AI SaaS landing pages with responsive layout, dark mode, login page, and frontend auth examples. Deploys to Cloudflare Workers via OpenNext.
 
-- [🚀 Live Demo](https://nextjs-nextra.netlify.app/en)
-- [🤖 AI Demo Landing Page](https://nextjs-nextra.netlify.app/en/ai-demo)
-- [✨ Alternative address 1](https://nextjs-nextra-starter-green.vercel.app/en)
-- [✨ Alternative address 2](https://nextra.likemashang.com/en)
-
-## 🧪 Project Distillation Skill
-
-This repository includes project-local distillation Skills under `.agents/skills/` to help future maintainers and other projects understand the starter architecture, feature map, implementation patterns, extension points, and migration notes:
-
-- [English Skill](.agents/skills/nextjs-nextra-starter-distill/SKILL.md)
-- [Chinese Skill](.agents/skills/nextjs-nextra-starter-distill-zh/SKILL.md)
-
-When using this project as a reference for similar products, start with [SKILL.md](.agents/skills/nextjs-nextra-starter-distill/SKILL.md), then read the relevant reference file: [architecture.md](.agents/skills/nextjs-nextra-starter-distill/references/architecture.md), [feature-map.md](.agents/skills/nextjs-nextra-starter-distill/references/feature-map.md), [implementation-patterns.md](.agents/skills/nextjs-nextra-starter-distill/references/implementation-patterns.md), [extension-guide.md](.agents/skills/nextjs-nextra-starter-distill/references/extension-guide.md), or [migration-notes.md](.agents/skills/nextjs-nextra-starter-distill/references/migration-notes.md).
-
-## 🛠️ Maintenance Commitment
-
-<div align="center">
-
-<table>
-  <tr>
-    <td><strong>🔄 Continuous update</strong><br/>Dependency and features are updated irregularly</td>
-    <td><strong>🐛 Fast Response</strong><br/>Reply within 2 hours on average Issue</td>
-  </tr>
-  <tr>
-    <td><strong>💎 Elaboration</strong><br/>Spend 100+ hours to perfect template details</td>
-    <td><strong>🛡️ Stable and Reliable</strong><br/>Ensure that each function is fully tested</td>
-  </tr>
-</table>
-
-</div>
-
-<div align="center">
-
-<img src="https://media.giphy.com/media/a5viI92PAF89q/giphy.gif" width="400"/>
-
-💝 **If you appreciate this effort, please show your support with a ⭐ Star.**
-
-</div>
+- [🚀 Live Site](https://www.nanisoft.com)
 
 ## 🚀 What's New
 
 - **Tailwind CSS v4 Upgrade**: Fully upgraded to Tailwind CSS v4, optimizing performance and introducing new features.
 - **Nextra v4 Refactoring**: Upgraded to Nextra v4, enhancing document generation efficiency and development experience.
-
-👉 [Click to view detailed upgrade notes](https://nextjs-nextra.netlify.app/en/upgrade)
 
 ## 🎉 Features
 
@@ -72,7 +28,7 @@ When using this project as a reference for similar products, start with [SKILL.m
 - 🔐 **Login page + frontend auth examples**: Practical auth flow reference for rapid integration
 - 🖼️ **Iconify icon support**: Unified icon strategy with low integration cost
 - 🛠️ **ESLint v9**: Consistent code quality and team-friendly standards
-- 🚀 **Deployment-ready**: Works smoothly with Vercel / Netlify
+- 🚀 **Deployment-ready**: Deploys to Cloudflare Workers via OpenNext
 
 ## 🎯 Use Cases
 
@@ -88,18 +44,6 @@ When using this project as a reference for similar products, start with [SKILL.m
 - Pnpm 9.x
 - **VS Code plugin `dbaeumer.vscode-eslint` >= v3.0.5 (pre-release)**
 
-## Preview
-
-![image](https://github.com/user-attachments/assets/f732afa6-5fce-4e4d-af1c-acadd1bf50e7)
-
-![image](https://github.com/user-attachments/assets/5cac69dc-601a-41db-a3aa-d75bad6fc4be)
-
-![image](https://github.com/user-attachments/assets/b655981c-7658-4bf4-a118-82cf96cb1d7a)
-
-![image](https://github.com/user-attachments/assets/b69a5f77-2a76-45b3-8468-11bf8fb1de89)
-
-![image](https://github.com/user-attachments/assets/a0a07f3f-a457-4521-a45f-4c0f970044f6)
-
 ## Installation and Running
 
 - Install dependencies
@@ -114,11 +58,19 @@ pnpm i
 pnpm dev
 ```
 
-Then open http://localhost:8000 in your browser to access the service
+Then open http://localhost:8000 in your browser to access the service.
 
-🎉 **Successfully running?** If you like the clean setup of this template, don’t forget to show some support!
+### Cloudflare (Worker) build & deploy
 
-[![Star this repo](https://img.shields.io/badge/⭐-Star%20this%20repo-yellow?style=flat&logo=github)](https://github.com/pdsuwwz/nextjs-nextra-starter)
+```bash
+pnpm cloudflare-build   # build with @opennextjs/cloudflare -> .open-next/
+pnpm preview            # build + local Worker preview
+pnpm deploy             # build + wrangler deploy
+```
+
+CI/CD runs through `.github/workflows/deploy.yml` (lint + build on PRs, build +
+`wrangler deploy` on pushes to `main`). Required GitHub secrets:
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. There is no database / Supabase.
 
 ## Using Shadcn UI Components
 
@@ -172,42 +124,6 @@ export default function Home() {
 Open [`src/components/ui/alert.tsx`](src/components/ui/alert.tsx) to modify the styles of the `Alert` component
 
 > Tips: In most cases, the default styles provided by `Shadcn UI` are sufficient to meet requirements without additional modifications
-
-## 🐱 A Word from the Heart
-
-<div align="center">
-
-If you've made it this far and still haven't starred the repo, then all I can say is...
-
-<img src="https://media.giphy.com/media/l0HlKrB02QY0f1mbm/giphy.gif" width="500"/>
-
-**Pretty please, drop a ⭐ Star!** 🥺👉👈
-
-Right now, my bug count is still higher than my star count 😭
-
-<a href="https://github.com/pdsuwwz/nextjs-nextra-starter">
-<img src="https://img.shields.io/badge/Discovered%20with%20care-Drop%20a%20Star%20%E2%AD%90-orange?style=for-the-badge&logo=github&logoColor=white" alt="Give a Star"/>
-</a>
-
-</div>
-
-## 🌟 Related Projects
-
-Here are some projects that developers and teams are using, referencing, or inspired by this project:
-
-| Project Name                                                           | Description                                                                                                                       |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [ClaudeCode101](https://www.claudecode101.com)                         | A Chinese tutorial site for Claude Code, featuring best practices and hands-on guides.                                            |
-| [EdgeOne Saas Starter](https://github.com/TencentEdgeOne/saas-starter) | [The fastest way to create and deploy your SaaS product with EdgeOne and Tencent Cloud](https://saas-starter-docs.edgeone.app/en) |
-| [Talking Web3](https://talkingweb3.io/en)                              | A Web3 project accelerator dedicated to creating outstanding Web3 projects.                                                       |
-| [CodeCrack](https://www.codecrack.cn/en)                               | A free and in-depth interview preparation website helping developers improve their technical skills and prepare for interviews.   |
-
-### 📢 Community Contributions
-
-💡 If your project is also using or referencing this project, we sincerely welcome you to:
-
-- Share your project link by submitting an [Issue](https://github.com/pdsuwwz/nextjs-nextra-starter/issues)
-- Submit a Pull Request (PR) to add your project to the list
 
 ## 🚨 Disclaimer
 

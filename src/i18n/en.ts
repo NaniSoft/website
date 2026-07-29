@@ -126,7 +126,7 @@ export default {
       },
       {
         title: '3. Launch',
-        description: 'Deploy to Netlify or Vercel with one command.',
+        description: 'Deploy to Cloudflare Workers with one command.',
       },
     ],
     ctaTitle: 'Starter-ready scenarios',
