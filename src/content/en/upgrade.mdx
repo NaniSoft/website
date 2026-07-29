@@ -1,0 +1,83 @@
+---
+title: "What's New"
+---
+
+import { Callout } from 'nextra/components'
+
+# 🔥 Major Framework and Starter Updates
+
+We've completed significant core framework upgrades and added more complete product examples and second-stage development references to bring you a better development experience!
+
+<Callout emoji={<span className='icon-[ri--alarm-warning-fill]'></span>} type="info">
+Note
+
+This is the latest release, and while it has been tested, there may still be some issues that have not been discovered. If you encounter any anomalies or instability, please provide [Feedback](https://github.com/pdsuwwz/nextjs-nextra-starter/issues), and I will fix them as soon as possible.
+</Callout>
+
+### Nextra v4 Updates
+
+Nextra v4 is now released with major improvements and new features:
+
+- 🚀 **App Router Support**: Fully transitioned to Next.js App Router, discontinuing Pages Router, and supporting the latest Metadata API.  
+- ⚡ **Faster Page Loading**: Optimized bundle size and performance for a more responsive website.  
+- 🔍 **New Search Engine**: Rust-powered Pagefind delivers faster and more accurate search results.  
+- 🏎️ **Turbopack Support**: Improved development experience, addressing long-standing community requests.  
+- 🌍 **RSC + i18n**: Enhanced internationalization, making multilingual website development easier.  
+- 🎨 **Optimized Theme Styles**: Improved UI design for better visual consistency.  
+- 📱 **Better Mobile Adaptation**: Optimized display and interaction for smaller screens.  
+- 📚 **More Powerful Page Collection**: The new "Page Map" now collects `md/mdx` pages and `jsx/tsx` pages from the `app/` directory.  
+- 🛠️ **Remote MDX Rendering**: Supports rendering MDX content from any source while generating proper sidebar navigation.  
+- ✨ **Enhanced Table of Contents (TOC)**: Displays Markdown headings accurately, supporting JSX, code blocks, math formulas, and more.  
+
+
+For more details, check out the [Nextra v4 Official Migration Guide](https://the-guild.dev/blog/nextra-4)
+
+
+### Tailwind CSS v4 Updates
+
+Tailwind CSS v4 has been officially released, introducing several significant improvements and new features:
+
+- 🚀 **New High-Performance Engine**: Full builds are up to 5x faster, and incremental builds are over 100x faster, measured in microseconds.
+- 💎 **Designed for the Modern Web**: Built on cutting-edge CSS features like cascade layers, registered custom properties with `@property`, and `color-mix()`.
+- 🎯 **Simplified Installation**: Fewer dependencies, zero configuration, and just a single line of code in your CSS file.
+- 📦 **First-Party Vite Plugin**: Tight integration for maximum performance and minimum configuration.
+- 🔍 **Automatic Content Detection**: All of your template files are discovered automatically, with no configuration required.
+- 📂 **Built-In Import Support**: No additional tooling necessary to bundle multiple CSS files.
+- 🛠️ **CSS-First Configuration**: A reimagined developer experience where you customize and extend the framework directly in CSS instead of a JavaScript configuration file.
+
+For more details, please refer to the [Tailwind CSS v4 Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide) and [Tailwind CSS Blog](https://tailwindcss.com/blog/tailwindcss-v4)
+
+### Starter Capability Updates
+
+Beyond framework upgrades, this release also adds starter capabilities that are useful for product validation, AI product showcases, and second-stage development:
+
+- 🤖 **AI SaaS Demo Page**: Added a dedicated [AI Demo landing page](/en/ai-demo) with hero, features, use cases, interactive demo, pricing cards, FAQ, testimonials, and CTAs. It is a practical starting point for AI product websites, SaaS landing pages, and product validation pages.
+- 🌍 **Localized Demo Copy**: AI Demo copy is managed through `src/i18n/ai-demo.ts` and reuses `src/i18n/zh.ts` and `src/i18n/en.ts`, making it easier to replace with real product messaging.
+- 🧩 **Reusable Landing Page Components**: Page components live under `src/components/AIDemoLanding`, with responsive layout, dark mode, and composable section patterns.
+- 🧪 **Project Distillation Skill**: Added [English Skill](https://github.com/pdsuwwz/nextjs-nextra-starter/blob/main/.agents/skills/nextjs-nextra-starter-distill/SKILL.md) and [Chinese Skill](https://github.com/pdsuwwz/nextjs-nextra-starter/blob/main/.agents/skills/nextjs-nextra-starter-distill-zh/SKILL.md) to capture the architecture, feature map, implementation patterns, extension points, and migration notes for future projects.
+- 🔐 **Clearer Auth Demo Boundary**: The login page and navbar auth state remain front-end auth examples. Before production, replace them with a real backend, session model, OAuth flow, or third-party auth provider.
+
+### Migration Tips
+
+For a smooth upgrade process, we recommend:
+
+1. Test the upgrade in a development environment first
+2. Check custom component compatibility
+3. Monitor console for any warnings
+4. Follow the official migration guides step by step
+5. If you reuse the AI Demo, replace product copy, CTAs, pricing plans, and interactive demo data first
+6. Before launch, check `SITE_URL`, analytics scripts, auth logic, and deployment environment variables
+
+### Documentation & Support
+
+- 📘 [Nextra Documentation](https://nextra.site)
+- 🎨 [Tailwind CSS Documentation](https://tailwindcss.com)
+- 🤖 [AI Demo Landing Page](/en/ai-demo)
+- 🧪 [Project Distillation Skill](https://github.com/pdsuwwz/nextjs-nextra-starter/blob/main/.agents/skills/nextjs-nextra-starter-distill/SKILL.md)
+- 🐞 Found an issue? Open an [Issue](https://github.com/pdsuwwz/nextjs-nextra-starter/issues)
+
+### Roadmap
+
+We'll continue optimizing framework performance and plan to add more useful features. Stay tuned!
+
+If you find this project useful or like the work I’ve done, please consider clicking the [⭐️ Star](https://github.com/pdsuwwz/nextjs-nextra-starter) button to show your support! Each star motivates me to keep improving. Thank you! 😊
