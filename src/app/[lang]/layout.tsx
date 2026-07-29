@@ -27,15 +27,14 @@ const CustomBanner = async ({ lang }: I18nLangAsyncProps) => {
   const { t } = await useServerLocale(lang)
   return (
     <Banner
-      storageKey="starter-banner"
+      storageKey="nanisoft-banner"
     >
       <div className="flex justify-center items-center gap-1">
         { t('banner.title') }
         {' '}
         <a
           className="max-sm:hidden text-warning hover:underline"
-          target="_blank"
-          href={repo}
+          href={`/${lang}/ai-cyber`}
         >
           { t('banner.more') }
         </a>
@@ -61,9 +60,6 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
   )
 }
 
-const BaiduTrack = () => null
-
-
 // interface Props {
 //   children: ReactNode
 //   params: Promise<{ lang: I18nLangKeys }>
@@ -77,8 +73,8 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
   const dictionary = await getDictionary(lang)
   const pageMap = await getPageMap(lang)
 
-  const title = 'My Nextra Starter'
-  const description = 'A Starter template with Next.js, Nextra'
+  const title = 'NaniSoft — Cybersecurity Knowledge for the AI Era'
+  const description = 'Articles, courses, and whitepapers on cybersecurity — IAM, application security, network security, governance, and the AI × Cyber frontier.'
 
   const { t } = await useServerLocale(lang)
 
@@ -152,7 +148,6 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
         <Toaster position="top-center" />
         <ThirdPartyScripts />
       </body>
-      <BaiduTrack />
     </html>
   )
 }

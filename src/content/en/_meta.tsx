@@ -11,39 +11,28 @@ export default {
       toc: false,
     },
   },
-  introduction: {
+  blog: {
     type: 'page',
-    title: 'This is Introduction',
-    theme: {
-      copyPage: false,
-      navbar: true,
-      toc: false,
-    },
+    title: 'Blog',
   },
-  login: {
+  courses: {
     type: 'page',
-    title: 'Login',
-    display: 'hidden',
-    theme: {
-      navbar: false,
-      footer: false,
-      toc: false,
-      layout: 'full',
-      timestamp: false,
-    },
+    title: 'Courses',
   },
-  'ai-demo': {
+  whitepapers: {
     type: 'page',
-    display: 'hidden',
+    title: 'Whitepapers',
+  },
+  'ai-cyber': {
+    type: 'page',
+    title: 'AI × Cyber',
+  },
+  about: {
+    type: 'page',
+    title: 'About',
     theme: {
-      copyPage: false,
       toc: false,
       timestamp: false,
-      layout: 'full',
     },
-  },
-  docs: {
-    title: '📦 Some Examples',
-    type: 'page',
   },
 } satisfies MetaRecord
