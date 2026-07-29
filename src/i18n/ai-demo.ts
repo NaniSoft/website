@@ -95,6 +95,11 @@ export type LandingCopy = {
 }
 
 export function getLandingCopy(lang: string): LandingCopy {
-  const safeLang: I18nLangKeys = lang === 'zh' ? 'zh' : 'en'
+  // Resolve against the registered locale keys, falling back to the default ('en').
+  // Add new locales to `i18nConfig` and they resolve automatically here.
+  const knownLocales = Object.keys(i18nConfig) as I18nLangKeys[]
+  const safeLang: I18nLangKeys = knownLocales.includes(lang as I18nLangKeys)
+    ? (lang as I18nLangKeys)
+    : 'en'
   return i18nConfig[safeLang].aiDemo as LandingCopy
 }

@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import { Toggle } from '@/components/ui/toggle'
 
 /**
- * 快速切换暗黑模式组件，用于覆盖 nextra 原生切换下拉框
+ * Quick dark-mode toggle that overrides Nextra's native theme dropdown.
  */
 export default function ThemeToggle({
   className,

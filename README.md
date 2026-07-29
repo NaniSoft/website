@@ -4,9 +4,9 @@ The website for **nanisoft.com** — a multilingual documentation + product-land
 site built on the Next.js 16 + Nextra 4 starter. Deployed to **Cloudflare Workers**
 (via OpenNext) at [www.nanisoft.com](https://www.nanisoft.com).
 
-English | 中文
+English
 
-[![License](https://img.shields.io/github/license/pdsuwwz/nextjs-nextra-starter?color=466fe8)](./LICENSE)
+[![License](https://img.shields.io/github/license/NaniSoft/website?color=466fe8)](./LICENSE)
 
 🔥 A Next.js 16 starter for indie developers and small teams: Tailwind CSS 4, React 19, Nextra 4, TypeScript, Shadcn UI, Radix UI, Aceternity UI, Sass, ESLint 9, Iconify, and i18n multilingual support. Built for Blog, Docs, and AI SaaS landing pages with responsive layout, dark mode, login page, and frontend auth examples. Deploys to Cloudflare Workers via OpenNext.
 
@@ -146,4 +146,4 @@ Users assume full responsibility for any direct/indirect consequences arising fr
 
 ## License
 
-[MIT](./LICENSE) License | Copyright © 2020-PRESENT [Wisdom](https://github.com/pdsuwwz)
+[MIT](./LICENSE) License | Copyright © 2020-PRESENT [NaniSoft](https://github.com/NaniSoft)

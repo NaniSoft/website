@@ -157,7 +157,7 @@ export default {
     },
     {
       question: 'How can I get technical support or help?',
-      answer: 'If you encounter any issues while using the template, please contact us via GitHub @pdsuwwz.',
+      answer: 'If you encounter any issues while using the template, please contact us via GitHub @NaniSoft.',
     },
     {
       question: '🐒 What does the author need most right now?',

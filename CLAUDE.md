@@ -44,8 +44,8 @@ src/app/[lang]/[[...mdxPath]]/page.tsx   Catch-all MDX route
 src/app/[lang]/_components/    ThirdPartyScripts (analytics)
 src/app/[lang]/styles/         index.css (Tailwind 4 + tokens + Nextra overrides), overrides.css
 src/app/_dictionaries/         get-dictionary.ts (dynamic dictionary import)
-src/content/{zh,en}/           Localized MDX content trees (mirrored) + _meta.tsx
-src/i18n/                      index.ts (typed dictionaries), zh.ts, en.ts, ai-demo.ts
+src/content/en/                English MDX content tree + _meta.tsx (mirroring pattern retained for future locales)
+src/i18n/                      index.ts (typed dictionaries), en.ts, ai-demo.ts
 src/hooks/                     useServerLocale.ts, useLocale.ts
 src/widgets/                   navbar-extras, locale-toggle, theme-toggle, auth-button, mobile-menu-auth
 src/components/                HomepageHero, AIDemoLanding, auth/, ui/ (Shadcn), CustomFooter, ...
@@ -62,18 +62,24 @@ Path alias: `@/*` → `src/*` (see `tsconfig.json`).
 ## Architecture
 
 ### Routing & i18n
-- `next.config.ts` declares `locales: ['zh', 'en']`, `defaultLocale: 'zh'`, and
+- `next.config.ts` declares `locales: ['en']`, `defaultLocale: 'en'`, and
   `unstable_shouldAddLocaleToLinks: true` so Nextra links keep their locale prefix.
-- The App Router segment `src/app/[lang]` makes language explicit in the URL.
-- MDX content is **mirrored** under `src/content/zh` and `src/content/en`. When you
-  add a page, create the MDX + `_meta.tsx` entry in **every** supported language.
+  A `redirects` rule sends the bare root `/` → `/en` (the default locale).
+- The App Router segment `src/app/[lang]` makes language explicit in the URL, so
+  English pages live at `/en/...`. The `[lang]` segment and the i18n plumbing are
+  retained so a second language can be added later without restructuring routes.
+- MDX content lives under `src/content/en`. The **mirroring** pattern (one content
+  tree per locale + a paired `_meta.tsx`) is retained: when you add a second
+  language, create its tree under `src/content/<lang>` and add the MDX + `_meta.tsx`
+  entry in **every** supported language.
 - `src/app/[lang]/[[...mdxPath]]/page.tsx` is the catch-all Nextra route.
   `generateStaticParamsFor('mdxPath')` supplies params; `importPage()` loads the
   localized MDX module; `generateMetadata` delegates to MDX page metadata.
-- Typed dictionary access: `src/i18n/index.ts` builds `i18nConfig` from `zh` + `en`
-  with typed dotted keys (`NestedKeyOf`), runtime lookup (`getNestedValue`), and
-  `interpolateString`. `useServerLocale(lang)` (server) and `useLocale()` (client)
-  return `{ currentLocale, t }`.
+- Typed dictionary access: `src/i18n/index.ts` builds `i18nConfig` from the
+  registered dictionaries (currently just `en`) with typed dotted keys
+  (`NestedKeyOf`), runtime lookup (`getNestedValue`), and `interpolateString`.
+  `useServerLocale(lang)` (server) and `useLocale()` (client) return
+  `{ currentLocale, t }`.
 - Rule: **shared UI copy goes in `src/i18n` dictionaries; long-form page content goes
   in `src/content/{lang}` MDX.** Don't hard-code product copy in components.
 
@@ -110,16 +116,19 @@ Path alias: `@/*` → `src/*` (see `tsconfig.json`).
 
 ## Common Workflows
 
-- **Add a docs page:** add `.mdx` under `src/content/{zh,en}/docs` for every locale,
-  update the nearest `_meta.tsx`, run `pnpm lint` (+ `pnpm build` if routing changed).
+- **Add a docs page:** add `.mdx` under `src/content/<lang>/docs` for every
+  supported locale (currently only `en`), update the nearest `_meta.tsx`, run
+  `pnpm lint` (+ `pnpm build` if routing changed).
 - **Add a top-level page:** add localized MDX + `_meta.tsx` records; for full-screen
   product pages set `theme.layout: 'full'`; build UI in `src/components/<Feature>`
   and render from MDX.
-- **Add/rename a language:** update `next.config.ts`, add a dictionary in
-  `src/i18n/`, register it in `i18nConfig`, add dynamic import in
-  `get-dictionary.ts`, mirror MDX + `_meta.tsx`, update Nextra `Layout` `i18n`
-  options, and replace the two-locale `LocaleToggle` with a menu if >2 locales.
-- **Add a landing section:** add copy to both dictionaries, update copy shapes,
+- **Add/rename a language:** update `next.config.ts` (`locales`/`defaultLocale`),
+  add a dictionary in `src/i18n/`, register it in `i18nConfig`, add the dynamic
+  import in `get-dictionary.ts`, mirror the MDX tree + `_meta.tsx` under
+  `src/content/<lang>`, add the locale to the Nextra `Layout` `i18n` prop and to
+  `LOCALE_META` in `locale-toggle.tsx`. The `LocaleToggle` is locale-list-driven
+  (toggles between two locales); replace it with a menu if you support more than two.
+- **Add a landing section:** add copy to the dictionary(ies), update copy shapes,
   add a section component near `HomepageHero`/`AIDemoLanding`, keep it responsive
   and dark-mode safe, run `pnpm lint`.
 - **Add Shadcn/Radix/Aceternity components:** use existing `components.json` aliases,
@@ -170,7 +179,7 @@ in `wrangler.jsonc`. OpenNext also requires `open-next.config.ts` in the repo ro
 > file — and `@opennextjs/cloudflare` does not support Node.js middleware. In-site
 > links already carry a locale prefix (`unstable_shouldAddLocaleToLinks`) and the
 > `LocaleToggle` widget switches locales client-side, so navigation is intact; a
-> `redirects` rule in `next.config.ts` sends bare `/` → `/zh` (the default locale).
+> `redirects` rule in `next.config.ts` sends bare `/` → `/en` (the default locale).
 > What's lost: automatic `Accept-Language` negotiation. If that's needed later,
 > either wait for OpenNext Node-middleware support or implement locale routing as
 > a Worker-level hook.
@@ -187,7 +196,8 @@ in `wrangler.jsonc`. OpenNext also requires `open-next.config.ts` in the repo ro
   isn't registered and `pnpm lint` errors out. The CI `lint` step is
   `continue-on-error: true`; `pnpm build` still gates. To fix for real, align the two
   (bump `@antfu/eslint-config` to v9, or pin `eslint-plugin-react-hooks` to v5).
-- `src/widgets/locale-toggle.tsx` is hard-coded to two locales and imports the
+- `src/widgets/locale-toggle.tsx` is locale-list-driven (reads registered locales
+  from `i18nConfig`; toggles between two, renders nothing with one) and imports the
   internal Next path `next/dist/client/add-base-path`.
 - `src/widgets/mobile-menu-auth.tsx` uses DOM selectors against Nextra mobile nav
   markup — recheck selectors when upgrading Nextra.
@@ -196,5 +206,9 @@ in `wrangler.jsonc`. OpenNext also requires `open-next.config.ts` in the repo ro
 - `pagefind` output (`public/_pagefind`, gitignored) is generated by `postbuild`;
   confirm the deployment target expects it.
 - Replace before production: `localStorage` auth, `auth:changed` event, fake Google
-  login, static metadata / repo links / footer links, the `SITE_URL` fallback, and
-  the starter analytics IDs.
+  login, static metadata / the `SITE_URL` fallback, and the starter analytics IDs.
+  (Repo links already point to `https://github.com/NaniSoft/website` and author/
+  copyright attribution to `NaniSoft`; review these if the org/repo changes.)
+- Starter-demo content (`src/content/en/docs/index.mdx`, `docs/examples/*`) is
+  leftover template demo copy, not nanisoft product content — remove or replace
+  when building out real docs.

@@ -6,11 +6,21 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect } from 'react'
 import { Toggle } from '@/components/ui/toggle'
 import { useLocale } from '@/hooks'
+import { i18nConfig } from '@/i18n'
 
 const ONE_YEAR = 365 * 24 * 60 * 60 * 1000
 
+// Display metadata per registered locale. Add an entry here when adding a locale.
+const LOCALE_META: Record<string, { name: string, icon: string }> = {
+  en: { name: 'English', icon: 'icon-[ri--english-input]' },
+}
+
 /**
- * 快速切换语言组件，用于覆盖 nextra 原生切换下拉框
+ * Quick locale switcher that overrides Nextra's native locale dropdown.
+ * Driven by the locales registered in `i18nConfig`, so it stays correct as
+ * locales are added. With a single locale it renders nothing (nothing to
+ * switch to); with two it toggles between them. For more than two, replace
+ * this with a menu (see CLAUDE.md "Add/rename a language").
  */
 export default function LocaleToggle({
   className,
@@ -20,6 +30,8 @@ export default function LocaleToggle({
   const { currentLocale } = useLocale()
   const router = useRouter()
   const pathname = usePathname()
+
+  const locales = Object.keys(i18nConfig)
 
   const forceHideBanner = useCallback(() => {
     const banner = document.querySelector('.nextra-banner')
@@ -44,24 +56,27 @@ export default function LocaleToggle({
       childList: true,
       subtree: true,
     })
+
     forceHideBanner()
     return () => observer.disconnect()
   }, [forceHideBanner])
 
   const changeLocale = useCallback(() => {
-    // 滚动条位置记录
+    // Remember the current scroll position
     const currentPosition = window.scrollY
-    // 检查是否滚动到底部
+    // Check whether the page is scrolled to the bottom
     const isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight
 
     const nextHref = {
       value: '',
     }
-    if (currentLocale === 'zh') {
-      nextHref.value = addBasePath(pathname.replace(`/zh`, `/en`))
+    // Toggle to the "other" locale when exactly two are registered.
+    if (locales.length === 2) {
+      const next = locales.find(locale => locale !== currentLocale) ?? currentLocale
+      nextHref.value = addBasePath(pathname.replace(`/${currentLocale}`, `/${next}`))
     }
     else {
-      nextHref.value = addBasePath(pathname.replace(`/en`, `/zh`))
+      nextHref.value = addBasePath(pathname)
     }
 
     const date = new Date(Date.now() + ONE_YEAR)
@@ -69,7 +84,7 @@ export default function LocaleToggle({
 
     router.replace(nextHref.value)
 
-    // 在路由变化后恢复滚动位置
+    // Restore the scroll position after the route change
     requestAnimationFrame(() => {
       if (isAtBottom) {
         window.scrollTo(0, document.body.scrollHeight)
@@ -78,7 +93,14 @@ export default function LocaleToggle({
         window.scrollTo(0, currentPosition)
       }
     })
-  }, [currentLocale, pathname, router])
+  }, [currentLocale, locales, pathname, router])
+
+  // Nothing to toggle when fewer than two locales are registered.
+  if (locales.length < 2) {
+    return null
+  }
+
+  const icon = LOCALE_META[currentLocale]?.icon ?? 'icon-[ri--english-input]'
 
   return (
     <Toggle
@@ -89,11 +111,7 @@ export default function LocaleToggle({
       ])}
       onClick={changeLocale}
     >
-      {
-        currentLocale === 'zh'
-          ? <span className="icon-[uil--letter-chinese-a]" />
-          : <span className="icon-[ri--english-input]" />
-      }
+      <span className={icon} />
     </Toggle>
   )
 }

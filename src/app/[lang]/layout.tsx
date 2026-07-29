@@ -21,7 +21,7 @@ export const metadata = {
   icons: '/img/favicon.svg',
 } satisfies Metadata
 
-const repo = 'https://github.com/pdsuwwz/nextjs-nextra-starter'
+const repo = 'https://github.com/NaniSoft/website'
 
 const CustomBanner = async ({ lang }: I18nLangAsyncProps) => {
   const { t } = await useServerLocale(lang)
@@ -99,7 +99,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
         <meta property="og:title" content={title} />
         <meta name="description" content={description} />
         <meta property="og:description" content={description} />
-        <link rel="canonical" href={repo} />
+        <link rel="canonical" href="https://www.nanisoft.com" />
       </Head>
       <body>
         <Layout
@@ -116,7 +116,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
             </LastUpdated>
           )}
           editLink={null}
-          docsRepositoryBase="https://github.com/pdsuwwz/nextjs-nextra-starter"
+          docsRepositoryBase="https://github.com/NaniSoft/website"
           footer={(
             <Footer className="bg-background py-5!">
               <CustomFooter />
@@ -132,7 +132,6 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
           )}
           i18n={[
             { locale: 'en', name: 'English' },
-            { locale: 'zh', name: '简体中文' },
           ]}
           toc={{
             backToTop: t('backToTop'),

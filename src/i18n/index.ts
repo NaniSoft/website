@@ -1,9 +1,7 @@
 import en from './en'
-import zh from './zh'
 
 export const i18nConfig = Object.freeze({
   en,
-  zh,
 })
 
 export type I18nLangKeys = keyof typeof i18nConfig
@@ -11,7 +9,7 @@ export interface I18nLangAsyncProps {
   lang: I18nLangKeys
 }
 
-// 获取所有语言对象的联合类型
+// Union type of all language dictionary objects
 export type AllLocales = typeof i18nConfig[I18nLangKeys]
 
 
@@ -28,13 +26,13 @@ export type NestedKeyOf<ObjectType extends object> = {
     : `${Key}`
 }[keyof ObjectType & (string | number)]
 
-// 获取所有可能的键
+// All possible dotted dictionary keys
 export type LocaleKeys = NestedKeyOf<AllLocales>
 
 
 type DeepObject = Record<string, any>
 
-// 类型提取给定路径上值的类型
+// Type extracting the value at a given dotted path
 export type PathValue<T, P extends string>
   = P extends `${infer Key}.${infer Rest}`
     ? Key extends keyof T
@@ -44,13 +42,13 @@ export type PathValue<T, P extends string>
       ? T[P]
       : never
 
-// 获取嵌套值
+// Get a nested value by dotted path
 export function getNestedValue<T extends DeepObject, K extends string>(obj: T, path: K): PathValue<T, K> {
   return path.split('.').reduce((acc, key) => acc && acc[key], obj) as PathValue<T, K>
 }
 
 
-// 插入值表达式
+// Interpolate {{ a.b }} expressions against a context object
 export function interpolateString(template: string, context: Record<string, any>): string {
   return template.replace(/\{\{\s*(\w+(\.\w+)*)\s*\}\}/g, (_, path) => {
     const value = getNestedValue(context, path.trim())

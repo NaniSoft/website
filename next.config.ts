@@ -16,8 +16,8 @@ export default withNextra({
   reactStrictMode: true,
   cleanDistDir: true,
   i18n: {
-    locales: ['zh', 'en'],
-    defaultLocale: 'zh',
+    locales: ['en'],
+    defaultLocale: 'en',
   },
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
@@ -26,8 +26,8 @@ export default withNextra({
   // on the Node.js runtime only, which @opennextjs/cloudflare does not support.
   // In-site links already carry a locale prefix (unstable_shouldAddLocaleToLinks),
   // and the LocaleToggle widget switches locales client-side. This redirect keeps
-  // the bare root URL resolving to the default locale.
+  // the bare root URL resolving to the default locale (English).
   redirects: async () => [
-    { source: '/', destination: '/zh', permanent: false },
+    { source: '/', destination: '/en', permanent: false },
   ],
 })

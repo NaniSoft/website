@@ -1,17 +1,17 @@
 {
-  "name": "nextjs-nextra-starter",
+  "name": "nanisoft-website",
   "type": "module",
   "version": "0.0.1",
-  "description": "Next.js Nextra (v4) Tailwind CSS (v4) docs starter",
-  "author": "Wisdom <pdsu.wwz@foxmail.com>",
+  "description": "NaniSoft website — multilingual docs + product landing (Next.js 16, Nextra 4, Tailwind CSS 4)",
+  "author": "NaniSoft",
   "license": "MIT",
-  "homepage": "https://github.com/pdsuwwz/nextjs-nextra-starter#readme",
+  "homepage": "https://github.com/NaniSoft/website#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pdsuwwz/nextjs-nextra-starter.git"
+    "url": "git+https://github.com/NaniSoft/website.git"
   },
   "bugs": {
-    "url": "https://github.com/pdsuwwz/nextjs-nextra-starter/issues"
+    "url": "https://github.com/NaniSoft/website/issues"
   },
   "engines": {
     "node": ">=24",

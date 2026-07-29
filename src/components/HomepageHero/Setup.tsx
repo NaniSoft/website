@@ -22,7 +22,7 @@ export function SetupHero(props: Props) {
         <div className={styles.badgeContainer}>
           <a
             className={styles.badge}
-            href="https://github.com/pdsuwwz/nextjs-nextra-starter"
+            href="https://github.com/NaniSoft/website"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -134,7 +134,7 @@ export function SetupHero(props: Props) {
               className="font-semibold group rounded-xl border border-slate-300/80 bg-white/85 shadow-[0_12px_22px_-18px_rgba(15,23,42,0.7)] transition duration-300 hover:-translate-y-0.5 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900/80 dark:hover:bg-zinc-900 max-sm:w-[100%]"
             >
               <Link
-                href="https://github.com/pdsuwwz/nextjs-nextra-starter"
+                href="https://github.com/NaniSoft/website"
                 target="_blank"
               >
                 Github

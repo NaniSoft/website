@@ -23,42 +23,7 @@ type Scenario = {
   metrics: Array<{ label: string, value: string }>
 }
 
-function getDemoScenarios(lang: string): Scenario[] {
-  if (lang === 'zh') {
-    return [
-      {
-        key: 'support',
-        label: '客服分诊',
-        summary: '自动分类工单、提取摘要，并分发给对应处理人。',
-        metrics: [
-          { label: '平均首响时间', value: '-38%' },
-          { label: '自动分发准确率', value: '96%' },
-          { label: '人工预处理耗时', value: '-4.2h/周' },
-        ],
-      },
-      {
-        key: 'reporting',
-        label: '周报生成',
-        summary: '定时汇总核心指标，自动输出可执行周报结论。',
-        metrics: [
-          { label: '周报产出时间', value: '-72%' },
-          { label: '数据同步时效', value: 'T+0' },
-          { label: '跨团队对齐效率', value: '+2.1x' },
-        ],
-      },
-      {
-        key: 'launch',
-        label: '上线协同',
-        summary: '自动推进素材、审批与发布清单，降低上线遗漏。',
-        metrics: [
-          { label: '发布延期率', value: '-29%' },
-          { label: '清单遗漏项', value: '-64%' },
-          { label: '协作往返沟通', value: '-31%' },
-        ],
-      },
-    ]
-  }
-
+function getDemoScenarios(_lang: string): Scenario[] {
   return [
     {
       key: 'support',
@@ -101,8 +66,8 @@ function parsePriceNumber(price: string): number | null {
   return Number(match[0])
 }
 
-function formatPlanPrice(price: string, cycle: BillingCycle, lang: string): string {
-  if (price === 'Custom' || price === '定制') {
+function formatPlanPrice(price: string, cycle: BillingCycle, _lang: string): string {
+  if (price === 'Custom') {
     return price
   }
 
@@ -116,11 +81,11 @@ function formatPlanPrice(price: string, cycle: BillingCycle, lang: string): stri
   const prefix = isDollar ? '$' : isYuan ? '¥' : ''
 
   if (cycle === 'monthly') {
-    return lang === 'zh' ? `${prefix}${value}/月` : `${prefix}${value}/mo`
+    return `${prefix}${value}/mo`
   }
 
   const yearly = Math.round(value * 10)
-  return lang === 'zh' ? `${prefix}${yearly}/年` : `${prefix}${yearly}/yr`
+  return `${prefix}${yearly}/yr`
 }
 
 export function InteractiveDemoPanel({ lang, ctaText }: InteractiveDemoProps) {
@@ -135,7 +100,7 @@ export function InteractiveDemoPanel({ lang, ctaText }: InteractiveDemoProps) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-[0_14px_40px_-24px_rgba(37,99,235,0.5)] backdrop-blur-sm dark:border-zinc-700/80 dark:bg-zinc-900/80 dark:shadow-[0_16px_44px_-30px_rgba(34,197,94,0.42)] sm:p-5">
       <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#2563EB]/12 blur-2xl motion-safe:animate-pulse dark:bg-[#22C55E]/10" aria-hidden />
-      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label={lang === 'zh' ? '场景切换' : 'Scenario switcher'}>
+      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Scenario switcher">
         {scenarios.map(scenario => (
           <button
             key={scenario.key}
@@ -181,7 +146,7 @@ export function InteractivePricingCards({ lang, plans }: InteractivePricingProps
 
   return (
     <>
-      <div className="mb-5 inline-flex rounded-xl border border-slate-300/80 bg-white/85 p-1 shadow-[0_10px_18px_-18px_rgba(15,23,42,0.75)] dark:border-zinc-700/80 dark:bg-zinc-900/75" role="group" aria-label={lang === 'zh' ? '计费周期' : 'Billing cycle'}>
+      <div className="mb-5 inline-flex rounded-xl border border-slate-300/80 bg-white/85 p-1 shadow-[0_10px_18px_-18px_rgba(15,23,42,0.75)] dark:border-zinc-700/80 dark:bg-zinc-900/75" role="group" aria-label="Billing cycle">
         <button
           type="button"
           onClick={() => setCycle('monthly')}
@@ -191,7 +156,7 @@ export function InteractivePricingCards({ lang, plans }: InteractivePricingProps
           ].join(' ')}
           aria-pressed={cycle === 'monthly'}
         >
-          {lang === 'zh' ? '月付' : 'Monthly'}
+          Monthly
         </button>
         <button
           type="button"
@@ -202,7 +167,7 @@ export function InteractivePricingCards({ lang, plans }: InteractivePricingProps
           ].join(' ')}
           aria-pressed={cycle === 'yearly'}
         >
-          {lang === 'zh' ? '年付（约 2 个月优惠）' : 'Yearly (approx. 2 months free)'}
+          Yearly (approx. 2 months free)
         </button>
       </div>
 
@@ -217,7 +182,7 @@ export function InteractivePricingCards({ lang, plans }: InteractivePricingProps
           >
             {plan.highlight && (
               <span className="mb-3 inline-flex rounded-full border border-[#2563EB]/25 bg-[#2563EB]/10 px-2.5 py-1 text-xs font-semibold text-[#1D4ED8] dark:border-[#60A5FA]/30 dark:bg-[#60A5FA]/15 dark:text-[#93C5FD]">
-                {lang === 'zh' ? '推荐方案' : 'Most Popular'}
+                Most Popular
               </span>
             )}
             <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[#2563EB]/10 blur-3xl dark:bg-[#22C55E]/10" aria-hidden />
