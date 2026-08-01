@@ -12,4 +12,17 @@ minimumReleaseAgeExclude:
   - wrangler@4.118.0
 shellEmulator: true
 
+# Force fixed versions for transitive deps that next@16.2.12 pins to
+# vulnerable copies (postcss 8.4.31, sharp 0.34.5). sharp is unused at
+# runtime (images.unoptimized = true) so the bump is low-risk; postcss
+# 8.4 -> 8.5 is a backward-compatible minor bump.
+#
+# zod: pin to the 4.3.x line. The lockfile refresh bumped zod 4.3.6 ->
+# 4.4.3 (both satisfy nextra 4.6.1's ^4.1.12 range), but zod 4.4.x added
+# stricter `nonoptional` validation that rejects the `children` value
+# nextra passes, 500-ing every page. No newer nextra exists to fix it.
 trustPolicy: no-downgrade
+overrides:
+  postcss: '>=8.5.10'
+  sharp: '>=0.35.0'
+  zod: ~4.3.6
