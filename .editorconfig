@@ -1,3 +1,11 @@
+# EditorConfig — https://editorconfig.org
+# Enforces consistent editor behavior across IDEs for every contributor.
+# Style itself (quotes, semicolons, sort order) is owned by the antfu ESLint
+# config; this file only sets the low-level formatting editors apply before
+# saves hand off to ESLint. Do NOT add `max_line_length` here: Tailwind utility
+# classes routinely exceed any reasonable width and the project deliberately
+# does not line-wrap class strings.
+
 root = true
 
 [*]
@@ -8,10 +16,28 @@ indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# Markdown: preserve trailing two-space line breaks (soft wraps).
-[*.md]
-trim_trailing_whitespace = false
+# Source — TS/JS/JSX and their module variants.
+[*.{ts,tsx,js,jsx,mjs,cjs,mts,cts}]
+indent_size = 2
+
+# Config/data — JSON, JSONC, JSON5, TOML.
+[*.{json,jsonc,json5,toml}]
+indent_size = 2
+
+# Styles — CSS, Sass.
+[*.{css,scss,sass}]
+indent_size = 2
 
 # YAML stays 2-space (matches pnpm-workspace.yaml / wrangler.jsonc layout).
 [*.{yml,yaml}]
 indent_size = 2
+
+# Markdown / MDX: preserve trailing two-space line breaks (soft wraps) and
+# do not force a line length — prose wraps naturally.
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+max_line_length = off
+
+# Patches/diffs: trailing whitespace can be semantically meaningful.
+[*.{diff,patch}]
+trim_trailing_whitespace = false

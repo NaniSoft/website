@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "ES2017",
+    // Node 24 is the CI/runtime floor (engines.node >=24, CI uses node 24);
+    // `target` only affects type-checking here because `noEmit` is true. ES2022
+    // unlocks top-level await, error-cause, and class-field typing without any
+    // runtime risk.
+    "target": "ES2022",
     "jsx": "react-jsx",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
@@ -16,13 +19,29 @@
         "./src/*"
       ]
     },
-    "ignoreDeprecations": "5.0",
     "resolveJsonModule": true,
     "allowJs": true,
+    // Enterprise strictness. `strict` is the umbrella; the flags below add the
+    // checks that catch real production bugs without forcing sweeping rewrites
+    // that could change rendering/animation behavior. We intentionally do NOT
+    // enable `noUncheckedIndexedAccess` or `exactOptionalPropertyTypes` — both
+    // generate heavy null-check churn and the `?.`/`?? defaults they require
+    // can subtly alter UI behavior.
     "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // Forces type-only imports to be written as `import type`, so they are
+    // safely erased under `isolatedModules` (Next/Turbopack compiles each file
+    // in isolation). antfu's `ts/consistent-type-imports` auto-fixes the
+    // surface form via `eslint --fix`. No runtime impact.
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "plugins": [
       {
@@ -33,9 +52,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
     "next-env.d.ts",
-    "./.next/types/**/*.ts",
+    ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-
+import type { ReactNode } from 'react'
 
 import type { I18nLangAsyncProps, I18nLangKeys } from '@/i18n'
 import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
@@ -61,12 +61,16 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
 }
 
 
-// interface Props {
-//   children: ReactNode
-//   params: Promise<{ lang: I18nLangKeys }>
-// }
+// Explicit props type instead of the `LayoutProps<'/[lang]'>` global that
+// Next.js generates into `.next/types`. That generated type only exists after
+// `next build`/`next dev` has run, but CI runs `pnpm typecheck` *before* the
+// build — so relying on it fails the verify gate on a fresh checkout.
+interface RootLayoutParams {
+  children: ReactNode
+  params: Promise<{ lang: string }>
+}
 
-export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'>) {
+export default async function RootLayout({ children, params }: RootLayoutParams) {
   const getterParams = await params
 
   const { lang } = getterParams as { lang: I18nLangKeys }

@@ -2,7 +2,7 @@
 
 import type { TargetAndTransition } from 'framer-motion'
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useBreakpoint } from '@/hooks'
 import { cn } from '@/lib/utils'
 
@@ -26,12 +26,13 @@ export const FlipWords = ({
   }, [currentWord, words])
 
   useEffect(() => {
-    if (!isAnimating) {
-      const timer = setTimeout(() => {
-        startAnimation()
-      }, duration)
-      return () => clearTimeout(timer)
+    if (isAnimating) {
+      return undefined
     }
+    const timer = setTimeout(() => {
+      startAnimation()
+    }, duration)
+    return () => clearTimeout(timer)
   }, [isAnimating, duration, startAnimation])
 
   const { isMd } = useBreakpoint()

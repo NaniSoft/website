@@ -11,10 +11,7 @@ export const getDictionary = async (
   locale: keyof typeof dictionaries,
 ): Promise<typeof En> => (await dictionaries[locale]()).default
 
-export const getDirection = (locale: keyof typeof dictionaries) => {
-  switch (locale) {
-    case 'en':
-    default:
-      return 'ltr' as const
-  }
-}
+// Single-locale (`en`) site — every supported locale is LTR. The parameter
+// is retained so that adding an RTL locale later only needs a branch here,
+// not a call-site change in `layout.tsx`.
+export const getDirection = (_locale: keyof typeof dictionaries): 'ltr' => 'ltr'

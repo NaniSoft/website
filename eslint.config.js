@@ -23,8 +23,11 @@ const ERROR = 2
 // promise (async hygiene), boundaries (architecture). Curated rule sets are
 // used instead of each plugin's full `recommended` — the security and sonarjs
 // recommended sets are noisy and several sonarjs rules need type-info, which
-// would break the build. New rules are `warn` so they surface without
-// failing `eslint .` until the team promotes them.
+// would break the build. The split: correctness + debug-footgun rules are
+// `error` (the build must fail on them), while noisy heuristics (sonarjs
+// duplicate-string, react-hooks/exhaustive-deps, react/no-array-index-key,
+// boundaries) stay `warn` so they surface without forcing changes that could
+// alter rendering/animation behavior.
 export default antfu({
   ignores: [
     'public',
@@ -73,8 +76,16 @@ export default antfu({
     'react/dom-no-dangerously-set-innerhtml': OFF,
     'react-hooks/exhaustive-deps': WARN,
     'react/no-useless-fragment': OFF,
-    'react/no-array-index-key': OFF,
-    'react-hooks/rules-of-hooks': OFF,
+    // Array-index keys can break reconciliation for reordering/animation.
+    // Surfaced as `warn` (not `error`) because changing existing keys in
+    // animated lists (HomepageHero, card-hover-effect, loader) would alter
+    // framer-motion/layout behavior — out of scope for a lint pass.
+    'react/no-array-index-key': WARN,
+    // Rules of Hooks is a correctness invariant, not style — promoted to
+    // `error`. `exhaustive-deps` stays `warn`: its false positives and the
+    // dep additions it implies can re-trigger effects/animations, so we
+    // surface rather than force.
+    'react-hooks/rules-of-hooks': ERROR,
     'react/no-comment-textnodes': OFF,
     'react-refresh/only-export-components': OFF,
     'react/no-unnecessary-use-prefix': OFF,
@@ -83,7 +94,7 @@ export default antfu({
     // recommended Next.js hydration-safe patterns — noise for this template.
     'react/set-state-in-effect': OFF,
 
-    'unused-imports/no-unused-vars': WARN,
+    'unused-imports/no-unused-vars': ERROR,
     curly: [ERROR, 'multi-line', 'consistent'],
 
     'no-multiple-empty-lines': [
@@ -92,7 +103,15 @@ export default antfu({
         max: 3,
       },
     ],
-    'no-console': WARN,
+    // --- production hardening: forbid debug/eval/alert footguns and console
+    //     noise. `no-console` is `error` — the codebase has zero `console.*`
+    //     calls in source (the lone `console.log` lives in an MDX code
+    //     example, which the markdown linter does not type-check as JS).
+    'no-console': ERROR,
+    'no-debugger': ERROR,
+    'no-alert': ERROR,
+    'no-eval': ERROR,
+    'no-param-reassign': ERROR,
 
     'style/jsx-self-closing-comp': [ERROR, {
       component: true,

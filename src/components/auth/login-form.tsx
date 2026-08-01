@@ -31,7 +31,7 @@ export default function LoginForm() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
     if (submitLoading || googleLoading) {
