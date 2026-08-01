@@ -1,7 +1,11 @@
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  '@tsparticles/engine': set this to true or false
-  esbuild: set this to true or false
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
-  workerd: set this to true or false
+  '@parcel/watcher': true
+  '@tsparticles/engine': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - '@iconify/json@2.2.508'
+  - miniflare@5.20260730.0-alpha
+  - wrangler@4.118.0

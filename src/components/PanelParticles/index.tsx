@@ -1,20 +1,21 @@
 'use client'
 
-import type { ISourceOptions } from '@tsparticles/engine'
-import Particles, { initParticlesEngine } from '@tsparticles/react'
+import type { Engine, ISourceOptions } from '@tsparticles/engine'
+import Particles, { ParticlesProvider } from '@tsparticles/react'
 import { useTheme } from 'nextra-theme-docs'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { loadFull } from 'tsparticles'
 
 const PanelParticles = () => {
   const { resolvedTheme } = useTheme()
 
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadFull(engine)
-    })
+  // Load the particles engine once. In @tsparticles/react v4 the
+  // `initParticlesEngine` helper was replaced by the <ParticlesProvider init>
+  // prop, so the engine is initialized through the provider instead of a
+  // manual useEffect.
+  const init = useCallback(async (engine: Engine) => {
+    await loadFull(engine)
   }, [])
-
 
   const options = useMemo<ISourceOptions>(
     () => ({
@@ -81,10 +82,12 @@ const PanelParticles = () => {
   )
 
   return (
-    <Particles
-      className="max-sm:hidden pointer-events-none"
-      options={options}
-    />
+    <ParticlesProvider init={init}>
+      <Particles
+        className="max-sm:hidden pointer-events-none"
+        options={options}
+      />
+    </ParticlesProvider>
   )
 }
 
