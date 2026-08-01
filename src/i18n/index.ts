@@ -43,6 +43,7 @@ export function getNestedValue<T extends DeepObject, K extends string>(obj: T, p
 
 // Interpolate {{variable}} placeholders into a template string
 export function interpolateString(template: string, context: Record<string, any>): string {
+  // eslint-disable-next-line security/detect-unsafe-regex -- operates only on trusted, developer-authored i18n templates (no untrusted input)
   return template.replace(/\{\{\s*(\w+(\.\w+)*)\s*\}\}/g, (_, path) => {
     const value = getNestedValue(context, path.trim())
     return value !== undefined ? value : `{{${path.trim()}}}`

@@ -12,17 +12,31 @@ minimumReleaseAgeExclude:
   - wrangler@4.118.0
 shellEmulator: true
 
-# Force fixed versions for transitive deps that next@16.2.12 pins to
-# vulnerable copies (postcss 8.4.31, sharp 0.34.5). sharp is unused at
-# runtime (images.unoptimized = true) so the bump is low-risk; postcss
-# 8.4 -> 8.5 is a backward-compatible minor bump.
-#
-# zod: pin to the 4.3.x line. The lockfile refresh bumped zod 4.3.6 ->
-# 4.4.3 (both satisfy nextra 4.6.1's ^4.1.12 range), but zod 4.4.x added
-# stricter `nonoptional` validation that rejects the `children` value
-# nextra passes, 500-ing every page. No newer nextra exists to fix it.
 trustPolicy: no-downgrade
 overrides:
+  # Supply-chain trust: `trustPolicy: no-downgrade` rejects packages whose
+  # publish-time trust evidence is weaker than an earlier-published version
+  # (typically because the older version dropped SLSA provenance attestation).
+  # The two provenance overrides below fix the pre-existing lockfile trust
+  # failure that blocked `pnpm install` and CI on main.
+  #
+  # eslint-import-resolver-typescript: eslint-config-next@16 pins ^3.5.2, but
+  # no 3.x publishes provenance. 4.4.5 does, and ships a Rust-based
+  # `unrs-resolver` (already in allowBuilds). 4.x's resolver interface is
+  # stable vs eslint-plugin-import, so overriding past the ^3 range is safe.
+  eslint-import-resolver-typescript: 4.4.5
+  # postcss: next@16.2.12 pins the vulnerable 8.4.31; 8.4 -> 8.5 is a
+  # backward-compatible minor bump.
   postcss: '>=8.5.10'
+  # semver: 6.x has no provenance; 7.5.4+ does. Pulled by old transitives
+  # (babel-plugin-polyfill-corejs2, eslint-plugin-import, eslint-plugin-react).
+  # 7.8.5 keeps the public API these consumers use (satisfies/gt/SemVer/etc.).
+  semver: 7.8.5
+  # sharp: next pins 0.34.5; unused at runtime (images.unoptimized = true), so
+  # the bump is low-risk.
   sharp: '>=0.35.0'
+  # zod: pin to the 4.3.x line. The lockfile refresh bumped zod 4.3.6 -> 4.4.3
+  # (both satisfy nextra 4.6.1's ^4.1.12 range), but zod 4.4.x added stricter
+  # `nonoptional` validation that rejects the `children` value nextra passes,
+  # 500-ing every page. No newer nextra exists to fix it.
   zod: ~4.3.6

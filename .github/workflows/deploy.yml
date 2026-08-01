@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint and Build
+    name: Typecheck, Lint, Test, Build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -25,11 +25,47 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
       - name: Lint
         run: pnpm lint
+      - name: Unit tests
+        run: pnpm test:run
       - run: pnpm build
         env:
           SITE_URL: https://www.nanisoft.com
+
+  e2e:
+    name: Playwright E2E
+    needs: verify
+    # E2E runs only on PRs so it never blocks the push-to-main deploy path
+    # (the `deploy` job depends on `verify` only). The webServer uses the
+    # production build (`pnpm start`, port 7000) — see playwright.config.ts.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build app
+        run: pnpm exec next build
+        env:
+          SITE_URL: https://www.nanisoft.com
+      - name: Install Playwright browsers
+        run: pnpm e2e:install
+      - name: Run Playwright tests
+        run: pnpm e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
 
   deploy:
     name: Deploy to Cloudflare Workers

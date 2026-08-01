@@ -57,6 +57,7 @@ function getDemoScenarios(): Scenario[] {
 }
 
 function parsePriceNumber(price: string): number | null {
+  // eslint-disable-next-line security/detect-unsafe-regex -- linear regex (no nested quantifiers), false positive
   const match = price.match(/\d+(?:\.\d+)?/)
   if (!match) {
     return null

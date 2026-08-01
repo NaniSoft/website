@@ -19,11 +19,29 @@
     "pnpm": ">=11.x"
   },
   "scripts": {
-    "build": "next build",
     "dev": "next dev --turbopack -p 8000",
+    "build": "next build",
     "postbuild": "next-sitemap --config next-sitemap.config.mjs && pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start -p 7000",
-    "lint": "eslint --fix .",
+
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "eslint --fix .",
+    "format:check": "eslint .",
+
+    "typecheck": "tsc --noEmit",
+
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium",
+
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:run",
+
+    "prepare": "husky",
+
     "cloudflare-build": "opennextjs-cloudflare build",
     "preview": "pnpm cloudflare-build && opennextjs-cloudflare preview",
     "deploy": "pnpm cloudflare-build && opennextjs-cloudflare deploy",
@@ -59,36 +77,54 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "tsparticles": "^4.3.2"
+    "tsparticles": "^4.3.2",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.2.0",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "@eslint-react/eslint-plugin": "^5.18.1",
     "@eslint/compat": "^2.1.0",
     "@iconify/json": "^2.2.508",
     "@iconify/tailwind4": "^1.2.3",
     "@next/third-parties": "^16.2.12",
+    "@playwright/test": "^1.62.1",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^26.1.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.8.0",
     "eslint-config-next": "^16.2.12",
+    "eslint-plugin-boundaries": "^7.1.0",
     "eslint-plugin-format": "^2.0.1",
+    "eslint-plugin-promise": "^7.3.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
+    "eslint-plugin-security": "^4.0.1",
+    "eslint-plugin-sonarjs": "^4.2.0",
+    "husky": "^9.1.7",
+    "jsdom": "^30.0.1",
+    "lint-staged": "^17.2.0",
     "pagefind": "^1.5.2",
     "postcss": "^8.5.25",
     "react-responsive": "^10.0.1",
     "sass": "^1.102.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
+    "vitest": "^4.1.10",
     "wrangler": "^4.118.0"
   }
 }
