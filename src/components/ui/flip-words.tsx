@@ -27,9 +27,10 @@ export const FlipWords = ({
 
   useEffect(() => {
     if (!isAnimating) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         startAnimation()
       }, duration)
+      return () => clearTimeout(timer)
     }
   }, [isAnimating, duration, startAnimation])
 

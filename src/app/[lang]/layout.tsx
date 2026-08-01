@@ -2,16 +2,15 @@ import type { Metadata } from 'next'
 
 
 import type { I18nLangAsyncProps, I18nLangKeys } from '@/i18n'
-import ThirdPartyScripts from './_components/ThirdPartyScripts'
 import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
 import { Banner, Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { CustomFooter } from '@/components/CustomFooter'
 import { Toaster } from '@/components/ui/sonner'
-import { useServerLocale } from '@/hooks'
+import { getServerLocale } from '@/hooks'
 import NavbarExtras from '@/widgets/navbar-extras'
+import { getDirection } from '../_dictionaries/get-dictionary'
 
-import { getDictionary, getDirection } from '../_dictionaries/get-dictionary'
 import './styles/index.css'
 
 export const metadata = {
@@ -24,7 +23,7 @@ export const metadata = {
 const repo = 'https://github.com/pdsuwwz/nextjs-nextra-starter'
 
 const CustomBanner = async ({ lang }: I18nLangAsyncProps) => {
-  const { t } = await useServerLocale(lang)
+  const { t } = await getServerLocale(lang)
   return (
     <Banner
       storageKey="starter-banner"
@@ -46,7 +45,7 @@ const CustomBanner = async ({ lang }: I18nLangAsyncProps) => {
 
 
 const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
-  const { t } = await useServerLocale(lang)
+  const { t } = await getServerLocale(lang)
   return (
     <Navbar
       logo={(
@@ -61,8 +60,6 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
   )
 }
 
-const BaiduTrack = () => null
-
 
 // interface Props {
 //   children: ReactNode
@@ -74,13 +71,12 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
 
   const { lang } = getterParams as { lang: I18nLangKeys }
 
-  const dictionary = await getDictionary(lang)
   const pageMap = await getPageMap(lang)
 
   const title = 'My Nextra Starter'
   const description = 'A Starter template with Next.js, Nextra'
 
-  const { t } = await useServerLocale(lang)
+  const { t } = await getServerLocale(lang)
 
   return (
     <html
@@ -150,9 +146,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
           {children}
         </Layout>
         <Toaster position="top-center" />
-        <ThirdPartyScripts />
       </body>
-      <BaiduTrack />
     </html>
   )
 }

@@ -1,12 +1,13 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import type { LandingCopy } from '@/i18n/ai-demo'
 import { Bot, CheckCircle2, FileText, GaugeCircle, Layers, ShieldCheck, Sparkles, WandSparkles } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { getLandingCopy, type LandingCopy } from '@/i18n/ai-demo'
+import { getLandingCopy } from '@/i18n/ai-demo'
 import { InteractiveDemoPanel, InteractivePricingCards } from './interactions'
 
-type SectionProps = {
+interface SectionProps {
   id: string
   title: string
   children: ReactNode
@@ -219,7 +220,7 @@ function DemoPreview({ copy }: { copy: LandingCopy }) {
     <Section id="demo" title={copy.demoTitle}>
       <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
         <InteractiveDemoPanel ctaText={copy.hero.startTrial} />
-        <div className={panelClass + ' p-5 sm:p-6'}>
+        <div className={`${panelClass} p-5 sm:p-6`}>
           <p className="text-base leading-7 text-slate-700 dark:text-zinc-300">{copy.demoDescription}</p>
           <a href="#pricing" className={`${primaryCtaClass} mt-6`}>
             {copy.hero.startTrial}
@@ -236,7 +237,11 @@ function Testimonials({ copy }: { copy: LandingCopy }) {
       <ul className="grid gap-4 md:grid-cols-2">
         {copy.testimonials.map(item => (
           <li key={item.name} className={softCardClass}>
-            <blockquote className="text-base leading-7 text-slate-700 dark:text-zinc-300">“{item.quote}”</blockquote>
+            <blockquote className="text-base leading-7 text-slate-700 dark:text-zinc-300">
+              “
+              {item.quote}
+              ”
+            </blockquote>
             <p className="mt-4 text-sm font-semibold text-slate-900 dark:text-zinc-100">{item.name}</p>
             <p className="text-sm text-slate-600 dark:text-zinc-400">{item.role}</p>
           </li>

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 const STORAGE_KEY = 'auth:userEmail'
 
-type AuthButtonProps = {
+interface AuthButtonProps {
   className?: string
   showOnMobile?: boolean
 }
@@ -28,7 +28,8 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
       try {
         const stored = window.localStorage.getItem(STORAGE_KEY)
         setEmail(stored)
-      } catch {
+      }
+      catch {
         setEmail(null)
       }
     }
@@ -49,7 +50,8 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY)
       setEmail(stored)
-    } catch {
+    }
+    catch {
       setEmail(null)
     }
   }, [mounted])
@@ -57,7 +59,8 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
   const onLogout = () => {
     try {
       window.localStorage.removeItem(STORAGE_KEY)
-    } finally {
+    }
+    finally {
       window.dispatchEvent(new Event('auth:changed'))
       setEmail(null)
     }
@@ -69,7 +72,7 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
         className={cn(
           visibilityClass,
           'flex items-center gap-2',
-          className
+          className,
         )}
       >
         <span className="h-3 w-10 rounded-sm bg-foreground/20 dark:bg-foreground/30 animate-pulse" aria-hidden="true" />
@@ -87,7 +90,7 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
         className={cn(
           visibilityClass,
           showOnMobile && 'w-full justify-center',
-          className
+          className,
         )}
       >
         <Link href={`/${currentLocale}/login`}>
@@ -104,7 +107,7 @@ export default function AuthButton({ className, showOnMobile }: AuthButtonProps)
         showOnMobile
           ? 'flex w-full flex-col items-start gap-2'
           : 'inline-flex items-center gap-2',
-        className
+        className,
       )}
     >
       <span className="text-sm text-foreground/80">{email}</span>

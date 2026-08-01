@@ -4,6 +4,8 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import ThemeToggle from '@/widgets/theme-toggle'
 
+const currentYear = new Date().getFullYear()
+
 const UnderlineLink = ({
   link,
   label,
@@ -53,7 +55,7 @@ export function CustomFooter() {
           <span className="pl-[4px]">
             Copyright ©
             {' '}
-            { new Date().getFullYear() }
+            { currentYear }
           </span>
           <UnderlineLink
             link="https://github.com/pdsuwwz"

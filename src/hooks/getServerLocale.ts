@@ -6,13 +6,7 @@ type LocalizedValue<T, K extends LocaleKeys> = PathValue<T, K> extends string
   ? string
   : PathValue<T, K>
 
-interface ServerLocaleParams {
-  params: {
-    lang?: string
-  }
-}
-
-export async function useServerLocale(lang: I18nLangKeys) {
+export async function getServerLocale(lang: I18nLangKeys) {
   // Use the language passed in from the params
   const currentLocale = lang
 

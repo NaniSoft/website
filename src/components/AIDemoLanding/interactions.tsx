@@ -1,20 +1,20 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { CheckCircle2 } from 'lucide-react'
 import type { Plan } from '@/i18n/ai-demo'
+import { CheckCircle2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
 type BillingCycle = 'monthly' | 'yearly'
 
-type InteractiveDemoProps = {
+interface InteractiveDemoProps {
   ctaText: string
 }
 
-type InteractivePricingProps = {
+interface InteractivePricingProps {
   plans: Plan[]
 }
 
-type Scenario = {
+interface Scenario {
   key: string
   label: string
   summary: string

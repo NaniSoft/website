@@ -9,9 +9,7 @@ import { FlipWords } from '@/components/ui/flip-words'
 import { LinkPreview } from '@/components/ui/link-preview'
 import { useLocale } from '@/hooks'
 
-interface Props {
-}
-export function SetupHero(props: Props) {
+export function SetupHero() {
   const { t, currentLocale } = useLocale()
 
   return (

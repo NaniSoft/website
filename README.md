@@ -43,7 +43,7 @@ When using this project as a reference for similar products, start with [SKILL.m
 
 <div align="center">
 
-<img src="https://media.giphy.com/media/a5viI92PAF89q/giphy.gif" width="400"/>
+<img src="https://media.giphy.com/media/a5viI92PAF89q/giphy.gif" width="400" alt="Preview animation of the Nextra starter" />
 
 💝 **If you appreciate this effort, please show your support with a ⭐ Star.**
 
@@ -174,7 +174,7 @@ Open [`src/components/ui/alert.tsx`](src/components/ui/alert.tsx) to modify the 
 
 If you've made it this far and still haven't starred the repo, then all I can say is...
 
-<img src="https://media.giphy.com/media/l0HlKrB02QY0f1mbm/giphy.gif" width="500"/>
+<img src="https://media.giphy.com/media/l0HlKrB02QY0f1mbm/giphy.gif" width="500" alt="Animated GIF asking for a GitHub star" />
 
 **Pretty please, drop a ⭐ Star!** 🥺👉👈
 

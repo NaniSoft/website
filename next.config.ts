@@ -1,3 +1,4 @@
+import process from 'node:process'
 import createWithNextra from 'nextra'
 
 const withNextra = createWithNextra({
@@ -11,6 +12,9 @@ const withNextra = createWithNextra({
 export default withNextra({
   images: {
     unoptimized: true,
+    // link-preview.tsx renders preview screenshots at quality 50; allow it
+    // alongside the default 75 so next/image doesn't warn at runtime.
+    qualities: [50, 75],
   },
   reactStrictMode: true,
   cleanDistDir: true,

@@ -53,7 +53,7 @@ export const LinkPreview = ({
     src = imageSrc
   }
 
-  const [isOpen, setOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   const [isMounted, setIsMounted] = React.useState(false)
 
@@ -94,7 +94,7 @@ export const LinkPreview = ({
         openDelay={50}
         closeDelay={100}
         onOpenChange={(open) => {
-          setOpen(open)
+          setIsOpen(open)
         }}
       >
         <HoverCardPrimitive.Trigger

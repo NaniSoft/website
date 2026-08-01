@@ -1,6 +1,6 @@
 import { i18nConfig } from './index'
 
-type HeroCopy = {
+interface HeroCopy {
   title: string
   subtitle: string
   tryDemo: string
@@ -9,33 +9,33 @@ type HeroCopy = {
   trust: string
 }
 
-type SocialProof = {
+interface SocialProof {
   logos: string[]
   stats: Array<{ label: string, value: string }>
 }
 
-type Feature = {
+interface Feature {
   title: string
   description: string
 }
 
-type Step = {
+interface Step {
   title: string
   description: string
 }
 
-type UseCase = {
+interface UseCase {
   title: string
   description: string
 }
 
-type Testimonial = {
+interface Testimonial {
   quote: string
   name: string
   role: string
 }
 
-export type Plan = {
+export interface Plan {
   name: string
   price: string
   description: string
@@ -44,19 +44,19 @@ export type Plan = {
   highlight?: boolean
 }
 
-type FAQ = {
+interface FAQ {
   question: string
   answer: string
 }
 
-type FinalCta = {
+interface FinalCta {
   title: string
   description: string
   primary: string
   secondary: string
 }
 
-type Footer = {
+interface Footer {
   productName: string
   copyright: string
   contactTitle: string
@@ -64,7 +64,7 @@ type Footer = {
   contactPhone: string
 }
 
-export type LandingCopy = {
+export interface LandingCopy {
   nav: {
     product: string
     tryDemo: string

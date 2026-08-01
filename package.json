@@ -2,6 +2,7 @@
   "name": "nextjs-nextra-starter",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@11.18.0",
   "description": "Next.js Nextra (v4) Tailwind CSS (v4) docs starter",
   "author": "Wisdom <pdsu.wwz@foxmail.com>",
   "license": "MIT",
@@ -13,7 +14,6 @@
   "bugs": {
     "url": "https://github.com/pdsuwwz/nextjs-nextra-starter/issues"
   },
-  "packageManager": "pnpm@11.18.0",
   "engines": {
     "node": ">=24.x",
     "pnpm": ">=11.x"
@@ -24,7 +24,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.mjs && pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start -p 7000",
     "lint": "eslint --fix .",
-    "cloudflare-build": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
+    "cloudflare-build": "opennextjs-cloudflare build",
     "preview": "pnpm cloudflare-build && opennextjs-cloudflare preview",
     "deploy": "pnpm cloudflare-build && opennextjs-cloudflare deploy",
     "upload": "pnpm cloudflare-build && opennextjs-cloudflare upload",

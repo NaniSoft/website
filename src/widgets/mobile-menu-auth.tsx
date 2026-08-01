@@ -49,6 +49,6 @@ export default function MobileMenuAuth() {
 
   return createPortal(
     <AuthButton showOnMobile className="w-full" />,
-    container
+    container,
   )
 }

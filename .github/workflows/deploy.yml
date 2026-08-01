@@ -19,18 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v6
-        # pnpm version is resolved from package.json `packageManager` (pnpm@11.18.0)
+      # pnpm version is resolved from package.json `packageManager` (pnpm@11.18.0)
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Lint
-        # Non-blocking: @antfu/eslint-config@9.x does not register the
-        # react-hooks plugin with eslint-plugin-react-hooks@7.x (flat-config
-        # wiring mismatch -> "could not find plugin react-hooks"). Lint is
-        # advisory; the build is the real gate.
-        continue-on-error: true
         run: pnpm lint
       - run: pnpm build
         env:
@@ -45,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v6
-        # pnpm version is resolved from package.json `packageManager` (pnpm@11.18.0)
+      # pnpm version is resolved from package.json `packageManager` (pnpm@11.18.0)
       - uses: actions/setup-node@v5
         with:
           node-version: 24

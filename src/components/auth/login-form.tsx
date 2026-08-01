@@ -1,13 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { LoaderOne } from '@/components/ui/loader'
 import { Label } from '@/components/ui/label'
+import { LoaderOne } from '@/components/ui/loader'
 import { useLocale } from '@/hooks'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 
 const STORAGE_KEY = 'auth:userEmail'
 
@@ -38,7 +38,7 @@ export default function LoginForm() {
       return
     }
 
-    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    if (!email || !/\S[^\s@]*@\S+\.\S+/.test(email)) {
       setError('invalidEmail')
       return
     }
@@ -57,7 +57,8 @@ export default function LoginForm() {
         router.replace(`/${currentLocale}`)
         setSubmitLoading(false)
       }, 1200)
-    } catch {
+    }
+    catch {
       setSubmitLoading(false)
       setError('storage')
     }
@@ -80,9 +81,11 @@ export default function LoginForm() {
         window.setTimeout(() => {
           router.replace(`/${currentLocale}`)
         }, 600)
-      } catch {
+      }
+      catch {
         setError('storage')
-      } finally {
+      }
+      finally {
         setGoogleLoading(false)
       }
     }, 900)
