@@ -65,4 +65,37 @@ test.describe('contact form', () => {
     // react-hook-form messages, not network. The exact copy is the schema's.
     await expect(page.getByText(/please enter your name/i)).toBeVisible()
   })
+
+  // Ticket 18 AC: "With sitekey unset, the Turnstile widget is absent and
+  // the form still posts to the in-app route." This runs against the
+  // built-in .dev.vars default (no sitekey configured), so it asserts the
+  // contract that survives provisioning: the form is fully usable without
+  // bot-protection, the cf-turnstile mount point is gone.
+  test('with no sitekey, the Turnstile widget is absent and a valid submission still posts to the in-app route', async ({ page }) => {
+    let posted = false
+    await page.route('**/api/contact-us', async route => {
+      posted = true
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'success', message: 'Thanks — we will reach out within a business day.' }),
+      })
+    })
+
+    await page.goto('/en#get-in-touch')
+    // Widget host is a `.cf-turnstile` div injected by Turnstile's script.
+    // When the sitekey is unset, the client never renders the mount point
+    // at all — `.cf-turnstile` is absent.
+    await expect(page.locator('.cf-turnstile')).toHaveCount(0)
+
+    await page.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
+    await page.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
+    await page.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
+    await page.getByRole('button', { name: /^Send$/ }).click()
+
+    // The form still posts — and the success path renders the toast.
+    await expect.poll(() => posted).toBe(true)
+    const toast = page.locator('[data-sonner-toast]').first()
+    await expect(toast).toBeVisible({ timeout: 5000 })
+  })
 })
