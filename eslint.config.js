@@ -45,6 +45,9 @@ export default antfu({
     'playwright-report/**',
     'test-results/**',
     'coverage/**',
+    // Issue-tracker scratch (notes / screenshots / prototype helpers) — not app
+    // code, lives outside the program per `docs/agents/issue-tracker.md`.
+    '.scratch/**',
   ],
   stylistic: {
     indent: 2,
