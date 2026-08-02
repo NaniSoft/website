@@ -1,0 +1,16 @@
+# Local development secrets — copy to `.dev.vars` (gitignored) and fill in.
+# NEVER commit real secrets. Production secrets live in Cloudflare Worker
+# secrets (set via `wrangler secret put <NAME>` against the `nanisoft` worker);
+# this file only mirrors them for local `pnpm dev` / `pnpm preview`.
+
+# Cloudflare Turnstile — local dev uses the always-passing test sitekey/secret.
+# https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+NEXT_PUBLIC_TURNSTILE_SITEKEY=1x00000000000000000000AA
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+
+# Resend — generate a key at https://resend.com/api-keys after verifying nanisoft.com.
+RESEND_API_KEY=re_xxxxxxxxxxxx
+# A verified sending address on the nanisoft.com domain.
+RESEND_FROM_ADDRESS=Nanisoft <hello@nanisoft.com>
+# Where contact-form submissions are delivered. Defaults to RESEND_FROM_ADDRESS.
+CONTACT_TO_ADDRESS=hello@nanisoft.com
