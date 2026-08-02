@@ -26,3 +26,19 @@ export const socialLinks = {
 /** Canonical production origin. */
 export const siteUrl
   = process.env.SITE_URL || 'https://www.nanisoft.com'
+
+/**
+ * Contact form configuration (sourced from wrangler `vars`, read at runtime).
+ * The contact route handler ships with the worker at `/api/contact-us`, so
+ * `contactEndpoint` is set in production; when unset the client form degrades
+ * to a `mailto:` fallback. `turnstileSitekey` is empty until provisioned —
+ * the widget is not rendered when empty (the form still posts). `contactToEmail`
+ * is the public recipient for the `mailto:` fallback; empty = no recipient
+ * (provision NEXT_PUBLIC_CONTACT_EMAIL when ready).
+ */
+export const contactEndpoint
+  = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || ''
+export const turnstileSitekey
+  = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || ''
+export const contactToEmail
+  = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ''
