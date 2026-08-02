@@ -426,3 +426,19 @@ Starter'`, a generic description, `docsRepositoryBase` and the `repo`
 - **Don't** "restore" `AICyberCarousel`, `feat/cyber-knowledge-hub`, or a
   "branding package" — that work was intentionally discarded when the repo
   history was reset to the Nextra-starter-based app.
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, label string equals role name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
