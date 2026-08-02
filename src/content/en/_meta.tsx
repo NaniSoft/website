@@ -23,6 +23,16 @@ export default {
       toc: false,
     },
   },
+  // Blog — visible main-nav item. Index lists posts reverse-chronologically;
+  // individual posts are hidden from nav (see src/content/en/blog/_meta.tsx).
+  blog: {
+    type: 'page',
+    title: 'Blog',
+    theme: {
+      copyPage: false,
+      toc: false,
+    },
+  },
   // Changelog — footer-linked, not main-nav. Content lands via the
   // `Changelog` component (src/lib/changelog.ts) in ticket 10.
   changelog: {
