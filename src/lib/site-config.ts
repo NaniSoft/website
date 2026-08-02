@@ -42,3 +42,7 @@ export const turnstileSitekey
   = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || ''
 export const contactToEmail
   = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ''
+
+/** Press kit URL for the footer Resources group. Empty = group omitted (no fabricated URL). */
+export const pressKitUrl
+  = process.env.NEXT_PUBLIC_PRESS_KIT_URL || ''
