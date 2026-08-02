@@ -33,6 +33,15 @@ export default {
       toc: false,
     },
   },
+  // About — visible main-nav item. Minimal origin story; no fabricated people.
+  about: {
+    type: 'page',
+    title: 'About',
+    theme: {
+      copyPage: false,
+      toc: false,
+    },
+  },
   // Changelog — footer-linked, not main-nav. Content lands via the
   // `Changelog` component (src/lib/changelog.ts) in ticket 10.
   changelog: {
