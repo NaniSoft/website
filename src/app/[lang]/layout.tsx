@@ -34,7 +34,7 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
       )}
       logoLink={`/${lang}`}
     >
-      <NavbarExtras />
+      <NavbarExtras githubUrl={githubUrl} />
     </Navbar>
   )
 }

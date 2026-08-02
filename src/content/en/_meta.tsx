@@ -42,6 +42,14 @@ export default {
       toc: false,
     },
   },
+  // Contact — visible main-nav item. No dedicated page; links to the homepage
+  // get-in-touch section (rendered by the contact form, ticket 13/17). Nextra
+  // renders `href` items as nav links in both the desktop navbar and the mobile
+  // slide-out, so no custom mobile wiring is needed.
+  contact: {
+    title: 'Contact',
+    href: '/en#get-in-touch',
+  },
   // Changelog — footer-linked, not main-nav. Content lands via the
   // `Changelog` component (src/lib/changelog.ts) in ticket 10.
   changelog: {
