@@ -1,7 +1,7 @@
 import type { MetaRecord } from 'nextra'
-import { TitleBadge } from '@/components/TitleBadge'
 
 export default {
+  // Homepage — full-screen, hidden from nav (apex `/` redirects to `/en`).
   index: {
     type: 'page',
     display: 'hidden',
@@ -12,48 +12,15 @@ export default {
       toc: false,
     },
   },
-  introduction: {
-    type: 'page',
-    title: 'This is Introduction',
-    theme: {
-      copyPage: false,
-      navbar: true,
-      toc: false,
-    },
-  },
-  login: {
-    type: 'page',
-    title: 'Login',
-    display: 'hidden',
-    theme: {
-      navbar: false,
-      footer: false,
-      toc: false,
-      layout: 'full',
-      timestamp: false,
-    },
-  },
-  'ai-demo': {
+  // Changelog — footer-linked, not main-nav. Content lands via the
+  // `Changelog` component (src/lib/changelog.ts) in ticket 10.
+  changelog: {
     type: 'page',
     display: 'hidden',
+    title: 'Changelog',
     theme: {
       copyPage: false,
       toc: false,
-      timestamp: false,
-      layout: 'full',
     },
-  },
-  docs: {
-    title: '📦 Some Examples',
-    type: 'page',
-  },
-  upgrade: {
-    title: (
-      <span className="flex items-center leading-[1]">
-        What's New
-        <TitleBadge />
-      </span>
-    ),
-    type: 'page',
   },
 } satisfies MetaRecord

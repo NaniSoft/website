@@ -3,46 +3,27 @@ import type { ReactNode } from 'react'
 
 import type { I18nLangAsyncProps, I18nLangKeys } from '@/i18n'
 import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
-import { Banner, Head, Search } from 'nextra/components'
+import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { CustomFooter } from '@/components/CustomFooter'
 import { Toaster } from '@/components/ui/sonner'
 import { getServerLocale } from '@/hooks'
+import { githubUrl } from '@/lib/site-config'
 import NavbarExtras from '@/widgets/navbar-extras'
 import { getDirection } from '../_dictionaries/get-dictionary'
 
 import './styles/index.css'
 
+const siteUrl = 'https://www.nanisoft.com'
+const description
+  = 'Nanisoft builds the cybersecurity tools that large organizations otherwise build in-house — filling the gaps left by enterprise security suites.'
+
 export const metadata = {
-  // Define your metadata here
-  // For more information on metadata API, see: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
-  metadataBase: new URL('https://www.nanisoft.com'),
+  metadataBase: new URL(siteUrl),
+  title: 'Nanisoft',
+  description,
   icons: '/img/favicon.svg',
 } satisfies Metadata
-
-const repo = 'https://github.com/pdsuwwz/nextjs-nextra-starter'
-
-const CustomBanner = async ({ lang }: I18nLangAsyncProps) => {
-  const { t } = await getServerLocale(lang)
-  return (
-    <Banner
-      storageKey="starter-banner"
-    >
-      <div className="flex justify-center items-center gap-1">
-        { t('banner.title') }
-        {' '}
-        <a
-          className="max-sm:hidden text-warning hover:underline"
-          target="_blank"
-          href={repo}
-        >
-          { t('banner.more') }
-        </a>
-      </div>
-    </Banner>
-  )
-}
-
 
 const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
   const { t } = await getServerLocale(lang)
@@ -52,14 +33,11 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
         <span>{ t('systemTitle') }</span>
       )}
       logoLink={`/${lang}`}
-      projectLink={repo}
     >
       <NavbarExtras />
-
     </Navbar>
   )
 }
-
 
 // Explicit props type instead of the `LayoutProps<'/[lang]'>` global that
 // Next.js generates into `.next/types`. That generated type only exists after
@@ -77,36 +55,23 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
 
   const pageMap = await getPageMap(lang)
 
-  const title = 'My Nextra Starter'
-  const description = 'A Starter template with Next.js, Nextra'
-
   const { t } = await getServerLocale(lang)
 
   return (
     <html
-      // Not required, but good for SEO
       lang={lang}
-      // Required to be set
-      // dir="ltr"
-      // Suggested by `next-themes` package https://github.com/pacocoursey/next-themes#with-app
       dir={getDirection(lang)}
       suppressHydrationWarning
     >
-      <Head
-      // ... Your additional head options
-      >
-        {/* <title>{asPath !== '/' ? `${normalizePagesResult.title} - ${title}` : title}</title> */}
-        <meta property="og:title" content={title} />
+      <Head>
+        <meta property="og:title" content="Nanisoft" />
         <meta name="description" content={description} />
         <meta property="og:description" content={description} />
-        <link rel="canonical" href="https://www.nanisoft.com" />
+        <link rel="canonical" href={siteUrl} />
       </Head>
       <body>
         <Layout
           copyPageButton={false}
-          banner={
-            <CustomBanner lang={lang} />
-          }
           navbar={
             <CustomNavbar lang={lang} />
           }
@@ -116,7 +81,7 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
             </LastUpdated>
           )}
           editLink={null}
-          docsRepositoryBase="https://github.com/pdsuwwz/nextjs-nextra-starter"
+          docsRepositoryBase={githubUrl}
           footer={(
             <Footer className="bg-background py-5!">
               <CustomFooter />
@@ -141,11 +106,10 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
           feedback={{ content: '' }}
           nextThemes={{
             attribute: 'class',
-            defaultTheme: 'system',
-            storageKey: 'starter-theme-provider',
+            defaultTheme: 'dark',
+            storageKey: 'nanisoft-theme',
             disableTransitionOnChange: true,
           }}
-        // ... Your additional layout options
         >
           {children}
         </Layout>

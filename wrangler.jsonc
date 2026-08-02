@@ -23,5 +23,22 @@
     // Enable image optimization
     // see https://opennext.js.org/cloudflare/howtos/image
     "binding": "IMAGES"
+  },
+  // Public env vars (non-secret). Secrets (TURNSTILE_SECRET_KEY, RESEND_API_KEY,
+  // RESEND_FROM_ADDRESS, CONTACT_TO_ADDRESS) are set via `wrangler secret put`
+  // against the `nanisoft` worker — never commit them here.
+  // See .scratch/nanisoft-marketing-site/issues/04-backend-provisioning.md
+  "vars": {
+    // Cloudflare Turnstile sitekey for the contact form. Empty until provisioned;
+    // when unset the Turnstile widget is not rendered (contact form degrades to
+    // a mailto: fallback via NEXT_PUBLIC_CONTACT_ENDPOINT being the in-app route).
+    "NEXT_PUBLIC_TURNSTILE_SITEKEY": "",
+    // Same-origin contact route handler; deploys with this worker via OpenNext.
+    "NEXT_PUBLIC_CONTACT_ENDPOINT": "/api/contact-us",
+    // Nanisoft GitHub org. Always present (defaults to the real org in
+    // src/lib/site-config.ts); set here so server-rendered navbar/footer
+    // links resolve at runtime. Other social URLs (LinkedIn/Discord/YouTube)
+    // are omitted when unset — add them here when provisioned.
+    "NEXT_PUBLIC_GITHUB_URL": "https://github.com/nanisoft"
   }
 }
