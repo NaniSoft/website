@@ -59,6 +59,7 @@
   "exclude": [
     "node_modules",
     "guild-website",
+    "guild-docs",
     ".scratch"
   ]
 }

@@ -1,40 +1,194 @@
+/*
+  Nanisoft design system — the single stylesheet entry.
+
+  One `@theme` block is the sole token source (the guild beige/green/blue
+  scales, the mode-tuned lime primary, the 5 nanisoft category accents, the
+  chrome tokens, and the retained Shadcn-var aliases). One `@theme inline`
+  pairs the `next/font` variable (`--font-plex-sans` → `--font-sans`).
+  `overrides.css` was folded in here and deleted — this is the only stylesheet.
+*/
+
+/* l-nextra is ordered before Tailwind's own layers so our utilities win over
+   Nextra's. The prefixed dist renames Nextra's internal layers to
+   v4-base/v4-utilities (avoiding Tailwind-v4 preflight collisions) and we wrap
+   the whole import in layer(l-nextra) to isolate it. */
+@layer l-nextra;
 @import 'tailwindcss';
-@import 'nextra-theme-docs/style.css';
+@import 'nextra-theme-docs/style-prefixed.css' layer(l-nextra);
+
+/*
+  Tailwind 4's default content scanning walks the whole project. The scratch
+  issue-tracker (`.scratch/<feature>/issues/*.md`) and the reference trees
+  (`guild-website/`, `guild-docs/`) contain prose that mentions placeholder
+  class names (`text-[var(--color-<cat>-foreground)]`, etc.) — if Tailwind sees
+  those it tries to generate utility classes for them, emitting invalid CSS
+  (`var(--color-<cat>)` fails parsing) and breaking the build. Exclude them.
+  Real content lives under `src/` and Nextra MDX under `src/content/`; both are
+  picked up by the default scan. Paths are relative to this stylesheet.
+*/
+@source not '../../../../.scratch';
+@source not '../../../../guild-website';
+@source not '../../../../guild-docs';
 
 @plugin 'tailwindcss-animate';
 @plugin "@iconify/tailwind4";
 @plugin '@tailwindcss/typography';
 
+/* next-themes toggles `.dark` on <html>; our dark overrides key off it. */
 @custom-variant dark (&:where(.dark, .dark *));
+/* hocus = hover OR focus-visible (replaces the v3 tailwindcss-hocus plugin). */
+@custom-variant hocus (&:is(:hover, :focus-visible));
+@custom-variant hocus-within (&:is(:hover, :focus-within));
+@custom-variant group-hocus (:is(:hover, :focus-visible) &);
+@custom-variant peer-hocus (:is(:hover, :focus-visible) ~ &);
 
 @theme {
+  /* ── brand ───────────────────────────────────────────────────────────── */
+  --color-hive-yellow: #e1ff00;
+  --color-dark: #111;
+
+  /* mode-tuned lime primary — the one link/focus/CTA colour, same hue both
+     modes, only lightness shifts. AA both modes (5.0:1 light / 16.6:1 dark).
+     Feeds the .hive-focus ring and the retained Shadcn primary utilities. The
+     <Head> `color` triplet in layout.tsx drives Nextra's own dynamic
+     --nextra-primary-* ladder (a separate, also-lime colour source). */
+  --color-primary: #4d7c0f;
+  --color-primary-foreground: #ffffff;
+  --color-ring: #4d7c0f;
+
+  /* ── beige scale ─────────────────────────────────────────────────────── */
+  --color-beige-100: #f8f7f6; --color-beige-200: #f1eee4;
+  --color-beige-300: #e9e5da; --color-beige-400: #dedacf;
+  --color-beige-500: #cfcabf; --color-beige-600: #b9b4a9;
+  --color-beige-700: #a29e93; --color-beige-800: #86827a;
+  --color-beige-900: #6d6a63; --color-beige-1000: #4d4b46;
+
+  /* ── green scale ─────────────────────────────────────────────────────── */
+  --color-green-100: #ecf6f3; --color-green-200: #cae4de;
+  --color-green-300: #a7d5ca; --color-green-400: #8cbeb3;
+  --color-green-500: #6aac9e; --color-green-600: #55998d;
+  --color-green-700: #3b736a; --color-green-800: #245850;
+  --color-green-900: #15433c; --color-green-1000: #00342c;
+
+  /* ── blue scale ──────────────────────────────────────────────────────── */
+  --color-blue-100: #f4f5f5; --color-blue-200: #dce3e4;
+  --color-blue-300: #c1d3d7; --color-blue-400: #a4c4cb;
+  --color-blue-500: #86b6c1; --color-blue-600: #68a8b6;
+  --color-blue-700: #4f96a6; --color-blue-800: #437c89;
+  --color-blue-900: #39616a; --color-blue-1000: #2e474c;
+
+  /* ── functional tones (icons: -bright on light bg, -dark on dark bg) ──── */
+  --color-critical-bright: #fd3325; --color-critical-dark: #f81202;
+  --color-warning-bright: #fe8830;
+  --color-positive-bright: #24d551; --color-positive-dark: #1ba13d;
+
+  /* ── subtle callout tones ────────────────────────────────────────────── */
+  --color-warning-100: #fbf8cb; --color-warning-500: #e7de62; --color-warning-800: #7d7204;
+  --color-critical-100: #fff0e8; --color-critical-500: #ffc6bb; --color-critical-800: #932d47;
+  --color-info-100: #e7f7ff; --color-info-500: #9fc9dc; --color-info-800: #205b75;
+  --color-positive-100: #f3fbd7; --color-positive-500: #afd563; --color-positive-800: #406b10;
+
+  /* ── 5 nanisoft category accents — lime→cyan→teal→blue→navy cool/acid ramp.
+     Each brand shade carries a paired -foreground so band text passes AA by
+     construction; the 3 dark accents carry a -dark tint for dark-mode
+     decorative use (dots/checkmarks/borders/large text on #111). The band
+     itself (bg-[var(--color-<cat>)] + text-[var(--color-<cat>-foreground)])
+     keeps the brand shade in both modes. */
+  --color-core: #e1ff00;            /* = hive-yellow; aliases the lime primary */
+  --color-core-foreground: #111111;
+  --color-ingestion: #1acbe2;
+  --color-ingestion-foreground: #111111;
+  --color-qt: #2e7a6b;              /* darkened from #378f7f for white-text AA */
+  --color-qt-foreground: #ffffff;
+  --color-qt-dark: #00342c;        /* Q&T dark gateway tile (green-1000) */
+  --color-interfaces: #2563eb;      /* replaces off-palette #7433ff */
+  --color-interfaces-foreground: #ffffff;
+  --color-interfaces-dark: #93c5fd;
+  --color-platform: #1e3a8a;        /* replaces off-palette #FF6BCB */
+  --color-platform-foreground: #ffffff;
+  --color-platform-dark: #bfdbfe;
+
+  /* Design rule: no inline small accent text on the shared background — the
+     accent is carried by a dot/fill only; label text stays ink/zinc. The
+     `SectionLabel` chrome primitive encodes this. */
+
+  /* ── chrome tokens ───────────────────────────────────────────────────── */
+  /* Shared background triplet (light #fff / dark #111) — rgb(var(--nextra-bg))
+     for ring-offsets and search-input backgrounds. Flips via the .dark rule. */
+  --nextra-bg: 255, 255, 255;
+  /* Navbar height — 82px desktop, 64px mobile (overridden in the @media rule).
+     Read by every sticky element and scroll-margin-top on anchor targets. */
+  --nextra-navbar-height: 82px;
+  /* Custom overshoot easings (ported from the guild stylesheet). */
+  --hive-ease-overshoot-far: linear(
+    0 0%,
+    0.5007 7.21%,
+    0.7803 12.29%,
+    0.8883 14.93%,
+    0.9724 17.63%,
+    1.0343 20.44%,
+    1.0754 23.44%,
+    1.0898 25.22%,
+    1.0984 27.11%,
+    1.1014 29.15%,
+    1.0989 31.4%,
+    1.0854 35.23%,
+    1.0196 48.86%,
+    1.0043 54.06%,
+    0.9956 59.6%,
+    0.9925 68.11%,
+    1 100%
+  );
+  --hive-ease-overshoot-a-bit: linear(
+    0 0%,
+    0.5007 7.21%,
+    0.7803 12.29%,
+    0.8883 14.93%,
+    0.9724 17.63%,
+    1.011319 20.44%,
+    1.024882 23.44%,
+    1.029634 25.22%,
+    1.032472 27.11%,
+    1.033462 29.15%,
+    1.032637 31.4%,
+    1.028182 35.23%,
+    1.006468 48.86%,
+    1.001419 54.06%,
+    0.9956 59.6%,
+    0.9925 68.11%,
+    1 100%
+  );
+
+  /* guild letterSpacing: tight is -0.015em (v4 default is -0.025em). */
+  --tracking-tight: -0.015em;
+
+  /* ── retained Shadcn-var aliases (folded from the former second @theme) ──
+     The 6 retained Shadcn primitives (button/input/label/textarea/toggle/
+     sonner) resolve `bg-background`/`text-foreground`/`border-input`/`ring`
+     etc. through these. They flip via the :root/.dark blocks below. Full
+     re-pointing at the guild tokens is a later centralization step. */
   --color-warning: hsl(var(--warning));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
 
   --radius-lg: calc(var(--radius) + 2px);
   --radius-md: calc(var(--radius));
@@ -72,45 +226,15 @@
   }
 }
 
+/* The unavoidable @theme inline: pairs the next/font variable to --font-sans
+   so `font-sans` utilities (and the body) resolve to IBM Plex Sans. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-warning: var(--warning);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-plex-sans);
 }
 
 /*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+  The default border color changed to `currentColor` in Tailwind CSS v4; keep
+  the v3-compatible default so existing elements still look right.
 */
 @layer base {
   *,
@@ -122,40 +246,58 @@
   }
 }
 
-@reference "./overrides.css";
-
-.x\:bg-gray-100 {
-  @apply bg-background;
-}
-.nextra-sidebar-footer,
-.nextra-navbar-blur {
-  @apply bg-background;
-}
-.nextra-mobile-nav .nextra-sidebar-footer {
-  @apply mx-0 px-4;
-}
-
-@keyframes heartbeat {
-  0%,100% {
-    transform: scale(.75)
+/* ── focus-ring primitive ──────────────────────────────────────────────────
+   2px lime ring, 2px offset, :focus-visible only. Applied globally to every
+   link/button/form-field below — not reinvented per component. `hive-focus`
+   and `hive-focus-within` are the opt-in utilities for non-standard elements. */
+@utility hive-focus {
+  &:focus {
+    outline: none;
   }
-  20% {
-    transform: scale(1)
-  }
-  40% {
-    transform: scale(.75)
-  }
-  60% {
-    transform: scale(1)
-  }
-  80% {
-    transform: scale(.75)
+  &:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2;
+    --tw-ring-offset-color: rgb(var(--nextra-bg));
   }
 }
 
-/*
-  ---break---
-*/
+@utility hive-focus-within {
+  &:focus {
+    outline: none;
+  }
+  &:focus-within {
+    @apply ring-2 ring-primary ring-offset-2;
+    --tw-ring-offset-color: rgb(var(--nextra-bg));
+  }
+}
+
+/* ── shake animation (ported from the guild stylesheet) ─────────────────── */
+@keyframes hive-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: rotate(-0.4deg);
+  }
+  75% {
+    transform: rotate(0.3deg);
+  }
+}
+
+.animate-shake:not(:focus-within) {
+  animation: hive-shake 0.3s ease;
+}
+
+/* The guild intentionally *un-tightens* tracking on .x:tracking-tight and
+   Nextra step headings — a bare --tracking-tight port renders them tighter
+   than the brand does. Port this override too. */
+.x\:tracking-tight {
+  letter-spacing: normal;
+}
+.nextra-steps :is(h2, h3, h4) {
+  letter-spacing: normal;
+}
+
 :root {
   --warning: hsl(38.21 94.06% 60.39%);
   --background: hsl(0 0% 100%);
@@ -164,8 +306,6 @@
   --card-foreground: hsl(0 0% 3.9%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(0 0% 3.9%);
-  --primary: hsl(221.2, 83.2%, 53.3%);
-  --primary-foreground: hsl(0 0% 98%);
   --secondary: hsl(210, 40%, 96.1%);
   --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
   --muted: hsl(0 0% 96.1%);
@@ -176,7 +316,6 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(0 0% 89.8%);
   --input: hsl(0 0% 89.8%);
-  --ring: hsl(221.2, 83.2%, 53.3%);
   --chart-1: hsl(12 76% 61%);
   --chart-2: hsl(173 58% 39%);
   --chart-3: hsl(197 37% 24%);
@@ -184,18 +323,18 @@
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
 }
-/*
-  ---break---
-*/
+
 .dark {
+  --nextra-bg: 17, 17, 17;
+  --color-primary: #e1ff00;
+  --color-primary-foreground: #111111;
+  --color-ring: #e1ff00;
   --background: hsl(0 0% 3.9%);
   --foreground: hsl(0 0% 98%);
   --card: hsl(0 0% 3.9%);
   --card-foreground: hsl(0 0% 98%);
   --popover: hsl(0 0% 3.9%);
   --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(217.2, 91.2%, 59.8%);
-  --primary-foreground: hsl(222.2, 47.4%, 11.2%);
   --secondary: hsl(217.2, 32.6%, 17.5%);
   --secondary-foreground: hsl(210, 40%, 98%);
   --muted: hsl(217.2, 32.6%, 17.5%);
@@ -206,28 +345,59 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(0 0% 14.9%);
   --input: hsl(0 0% 14.9%);
-  --ring: hsl(0 0% 83.1%);
   --chart-1: hsl(220 70% 50%);
   --chart-2: hsl(160 60% 45%);
   --chart-3: hsl(30 80% 55%);
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
 }
-/*
-  ---break---
-*/
+
+@media (max-width: 767px) {
+  :root {
+    --nextra-navbar-height: 64px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
-}
-
-@layer base {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* Anchor targets clear the sticky navbar (consumes --nextra-navbar-height). */
+  :target {
+    scroll-margin-top: var(--nextra-navbar-height);
+  }
+  /* Global focus ring — every link/button/form-field gets the lime hive-focus
+     ring on :focus-visible, no per-component reinvention. Composes the
+     `hive-focus` @utility so the ring is declared in one place. */
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [role="button"],
+  [tabindex]:not([tabindex="-1"]) {
+    @apply hive-focus;
+  }
+}
+
+/* Nextra chrome overrides — map Nextra's gray surfaces onto our tokens. */
+.x\:bg-gray-100 {
+  @apply bg-background;
+}
+.nextra-sidebar-footer,
+.nextra-navbar-blur {
+  @apply bg-background;
+}
+.nextra-mobile-nav .nextra-sidebar-footer {
+  @apply mx-0 px-4;
 }

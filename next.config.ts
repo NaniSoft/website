@@ -1,3 +1,5 @@
+import { createRequire } from 'node:module'
+import path from 'node:path'
 import process from 'node:process'
 import createWithNextra from 'nextra'
 
@@ -5,6 +7,16 @@ const withNextra = createWithNextra({
   defaultShowCopyCode: true,
   unstable_shouldAddLocaleToLinks: true,
 })
+
+// Turbopack resolve aliases for two Nextra client entrypoints (the same pair
+// the guild shell wires, minus the @theguild/remark-mermaid alias we drop by
+// not porting Mermaid). They point at the dist files the package export map
+// already resolves to, and make `next dev --turbopack` resolution robust.
+const require = createRequire(import.meta.url)
+const nextraClientDir = path.relative(
+  process.cwd(),
+  path.join(path.dirname(require.resolve('nextra/package.json')), 'dist', 'client'),
+)
 
 /**
  * @type {import("next").NextConfig}
@@ -37,6 +49,12 @@ export default withNextra({
   },
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
+  },
+  turbopack: {
+    resolveAlias: {
+      'nextra/components': path.join(nextraClientDir, 'components', 'index.js'),
+      'nextra/setup-page': path.join(nextraClientDir, 'setup-page.js'),
+    },
   },
 })
 // Wire OpenNext for Cloudflare into `next dev` so Cloudflare bindings work

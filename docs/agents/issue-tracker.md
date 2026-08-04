@@ -12,7 +12,7 @@ Issues and specs (you may know a spec as a PRD) for this repo live as markdown f
 
 ## In progress
 
-- `.scratch/nanisoft-marketing-site/` — the Nanisoft marketing-site effort. `map.md` is the wayfinder map; `issues/` holds six resolved decision/prototype tickets (`01`–`06`) and twelve `ready-for-agent` implementation tickets (`07`–`18`, foundation-first tracer bullets with `Blocked by:` edges); `spec.md` is the `ready-for-agent` implementation spec. Frontier = ticket 07 (no blockers).
+- `.scratch/nanisoft-theme-rewrite/` — the Nanisoft design-system rewrite (the-guild.dev design transplanted onto our Nextra 4 stack). `map.md` is the wayfinder map; `issues/` holds eleven decision/research/prototype/task tickets (`01`–`11`, all resolved, wayfinder-typed with `Blocked by:` edges) which stay as the audit trail. `spec.md` is the consolidated PRD (ready-for-agent). The implementation tickets cut from it live in `issues/impl/` (`01`–`09`, `ready-for-agent`, dependency-ordered) — a subdirectory so the build tickets can number from `01` without colliding with the decision tickets.
 
 ## When a skill says "publish to the issue tracker"
 

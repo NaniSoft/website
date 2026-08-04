@@ -48,6 +48,11 @@ export default antfu({
     // Issue-tracker scratch (notes / screenshots / prototype helpers) — not app
     // code, lives outside the program per `docs/agents/issue-tracker.md`.
     '.scratch/**',
+    // Throwaway design prototypes (`/prototype-*` routes) used during the
+    // design-system rewrite. They carry intentionally-radical variant code for
+    // visual comparison and are deleted once the real surfaces land (a later
+    // ticket). Excluded from lint (and the no-brand-leakage guard) until then.
+    'src/app/prototype-*/**',
   ],
   stylistic: {
     indent: 2,

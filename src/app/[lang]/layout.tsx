@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-
 import type { I18nLangAsyncProps, I18nLangKeys } from '@/i18n'
+
+import { IBM_Plex_Sans } from 'next/font/google'
 import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
 import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
@@ -13,6 +14,17 @@ import NavbarExtras from '@/widgets/navbar-extras'
 import { getDirection } from '../_dictionaries/get-dictionary'
 
 import './styles/index.css'
+
+// IBM Plex Sans via next/font — the variable lands on <html> and is paired to
+// --font-sans in the @theme inline block of index.css, so `font-sans`
+// utilities (and the body) resolve to Plex. The Next 16.2 next/font/google
+// regression is fixed in next@16.2.12 (which we run).
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-plex-sans',
+  display: 'swap',
+})
 
 const siteUrl = 'https://www.nanisoft.com'
 const description
@@ -61,9 +73,13 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
     <html
       lang={lang}
       dir={getDirection(lang)}
+      className={ibmPlexSans.variable}
       suppressHydrationWarning
     >
-      <Head>
+      <Head
+        color={{ hue: 67, saturation: 100, lightness: { dark: 55, light: 22 } }}
+        backgroundColor={{ dark: '#111', light: '#fff' }}
+      >
         <meta property="og:title" content="Nanisoft" />
         <meta name="description" content={description} />
         <meta property="og:description" content={description} />
