@@ -1,7 +1,7 @@
 /*
   Nanisoft design system — the single stylesheet entry.
 
-  One `@theme` block is the sole token source (the guild beige/green/blue
+  One `@theme` block is the sole token source (the ported beige/green/blue
   scales, the mode-tuned lime primary, the 5 nanisoft category accents, the
   chrome tokens, and the retained Shadcn-var aliases). One `@theme inline`
   pairs the `next/font` variable (`--font-plex-sans` → `--font-sans`).
@@ -18,17 +18,15 @@
 
 /*
   Tailwind 4's default content scanning walks the whole project. The scratch
-  issue-tracker (`.scratch/<feature>/issues/*.md`) and the reference trees
-  (`guild-website/`, `guild-docs/`) contain prose that mentions placeholder
-  class names (`text-[var(--color-<cat>-foreground)]`, etc.) — if Tailwind sees
-  those it tries to generate utility classes for them, emitting invalid CSS
-  (`var(--color-<cat>)` fails parsing) and breaking the build. Exclude them.
-  Real content lives under `src/` and Nextra MDX under `src/content/`; both are
-  picked up by the default scan. Paths are relative to this stylesheet.
+  issue-tracker (`.scratch/<feature>/issues/*.md`) contains prose that mentions
+  placeholder class names (`text-[var(--color-<cat>-foreground)]`, etc.) — if
+  Tailwind sees those it tries to generate utility classes for them, emitting
+  invalid CSS (`var(--color-<cat>)` fails parsing) and breaking the build.
+  Exclude it. Real content lives under `src/` and Nextra MDX under
+  `src/content/`; both are picked up by the default scan. Paths are relative to
+  this stylesheet.
 */
 @source not '../../../../.scratch';
-@source not '../../../../guild-website';
-@source not '../../../../guild-docs';
 
 @plugin 'tailwindcss-animate';
 @plugin "@iconify/tailwind4";
@@ -119,7 +117,7 @@
   /* Navbar height — 82px desktop, 64px mobile (overridden in the @media rule).
      Read by every sticky element and scroll-margin-top on anchor targets. */
   --nextra-navbar-height: 82px;
-  /* Custom overshoot easings (ported from the guild stylesheet). */
+  /* Custom overshoot easings (ported from the reference stylesheet). */
   --hive-ease-overshoot-far: linear(
     0 0%,
     0.5007 7.21%,
@@ -159,14 +157,14 @@
     1 100%
   );
 
-  /* guild letterSpacing: tight is -0.015em (v4 default is -0.025em). */
+  /* Reference letterSpacing: tight is -0.015em (v4 default is -0.025em). */
   --tracking-tight: -0.015em;
 
   /* ── retained Shadcn-var aliases (folded from the former second @theme) ──
      The 6 retained Shadcn primitives (button/input/label/textarea/toggle/
      sonner) resolve `bg-background`/`text-foreground`/`border-input`/`ring`
      etc. through these. They flip via the :root/.dark blocks below. Full
-     re-pointing at the guild tokens is a later centralization step. */
+     re-pointing at the ported tokens is a later centralization step. */
   --color-warning: hsl(var(--warning));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -270,7 +268,7 @@
   }
 }
 
-/* ── shake animation (ported from the guild stylesheet) ─────────────────── */
+/* ── shake animation (ported from the reference stylesheet) ─────────────── */
 @keyframes hive-shake {
   0%,
   100% {
@@ -288,7 +286,7 @@
   animation: hive-shake 0.3s ease;
 }
 
-/* The guild intentionally *un-tightens* tracking on .x:tracking-tight and
+/* The reference design intentionally *un-tightens* tracking on .x:tracking-tight and
    Nextra step headings — a bare --tracking-tight port renders them tighter
    than the brand does. Port this override too. */
 .x\:tracking-tight {

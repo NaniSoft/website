@@ -9,14 +9,11 @@ import { describe, expect, it } from 'vitest'
 // rendered behaviour, so the lowest viable seam is the source text itself.
 //
 // Scope: `.ts`/`.tsx` under `src/` — where component brand strings and imports
-// live. Excludes:
-//  - `src/app/prototype-*` — the throwaway prototype routes stay until a later
-//    ticket deletes them (their comments reference the brand by name).
+// live. Scans all of `src/` (the throwaway `prototype-*` routes were deleted
+// once the real surfaces landed; nothing is excluded by path). The only
+// exclusion is:
 //  - this guard file itself — a guard scanning its own source, which naturally
 //    contains the literals it checks for, is nonsensical.
-//  - the stylesheet (`index.css`) — out of scope because it legitimately
-//    references the git-ignored `guild-*` reference dirs in `@source not`
-//    directives (a build-config path, not a brand leak).
 
 const testFile = fileURLToPath(import.meta.url)
 const srcDir = path.resolve(path.dirname(testFile), '..')
@@ -43,9 +40,6 @@ interface Offender {
 const offenders: Offender[] = []
 for (const file of walk(srcDir)) {
   const rel = path.relative(srcDir, file).replace(/\\/g, '/')
-  if (rel.startsWith('app/prototype-')) {
-    continue
-  }
   if (file === testFile) {
     continue
   }

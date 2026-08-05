@@ -60,7 +60,7 @@ function BrandMark() {
 }
 
 /**
- * Nanisoft site footer — the guild-style 4-column footer (Brand + socials,
+ * Nanisoft site footer — the 4-column footer (Brand + socials,
  * flagship products, Resources, Company) rendered into Nextra's `<Footer>`
  * slot from `app/[lang]/layout.tsx`.
  */

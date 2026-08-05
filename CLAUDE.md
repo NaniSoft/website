@@ -19,9 +19,9 @@ present as placeholders (see [Limitations](#limitations--replace-before-producti
 | --------------- | ----------------------------------------------------------------- |
 | Framework       | Next.js 16 (App Router, Turbopack dev)                            |
 | Content         | Nextra 4 (`nextra-theme-docs` 4)                                  |
-| UI              | React 19, Tailwind CSS 4, Shadcn/Radix, Aceternity                |
+| UI              | React 19, Tailwind CSS 4, Shadcn/Radix (6 retained primitives)    |
 | Animation       | `framer-motion` / `motion`, `tailwindcss-animate`                 |
-| Particles       | `@tsparticles/*` v4                                               |
+| Navigation      | `radix-ui` `NavigationMenu` (Products mega-menu + 300ms close)    |
 | i18n            | Single locale `en` (Nextra i18n + typed dictionary)               |
 | Validation      | `zod` (pinned `~4.3.6` — see [Constraints](#version-constraints)) |
 | Search          | `pagefind` (postbuild)                                            |
@@ -73,37 +73,42 @@ src/
     [lang]/                       # single locale segment (en)
       [[...mdxPath]]/page.tsx     # Nextra catch-all MDX route
       _components/ThemeProvider.tsx
-      layout.tsx                  # Nextra shell: Navbar/Banner/Search/Footer/LastUpdated
-      not-found.ts
+      layout.tsx                  # Nextra shell: <Head> + <Layout navbar footer search>
+      not-found.ts                # Nextra NotFoundPage wrapper
       styles/
-        index.css                 # Tailwind 4 + tokens + Shadcn vars + Nextra overrides
-        overrides.css             # focused global overrides
+        index.css                 # SOLE stylesheet: single @theme tokens + chrome
+                                  #   overrides + Nextra style-prefixed in layer(l-nextra)
     _dictionaries/get-dictionary.ts   # dynamic dictionary import + getDirection
-  assets/images/                  # hero-tile-dark.svg, hero-tile-light.svg
+    api/contact-us/route.ts       # contact form backend (Turnstile + Resend)
+  assets/images/                  # placeholder illustrations (same-size stand-ins)
   components/
-    AIDemoLanding/                 # AI SaaS landing page + islands (EntryCard, interactions)
-    CustomFooter/
-    HomepageHero/                  # homepage hero (Section, Setup, SetupHero.module.css)
-    MotionWrapper/                 # FadeIn, Flash (reusable motion wrappers)
-    PanelParticles/               # tsparticles v4 wrapper
-    ScrollProgressBar/
-    ThemeSwitcher/
-    TitleBadge/
-    auth/                          # demo login (login-form.tsx + login-form.client.tsx)
-    ui/                            # Shadcn/Radix + Aceternity primitives
-  content/en/                      # localized MDX content tree
+    About/                        # about page, wrapped in the shared chrome
+    Blog/                         # editorial blog chrome (featured index + post + ToC)
+    Changelog/                    # changelog surface
+    chrome/                       # shared chrome primitives: SectionLabel, TopBar,
+                                  #   PostTOC, NewsletterPlaceholder, TagList, accents
+    ContactForm/                  # Turnstile + Resend form, re-skinned into GetInTouch
+    Home/                         # homepage: hero tabs, trust, ecosystem, services,
+                                  #   get-in-touch, recommended-reading, newsletter
+    Navbar/                       # radix-ui NavigationMenu mega-menu + top links
+    NotFound/                     # 404 surface
+    Products/                     # flat /en/products index + ProductPageTemplate (21)
+    SiteFooter/                   # 4-col footer: brand+socials | flagship | resources | co
+    ui/                           # 6 retained Shadcn/Radix primitives:
+                                  #   button, input, label, textarea, toggle, sonner
+  content/en/                      # MDX content tree (single locale)
     _meta.tsx                      # Nextra nav records + page layout behavior
-    index.mdx, introduction.mdx, ai-demo.mdx, login.mdx, upgrade.mdx
-    docs/_meta.tsx, docs/index.mdx, docs/i18n.mdx
-    docs/examples/{test-tailwind.mdx, theme-update.mdx}
+    index.mdx, about.mdx, products.mdx, changelog.mdx
+    blog/_meta.tsx, blog/index.mdx, blog/<4 posts>.mdx
   hooks/                           # getServerLocale, useLocale, useBreakpoint, index
-  i18n/                            # index (typed dictionary helpers), en.ts, ai-demo.ts
-  lib/                             # utils.ts (+ utils.test.ts)
+  i18n/                            # index (typed dictionary helpers), en.ts
+  lib/                             # products, blog, blog-chrome, changelog, contact-*,
+                                  #   site-config, utils (+ tests)
   mdx-components.ts                # Nextra MDX component overrides (Pre, withIcons)
   test/setup.ts                    # vitest + Testing Library + ts-reset
+  test/no-guild-leakage.test.ts    # source guard: no "guild" / @theguild/* in src/
   types/global.d.ts                # ts-reset side-effect import
-  widgets/                         # Nextra navbar extensions: auth-button, mobile-menu-auth,
-                                  #   navbar-extras, theme-toggle
+  widgets/                         # Nextra navbar extensions: theme-toggle
 ```
 
 Root config of note: `next.config.ts`, `tsconfig.json`, `eslint.config.js`,
@@ -121,9 +126,11 @@ Root config of note: `next.config.ts`, `tsconfig.json`, `eslint.config.js`,
   the single locale (`locales: ['en']`, `defaultLocale: 'en'`).
 - `src/app/[lang]/layout.tsx` is the localized Nextra shell. It awaits
   `params`, resolves `lang`, builds the Nextra `pageMap` via `getPageMap(lang)`,
-  and composes `Layout`, `Navbar` (with `<NavbarExtras />`), `Banner`,
-  `Search`, `Footer` (with `<CustomFooter />`), `LastUpdated`, and a global
-  `<Toaster />`. `dir` comes from `getDirection(lang)` (`'ltr'` for `en`).
+  and composes `<Head>` (with the lime `color` triplet + `backgroundColor`),
+  the `Layout` (with our `Navbar`, `SiteFooter`, `Search`, `LastUpdated`),
+  and a global `<Toaster />`. IBM Plex Sans is wired via `next/font` on
+  `<html>` and paired to `--font-sans` in the `@theme inline` block. `dir`
+  comes from `getDirection(lang)` (`'ltr'` for `en`).
 - `src/app/[lang]/[[...mdxPath]]/page.tsx` is the catch-all Nextra MDX route.
   `importPage` loads localized MDX content/TOC/metadata; `useMDXComponents`
   wraps pages with the theme.
@@ -134,16 +141,17 @@ Root config of note: `next.config.ts`, `tsconfig.json`, `eslint.config.js`,
 
 ### Content and navigation
 
-- `src/content/en/` is the only content tree (single-locale). `_meta.tsx`
+- `src/content/en/` is the only content tree (single-locale) — the homepage,
+  products, blog (index + 4 posts), about, and changelog MDX. `_meta.tsx`
   files drive Nextra navigation and page-level layout (`theme.layout: 'full'`
-  for full-screen pages like home / `ai-demo` / `login`).
+  for full-screen pages like home / products / blog).
 - `src/mdx-components.ts` customizes MDX (code blocks via `Pre`, `withIcons`).
 
 ### i18n
 
 - `src/i18n/index.ts` exports the typed dictionary system: language key
   types, nested-key typing, path lookup, and interpolation.
-- `src/i18n/en.ts` holds UI copy; `src/i18n/ai-demo.ts` shapes AI-landing copy.
+- `src/i18n/en.ts` holds UI copy.
 - `src/hooks/getServerLocale.ts` → server-side typed `t()` (async, awaits the
   dictionary). `src/hooks/useLocale.ts` → client-side `t()` via `useParams`.
 - `src/app/_dictionaries/get-dictionary.ts` dynamically imports the dictionary
@@ -151,21 +159,35 @@ Root config of note: `next.config.ts`, `tsconfig.json`, `eslint.config.js`,
 
 ### Styling
 
-- `src/app/[lang]/styles/index.css` imports Tailwind 4, Nextra docs styles,
-  Tailwind plugins, Iconify, typography; defines design tokens, dark-mode
-  variant behavior, Shadcn-compatible CSS variables, and Nextra override
-  classes. `overrides.css` holds focused global overrides.
-- `components.json` points Shadcn at `index.css`, aliases UI paths, registers
-  the Aceternity registry.
+- `src/app/[lang]/styles/index.css` is the **sole stylesheet**. One `@theme`
+  block holds all design tokens (the ported beige/green/blue scales, the
+  mode-tuned lime primary, the 5 nanisoft category accents, the chrome
+  tokens, and the retained Shadcn-var aliases) plus a single `@theme inline`
+  pairing `next/font`'s `--font-plex-sans` to `--font-sans`. Nextra's
+  `style-prefixed.css` is imported wrapped in `layer(l-nextra)` so it cannot
+  override token-level rules; `.hive-focus`, `hive-shake`, the
+  `.x:tracking-tight` reset, and the `--nextra-navbar-height` sticky offset
+  all live here. `overrides.css` was folded in and **deleted** — there is no
+  second stylesheet. `@source not '../../../../.scratch'` keeps placeholder
+  class names in scratch ticket markdown out of Tailwind's content scan.
+- `components.json` points Shadcn at `index.css` and aliases UI paths (the
+  Aceternity registry entry is inert — no Aceternity primitives are retained).
 
 ### UI and product surfaces
 
-- `HomepageHero` — homepage experience. `AIDemoLanding` — AI SaaS landing page
-  and interactive islands. `auth/` — demo login. `widgets/` — Nextra navbar
-  extensions (locale is single, so no locale toggle). `components/ui/` —
-  Shadcn/Radix + Aceternity primitives. `MotionWrapper`, `PanelParticles`,
-  `ScrollProgressBar`, `TitleBadge`, `CustomFooter`, `ThemeSwitcher` are
-  reusable presentation pieces.
+- The ported design system lives under `src/components/`. `Home/` is the
+  homepage (tabs-over-split hero, trust band, ecosystem, services,
+  get-in-touch, recommended reading, newsletter). `Navbar/` is the Radix
+  `NavigationMenu` mega-menu. `Products/` is the flat `/en/products` index +
+  `ProductPageTemplate` (21 products, per-category accent). `Blog/`,
+  `Changelog/`, `About/`, `NotFound/` are the editorial/404 surfaces. `chrome/`
+  holds the shared primitives (`SectionLabel`, `TopBar`, `PostTOC`,
+  `NewsletterPlaceholder`, `TagList`, accents) every surface imports from.
+  `ContactForm/` is the real Turnstile + Resend contact form, re-skinned into
+  the GetInTouch section. `SiteFooter/` is the 4-column footer.
+  `components/ui/` holds the 6 retained Shadcn/Radix primitives.
+  `widgets/theme-toggle.tsx` is the only Nextra navbar extension (single
+  locale → no locale toggle).
 
 ---
 
@@ -174,12 +196,14 @@ Root config of note: `next.config.ts`, `tsconfig.json`, `eslint.config.js`,
 Always inspect current source before editing. Verify with `pnpm lint`;
 add `pnpm build` when routing, static params, or metadata change.
 
-### Add a docs page
+### Add a content page
 
-1. Add the `.mdx` under `src/content/en/docs` (+ the relevant subfolder).
-2. Add/update the nearest `_meta.tsx` entry so the page is navigable.
-3. Use shared React components (from `src/components`) only when the page
-   needs interactive or repeated UI.
+1. Add the `.mdx` under `src/content/en/` (e.g. a blog post under
+   `content/en/blog/`) and a `_meta.tsx` record so it is navigable.
+2. For full-screen pages set `theme.layout: 'full'` and decide `toc`,
+   `navbar`, `footer`, `timestamp`.
+3. Use shared React components (from `src/components`, especially `chrome/`)
+   only when the page needs interactive or repeated UI.
 4. Keep reusable UI copy in `src/i18n/en.ts`, not inline in MDX.
 
 ### Add a top-level page (e.g. a product page)
@@ -192,11 +216,12 @@ add `pnpm build` when routing, static params, or metadata change.
 
 ### Add a landing-page section
 
-1. Add copy fields to `src/i18n/en.ts` (and `ai-demo.ts` if changing the AI
-   demo copy shape) — update the TypeScript copy shapes when needed.
-2. Add a small section component near `HomepageHero` / `AIDemoLanding`.
-3. Keep it responsive and preserve dark-mode classes; stay on the existing
-   token system. `pnpm lint`.
+1. Add copy fields to `src/i18n/en.ts` — update the TypeScript copy shapes
+   when needed.
+2. Add a section component under `src/components/Home/` and render it from the
+   homepage MDX.
+3. Keep it responsive and preserve dark-mode classes; stay on the single
+   `@theme` token system in `index.css`. `pnpm lint`.
 
 ### Add / rename a language (currently single-locale)
 
@@ -207,23 +232,26 @@ Touch **all** of: `next.config.ts` (`i18n.locales`), `src/i18n/index.ts`,
 locale proxy (incompatible with OpenNext — see Deploy). With >2 locales,
 replace the simple locale UI with a menu.
 
-### Add Shadcn / Radix / Aceternity components
+### Add Shadcn / Radix components
 
 1. Use the existing aliases from `components.json`.
-2. Add primitives under `src/components/ui`.
-3. Keep styling aligned with existing tokens. Prefer `lucide-react` for icons
-   where a match exists; use Iconify classes for brand/stack icons that
-   already follow the project pattern. `pnpm lint`.
+2. Add primitives under `src/components/ui` (the registry is Shadcn; the
+   Aceternity registry entry in `components.json` is inert).
+3. Keep styling aligned with the `@theme` tokens in `index.css`. Prefer
+   `lucide-react` for icons where a match exists; use Iconify classes for
+   brand/stack icons that already follow the project pattern. `pnpm lint`.
 
 ### Customize brand / theme / navigation / footer / metadata
 
-Touch `layout.tsx`, `CustomFooter/index.tsx`, `styles/index.css`,
-`src/i18n/en.ts`, `public/img/favicon.svg`, `next-sitemap.config.mjs`.
-Update `metadataBase`, title, description, favicon, canonical; adjust CSS
-variables/tokens; update footer links. Set the production `SITE_URL`.
+Touch `layout.tsx`, `SiteFooter/index.tsx`, `styles/index.css`,
+`src/lib/site-config.ts`, `src/i18n/en.ts`, `public/img/favicon.svg`,
+`next-sitemap.config.mjs`. Update `metadataBase`, title, description,
+favicon, canonical; adjust `@theme` tokens; update footer/social links. Set
+the production `SITE_URL` (CI sets `https://www.nanisoft.com`).
 
-Common mistakes: leaving demo URLs / analytics IDs / the upstream repo
-link; changing token names Shadcn components depend on.
+Common mistakes: changing token names the 6 retained Shadcn primitives or
+the ported components depend on; hard-coding social URLs instead of routing
+them through `src/lib/site-config.ts`.
 
 ### Update search / sitemap / deployment
 
@@ -275,9 +303,8 @@ link; changing token names Shadcn components depend on.
 - `next-env.d.ts` is in `ignores` — Next 16 rewrites its `import` line on
   every dev/build, so linting it is pure churn.
 - **`security/detect-unsafe-regex` false-positives** are disabled inline with
-  a justification at `src/components/AIDemoLanding/interactions.tsx` and
-  `src/i18n/index.ts`. Do NOT globally weaken the rule; add a scoped
-  `eslint-disable-next-line` for genuine false positives.
+  a justification at `src/i18n/index.ts`. Do NOT globally weaken the rule; add
+  a scoped `eslint-disable-next-line` for genuine false positives.
 
 ### TypeScript: enterprise strictness, no behavior risk
 
@@ -327,14 +354,10 @@ Do not blindly re-bump past these (discovered 2026-08-01):
   added stricter `nonoptional` validation that rejects the `children` value
   nextra passes → every page 500s at build. No newer nextra exists. Re-test by
   removing the override when nextra next releases.
-- **`@tsparticles/*` is v4.** v3's `initParticlesEngine` is gone. `PanelParticles`
-  wraps `<Particles>` in `<ParticlesProvider init={async engine => loadFull(engine)}>`
-  (init stable via `useCallback([])`). `loadFull` (from `tsparticles`) and
-  `ISourceOptions` (from `@tsparticles/engine`) are unchanged in v4.
 - **pnpm 11 build-script gating.** `pnpm build`'s preflight re-runs
   `pnpm install`, which **fails on ignored build scripts**. Keep the
   `allowBuilds:` map in `pnpm-workspace.yaml` (`esbuild`, `workerd`, `sharp`,
-  `@tsparticles/engine`, `@parcel/watcher`, `unrs-resolver`) `true`. pnpm
+  `@parcel/watcher`, `unrs-resolver`) `true`. pnpm
   `overrides:` live in `pnpm-workspace.yaml` — `pnpm.overrides` in
   `package.json` is no longer read.
 - **pnpm 11 supply-chain trust policy.** `trustPolicy: no-downgrade` rejects
@@ -378,34 +401,29 @@ Two non-obvious gotchas:
 
 ## Limitations & replace-before-production
 
-The site was repurposed from the upstream `nextjs-nextra-starter` template.
-The following are demo/placeholder values that must be replaced before this
-is a real production site:
+The site was repurposed from the upstream `nextjs-nextra-starter` template
+and then rebuilt around the ported design system. The template's demo auth,
+placeholder metadata, upstream repo link, and `example.com` SITE_URL fallback
+have been replaced with real Nanisoft branding. The following are the
+remaining production-gating items:
 
-- **Demo auth.** `src/components/auth/login-form*` uses `localStorage` and an
-  `auth:userEmail` key / `auth:changed` custom event as the auth mechanism,
-  with a fake Google login and a hard-coded demo email. Replace with a real
-  provider/session model (cookies, server revalidation, route protection).
-- **Placeholder metadata.** `layout.tsx` still ships `title = 'My Nextra
-Starter'`, a generic description, `docsRepositoryBase` and the `repo`
-  constant pointing at `https://github.com/pdsuwwz/nextjs-nextra-starter`,
-  and a hard-coded canonical `https://www.nanisoft.com`. Replace with real
-  brand metadata, repo, and canonical.
-- **`SITE_URL` fallback.** `next-sitemap.config.mjs` falls back to
-  `https://example.com` when `SITE_URL` is unset. CI sets
-  `SITE_URL=https://www.nanisoft.com`; ensure it is set wherever `postbuild`
-  runs.
-- **Analytics.** Any analytics IDs (Google Analytics / Baidu) referenced by
-  the template are project-specific — keep only what belongs to nanisoft.
-- **DOM-coupled widgets.** `src/widgets/mobile-menu-auth.tsx` selects against
-  Nextra mobile-nav markup; recheck selectors when upgrading Nextra.
-- **Nextra override classes** in `src/app/[lang]/styles/index.css` may break
+- **Contact + social env.** `src/lib/site-config.ts` reads the contact
+  endpoint, Turnstile sitekey, contact email, and social links from env
+  (Cloudflare Worker `vars`/secrets). Unset values degrade gracefully — the
+  contact form falls back to `mailto:`, unset social links are omitted — but
+  all must be provisioned for a real production deploy.
+- **Hard-coded canonical.** `layout.tsx` hard-codes
+  `siteUrl = 'https://www.nanisoft.com'` for the canonical `<link>` and OG
+  tags rather than reading the env-driven `siteUrl` from
+  `src/lib/site-config.ts`. Align the two before a multi-environment deploy.
+- **Nextra override classes** in `src/app/[lang]/styles/index.css` (the
+  `layer(l-nextra)` overrides, `.hive-focus`, navbar sticky offset) may break
   when Nextra markup changes — re-verify on Nextra upgrades.
-- **Disclaimer.** This template is a technical reference. Dependent
-  frameworks (Next.js/Nextra/Tailwind) carry version-iteration risk;
-  third-party components (e.g. Shadcn UI) follow their upstream repos; and
-  environment changes can cause build exceptions. Users must run their own
-  security audits and production validation, and accept responsibility for
+- **Disclaimer.** This site is a technical reference. Dependent frameworks
+  (Next.js/Nextra/Tailwind) carry version-iteration risk; third-party
+  components (e.g. Shadcn UI) follow their upstream repos; and environment
+  changes can cause build exceptions. Users must run their own security
+  audits and production validation, and accept responsibility for
   consequences of use or modification.
 
 ---
@@ -421,8 +439,13 @@ Starter'`, a generic description, `docsRepositoryBase` and the `repo`
   `exactOptionalPropertyTypes`, or globally weaken `security/detect-unsafe-regex`.
 - **Don't** re-add a Nextra locale proxy / `runtime: 'edge'` in proxy config.
 - **Don't** bump TypeScript to 7.x or `zod` past 4.3.x (see Constraints).
-- **Don't** copy the demo auth, placeholder analytics, static metadata, or
-  upstream product copy into production without replacing them.
+- **Don't** re-add the throwaway `prototype-*` routes, a second stylesheet
+  (`overrides.css`), `@theguild/*` deps, or `@stitches/react`/`@headlessui/react`
+  — the port is vendored into `src/` on generally-available deps only.
+  `src/test/no-guild-leakage.test.ts` enforces the no-brand-leak rule at
+  source-text level.
+- **Don't** ship the site with the contact/social env unset — provision the
+  `src/lib/site-config.ts` env values before production.
 - **Don't** "restore" `AICyberCarousel`, `feat/cyber-knowledge-hub`, or a
   "branding package" — that work was intentionally discarded when the repo
   history was reset to the Nextra-starter-based app.
