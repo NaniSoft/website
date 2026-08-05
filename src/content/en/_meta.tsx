@@ -38,10 +38,13 @@ export default {
     },
   },
   // About — visible main-nav item. Minimal origin story; no fabricated people.
+  // `layout: 'full'` so the editorial About component (prose + quick-facts
+  // aside) owns the page width; Nextra's docs sidebar + TOC stay off.
   about: {
     type: 'page',
     title: 'About',
     theme: {
+      layout: 'full',
       copyPage: false,
       toc: false,
     },
@@ -55,12 +58,14 @@ export default {
     href: '/en#get-in-touch',
   },
   // Changelog — footer-linked, not main-nav. Content lands via the
-  // `Changelog` component (src/lib/changelog.ts) in ticket 10.
+  // `Changelog` client component (tabbed filter over src/lib/changelog.ts).
+  // `layout: 'full'` gives the filter + entry list the full content width.
   changelog: {
     type: 'page',
     display: 'hidden',
     title: 'Changelog',
     theme: {
+      layout: 'full',
       copyPage: false,
       toc: false,
     },

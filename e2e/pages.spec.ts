@@ -63,18 +63,34 @@ test.describe('marketing pages render', () => {
     }
   })
 
-  test('/en/about renders the minimal origin story', async ({ page }) => {
+  test('/en/about renders the minimal origin story in the shared chrome', async ({ page }) => {
     const res = await page.goto('/en/about')
     expect(res?.ok(), 'about responded with a non-OK status').toBeTruthy()
     await expect(page.getByRole('heading', { level: 1, name: 'About' })).toBeVisible()
     await expect(page.getByText(/Nanisoft builds the cybersecurity tools/i)).toBeVisible()
     await expect(page.getByRole('link', { name: /^changelog$/i }).first()).toHaveAttribute('href', '/en/changelog')
+
+    // Shared chrome — the navbar + footer are present on the about page (the
+    // page renders at `layout: 'full'`, which keeps the chrome, drops the docs
+    // sidebar). `contentinfo` (not `locator('footer')`) avoids the Next dev
+    // error-overlay's own <footer>, which inflates the locator in dev mode.
+    await expect(page.getByRole('navigation', { name: 'Navigation Menu' })).toBeVisible()
+    await expect(page.getByRole('contentinfo')).toBeVisible()
+
+    // Quick-facts aside carries the two verifiable counts (5 categories, 21
+    // products) and a link to the changelog.
+    await expect(page.getByText('Quick facts')).toBeVisible()
+    await expect(page.getByRole('link', { name: /Read the changelog/ })).toHaveAttribute('href', '/en/changelog')
   })
 
   test('/en/changelog shows the inaugural entry as the newest', async ({ page }) => {
     const res = await page.goto('/en/changelog')
     expect(res?.ok(), 'changelog responded with a non-OK status').toBeTruthy()
     await expect(page.getByRole('heading', { level: 1, name: /What shipped/i })).toBeVisible()
+
+    // Shared chrome.
+    await expect(page.getByRole('navigation', { name: 'Navigation Menu' })).toBeVisible()
+    await expect(page.getByRole('contentinfo')).toBeVisible()
 
     // The inaugural entry is the newest (and only) entry; its h2 sits above
     // every other entry. Assert that by checking the first h2 is "Introducing
@@ -89,5 +105,41 @@ test.describe('marketing pages render', () => {
     for (const heading of ['The problem', 'The approach', 'The first chapter', 'More coming']) {
       await expect(page.getByRole('heading', { name: heading })).toBeVisible()
     }
+  })
+
+  test('/en/changelog tabbed filter narrows entries by kind', async ({ page }) => {
+    await page.goto('/en/changelog')
+    const filterGroup = page.getByRole('group', { name: 'Filter changelog' })
+    await expect(filterGroup).toBeVisible()
+
+    // "All" is pressed by default and shows the inaugural entry.
+    await expect(filterGroup.getByRole('button', { name: /All/, pressed: true })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 2, name: 'Introducing Nanisoft' })).toBeVisible()
+
+    // The inaugural entry is filed as a launch — the Launch toggle surfaces it.
+    await filterGroup.getByRole('button', { name: /^Launch/ }).click()
+    await expect(page.getByRole('heading', { level: 2, name: 'Introducing Nanisoft' })).toBeVisible()
+
+    // A kind with no entries hides the list without dropping a toggle.
+    await filterGroup.getByRole('button', { name: /^Fixes/ }).click()
+    await expect(page.getByRole('heading', { level: 2, name: 'Introducing Nanisoft' })).toHaveCount(0)
+  })
+})
+
+test.describe('404 page', () => {
+  test('renders a way forward (not a dead-end) in the shared chrome', async ({ page }) => {
+    const res = await page.goto('/en/this-page-does-not-exist')
+    expect(res?.status(), 'expected a 404 status for an unknown path').toBe(404)
+
+    // Shared chrome still wraps the 404.
+    await expect(page.getByRole('navigation', { name: 'Navigation Menu' })).toBeVisible()
+    await expect(page.getByRole('contentinfo')).toBeVisible()
+
+    // The page offers a way forward — home + blog CTAs, plus Nextra's default
+    // "submit an issue" link.
+    await expect(page.getByRole('heading', { level: 1, name: 'Not here.' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/en')
+    await expect(page.getByRole('link', { name: 'Read the blog' })).toHaveAttribute('href', '/en/blog')
+    await expect(page.getByRole('link', { name: /submit an issue about broken link/i })).toBeVisible()
   })
 })

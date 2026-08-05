@@ -1,7 +1,11 @@
-import type { ChangelogEntry } from './changelog'
+import type { ChangelogEntry, ChangelogKind } from './changelog'
 
 import { describe, expect, it } from 'vitest'
 import { allChangelog, inauguralEntry } from './changelog'
+
+// The 4 changelog kinds the tabbed filter (variant C, impl ticket 07) filters
+// on. Every entry must carry one so the filter never drops an entry silently.
+const VALID_KINDS: readonly ChangelogKind[] = ['launch', 'feature', 'fix', 'security']
 
 // External-behavior tests at the src/lib seam. The changelog is a typed
 // reverse-chronological array (mirrors the blog data-module pattern) so the
@@ -16,6 +20,12 @@ describe('changelog data module', () => {
 
   it('has at least the inaugural entry', () => {
     expect(allChangelog.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('every entry carries a valid kind for the tabbed filter', () => {
+    for (const entry of allChangelog) {
+      expect(VALID_KINDS, entry.title).toContain(entry.kind)
+    }
   })
 })
 
@@ -49,5 +59,9 @@ describe('inaugural entry', () => {
   it('is the newest entry', () => {
     const newest: ChangelogEntry = allChangelog[0]!
     expect(newest.title).toBe('Introducing Nanisoft')
+  })
+
+  it('is filed as a launch', () => {
+    expect(inauguralEntry.kind).toBe('launch')
   })
 })

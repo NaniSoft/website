@@ -1,1 +1,1 @@
-export { NotFoundPage as default } from 'nextra-theme-docs'
+export { NotFound as default } from '@/components/NotFound'

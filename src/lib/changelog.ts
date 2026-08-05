@@ -8,6 +8,14 @@ export interface ChangelogSection {
   text: string
 }
 
+/**
+ * The 4 changelog kinds the tabbed filter (variant C, impl ticket 07) filters
+ * on. `launch` is reserved for inaugural/launch entries; the rest are the
+ * normal ongoing kinds. Mirrors the variant-C prototype's kind set so the
+ * filter tabs are stable.
+ */
+export type ChangelogKind = 'launch' | 'feature' | 'fix' | 'security'
+
 export interface ChangelogEntry {
   /** ISO date (YYYY-MM-DD). */
   date: string
@@ -15,6 +23,8 @@ export interface ChangelogEntry {
   /** One-line summary. */
   summary: string
   author: string
+  /** Filter kind — drives the tabbed filter on /en/changelog. */
+  kind: ChangelogKind
   /** Ordered framing sections. */
   body: ChangelogSection[]
 }
@@ -36,6 +46,7 @@ export const allChangelog: ChangelogEntry[] = [
     summary:
       'Nanisoft launches with the Core trio and four more categories — twenty-one products that replace the custom in-house gap-fillers large organizations otherwise build.',
     author: 'Nanisoft Team',
+    kind: 'launch',
     body: [
       {
         heading: 'The problem',
