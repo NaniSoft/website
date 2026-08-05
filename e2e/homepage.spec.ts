@@ -31,7 +31,10 @@ test.describe('homepage composition', () => {
 
   test('products grid shows the open category with anchor links into /en/products', async ({ page }) => {
     await page.goto('/en')
-    await expect(page.getByText(/products, one graph/i)).toBeVisible()
+    // Scope to <main>: the site footer (outside main) carries the tagline
+    // "21 products, one graph." too, which would otherwise make this page-wide
+    // text match ambiguous (strict-mode violation).
+    await expect(page.locator('main').getByText(/products, one graph/i)).toBeVisible()
     // Scope to the products grid: anchor links start with `/en/products#`.
     // The hero "flagship pill" is a non-link span, but if it ever became a
     // link we'd want this assertion to stay unambiguous.

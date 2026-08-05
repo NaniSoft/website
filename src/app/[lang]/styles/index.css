@@ -401,3 +401,41 @@
 .nextra-mobile-nav .nextra-sidebar-footer {
   @apply mx-0 px-4;
 }
+
+/* Site-footer link-column accordion — native <details> with a CSS height +
+   opacity transition (~200ms ease-out). The browser's default
+   `details:not([open]) > :not(summary) { display: none }` would clip instantly
+   and block the transition, so the content is kept rendered (this author rule
+   out-specifies the UA one) and collapsed via grid-template-rows + opacity +
+   visibility. `visibility: hidden` on the closed state also hides the collapsed
+   content from assistive tech. Forced open at `lg` (64rem) so desktop always
+   shows the full column regardless of the `[open]` state. The `FooterColumn`
+   client component mirrors this with a real `open` attribute on desktop so the
+   links are exposed to the accessibility tree (Chromium excludes closed-
+   <details> content from the a11y tree even when CSS-painted). */
+.site-footer details > .col-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition:
+    grid-template-rows 200ms ease-out,
+    opacity 200ms ease-out,
+    visibility 200ms ease-out;
+}
+.site-footer details[open] > .col-content {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+}
+.site-footer details > .col-content > ul {
+  min-height: 0;
+}
+@media (min-width: 64rem) {
+  .site-footer details > .col-content {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+  }
+}

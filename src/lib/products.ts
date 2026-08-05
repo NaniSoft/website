@@ -26,6 +26,8 @@ export interface ProductLink {
 }
 
 export interface MegaMenuGroup {
+  /** Stable category id (equals the category slug). */
+  id: string
   name: string
   anchor: string
   products: ProductLink[]
@@ -135,6 +137,7 @@ function findProduct(name: string): Product {
  * mega-menu (ticket 15) and the /en/products grid never diverge.
  */
 export const megaMenuGroups: MegaMenuGroup[] = productCategories.map(cat => ({
+  id: cat.id,
   name: cat.name,
   anchor: categoryAnchor(cat),
   products: cat.products.map(p => ({ name: p.name, anchor: productAnchor(p) })),

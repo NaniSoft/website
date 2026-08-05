@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import type { I18nLangAsyncProps, I18nLangKeys } from '@/i18n'
+import type { I18nLangKeys } from '@/i18n'
 
 import { IBM_Plex_Sans } from 'next/font/google'
-import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
+import { LastUpdated, Layout } from 'nextra-theme-docs'
 import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
-import { CustomFooter } from '@/components/CustomFooter'
+import { Navbar } from '@/components/Navbar'
+import { SiteFooter } from '@/components/SiteFooter'
 import { Toaster } from '@/components/ui/sonner'
 import { getServerLocale } from '@/hooks'
 import { githubUrl } from '@/lib/site-config'
-import NavbarExtras from '@/widgets/navbar-extras'
 import { getDirection } from '../_dictionaries/get-dictionary'
 
 import './styles/index.css'
@@ -36,20 +36,6 @@ export const metadata = {
   description,
   icons: '/img/favicon.svg',
 } satisfies Metadata
-
-const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
-  const { t } = await getServerLocale(lang)
-  return (
-    <Navbar
-      logo={(
-        <span>{ t('systemTitle') }</span>
-      )}
-      logoLink={`/${lang}`}
-    >
-      <NavbarExtras githubUrl={githubUrl} />
-    </Navbar>
-  )
-}
 
 // Explicit props type instead of the `LayoutProps<'/[lang]'>` global that
 // Next.js generates into `.next/types`. That generated type only exists after
@@ -89,7 +75,7 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
         <Layout
           copyPageButton={false}
           navbar={
-            <CustomNavbar lang={lang} />
+            <Navbar githubUrl={githubUrl} />
           }
           lastUpdated={(
             <LastUpdated>
@@ -99,9 +85,7 @@ export default async function RootLayout({ children, params }: RootLayoutParams)
           editLink={null}
           docsRepositoryBase={githubUrl}
           footer={(
-            <Footer className="bg-background py-5!">
-              <CustomFooter />
-            </Footer>
+            <SiteFooter />
           )}
           search={(
             <Search

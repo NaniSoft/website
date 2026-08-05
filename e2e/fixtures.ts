@@ -23,6 +23,16 @@ export const PRODUCT_CATEGORIES = [
   'Platform & Trust',
 ] as const
 
+/** The six flagship products, rendered as footer + mega-menu item links. */
+export const FLAGSHIP_PRODUCTS = [
+  'Atlas',
+  'Bedrock',
+  'Keystone',
+  'Compass',
+  'Sentinel',
+  'Meridian',
+] as const
+
 /** All four seed blog post titles (reverse-chronological). */
 export const SEED_BLOG_HEADLINES = [
   'Why we built Nanisoft',
@@ -41,14 +51,23 @@ export const INDUSTRIES = [
 ] as const
 
 /**
- * Open the navbar Products mega-menu on desktop. Mobile behavior of the mega-
- * menu inside Nextra's slide-out is a sharpen-during-implementation item (per
- * the spec) — these specs run on desktop Chrome only.
+ * Open the navbar Products mega-menu on desktop. The navbar is a Radix
+ * NavigationMenu (`<nav aria-label="Navigation Menu">`); the Products trigger
+ * is a `button` and the panel content surfaces as `link`s (Radix renders
+ * NavigationMenuLink as role=link, not menuitem). Hover opens the panel with
+ * the ~300ms close-delay; we wait for a known link to be visible before
+ * returning the nav scope so callers can assert against it. Mobile behavior of
+ * the mega-menu inside the framer-motion slide-out is covered separately in
+ * navbar.spec.ts.
  */
 export async function openProductsMegaMenu(page: Page) {
-  // resize to a safe desktop viewport to avoid the Nextra mobile slide-out
+  // Resize to a safe desktop viewport so the desktop navbar (not the mobile
+  // slide-out) is rendered.
   await page.setViewportSize({ width: 1280, height: 900 })
-  const trigger = page.getByRole('button', { name: /^Products/ }).first()
-  await trigger.click()
-  await expect(page.getByRole('menu')).toBeVisible()
+  const nav = page.getByRole('navigation', { name: 'Navigation Menu' })
+  const trigger = nav.getByRole('button', { name: 'Products' })
+  await trigger.hover()
+  // Wait for the panel to mount + the Radix viewport to size before returning.
+  await expect(nav.getByRole('link', { name: 'Core' })).toBeVisible()
+  return nav
 }
