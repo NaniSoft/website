@@ -37,6 +37,22 @@ export function accentForegroundVar(categoryId: CategoryId): string {
   return `var(--color-${accentToken(categoryId)}-foreground)`
 }
 
+/**
+ * Inline style for an accent-tinted band: accent background, foreground text.
+ *  Used for hero bands, checkmark badges — anywhere the accent fills a surface.
+ */
+export function accentBandStyle(categoryId: CategoryId): { background: string, color: string } {
+  return { background: accentVar(categoryId), color: accentForegroundVar(categoryId) }
+}
+
+/**
+ * Inline style for an inverted accent control: foreground background, accent
+ *  text. Used for a primary CTA sitting on an accent band.
+ */
+export function accentInvertStyle(categoryId: CategoryId): { background: string, color: string } {
+  return { background: accentForegroundVar(categoryId), color: accentVar(categoryId) }
+}
+
 // Static `bg-*` class names per accent token. The literals are hoisted to module
 // scope so Tailwind 4's content scanner sees them and generates the utilities.
 const DOT_CLASS: Record<string, string> = {

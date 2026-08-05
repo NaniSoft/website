@@ -18,9 +18,9 @@ import { productLandings, productLandingsByCategory } from './products-content'
 //
 // Server component: `products-content.ts` + `src/lib/products.ts` are the
 // single sources of truth. No upstream-vendor brand strings, no upstream-vendor
-// package imports.
-
-const NAV_SCROLL_MARGIN = 'scroll-mt-[var(--nextra-navbar-height)]'
+// package imports. Anchor targets clear the sticky navbar via the global
+// `:target { scroll-margin-top: var(--nextra-navbar-height) }` rule in
+// `styles/index.css` — no per-element scroll-mt needed here.
 
 export function Products() {
   return (
@@ -61,7 +61,7 @@ export function Products() {
           is the deep-link target the mega-menu / footer / homepage use. */}
       <div className="flex flex-col gap-14">
         {productLandingsByCategory.map(category => (
-          <section key={category.id} id={category.id} className={NAV_SCROLL_MARGIN}>
+          <section key={category.id} id={category.id}>
             <div className="mb-5 flex items-center gap-2.5">
               <span className={cn('size-2.5 rounded-full', accentDotClass(category.id))} aria-hidden />
               <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-zinc-500 dark:text-zinc-400">
@@ -79,10 +79,7 @@ export function Products() {
                   <a
                     id={product.slug}
                     href={`#${product.slug}-detail`}
-                    className={cn(
-                      'hive-focus group flex h-full flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-400 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900/20 dark:hover:border-zinc-600',
-                      NAV_SCROLL_MARGIN,
-                    )}
+                    className="hive-focus group flex h-full flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-400 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900/20 dark:hover:border-zinc-600"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className={cn('size-2 rounded-full', accentDotClass(category.id))} aria-hidden />
@@ -122,15 +119,15 @@ export function Products() {
 
       {/* Inline expanded detail — one ProductPageTemplate per product, on the
           same page. `#<slug>-detail` is the click-scroll target; the global
-          `:target` rule + the explicit scroll-mt land it below the navbar. */}
+          `:target` rule lands it below the navbar. */}
       <div className="mt-4 flex flex-col">
         {productLandings.map(product => (
           <section
             key={product.slug}
             id={`${product.slug}-detail`}
-            className={cn('border-t border-zinc-200 pt-14 dark:border-zinc-800', NAV_SCROLL_MARGIN)}
+            className="border-t border-zinc-200 pt-14 dark:border-zinc-800"
           >
-            <ProductPageTemplate product={product} backHref="/en/products" />
+            <ProductPageTemplate product={product} />
           </section>
         ))}
       </div>
