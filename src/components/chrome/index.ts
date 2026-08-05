@@ -1,4 +1,6 @@
 export { accentBandStyle, accentDotClass, accentForegroundVar, accentInvertStyle, accentToken, accentVar, type CategoryId } from './accents'
 export { NewsletterPlaceholder } from './newsletter-placeholder'
+export { PostTOC } from './post-toc'
 export { SectionLabel } from './section-label'
+export { TagList } from './tag-list'
 export { TopBar } from './top-bar'

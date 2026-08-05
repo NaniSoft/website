@@ -25,10 +25,14 @@ export default {
   },
   // Blog — visible main-nav item. Index lists posts reverse-chronologically;
   // individual posts are hidden from nav (see src/content/en/blog/_meta.tsx).
+  // `layout: 'full'` gives the editorial index (featured + uniform stack) the
+  // full content width for its 2-col featured card; Nextra's TOC sidebar stays
+  // off (`toc: false`).
   blog: {
     type: 'page',
     title: 'Blog',
     theme: {
+      layout: 'full',
       copyPage: false,
       toc: false,
     },

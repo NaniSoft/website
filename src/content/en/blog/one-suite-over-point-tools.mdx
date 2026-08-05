@@ -5,24 +5,36 @@ date: "2026-07-02"
 author: "Nanisoft Team"
 ---
 
-import { PostMeta } from '@/components/Blog/PostMeta'
+import { PostLayout } from '@/components/Blog/PostLayout'
 
-<PostMeta date="2026-07-02" author="Nanisoft Team" description="Point tools each solve one problem and leave the seams exposed. A single suite reading from one graph closes the gaps between them." />
+<PostLayout
+  slug="one-suite-over-point-tools"
+  title="The case for one suite over a stack of point tools"
+  description="Point tools each solve one problem and leave the seams exposed. A single suite reading from one graph closes the gaps between them."
+  date="2026-07-02"
+  author="Nanisoft Team"
+>
+  <h2 id="the-seams">The seams</h2>
 
-Point tools are easy to buy and hard to keep. Each one solves one problem well,
-and then leaves the seams — the joins between tools, the gaps in coverage, the
-places where one product's model ends and another's begins — for the buyer to
-stitch together. That stitching is the custom in-house work Nanisoft was built to
-replace.
+  Point tools are easy to buy and hard to keep. Each one solves one problem well,
+  and then leaves the seams — the joins between tools, the gaps in coverage, the
+  places where one product's model ends and another's begins — for the buyer to
+  stitch together. That stitching is the custom in-house work Nanisoft was built to
+  replace.
 
-A single suite reading from one graph changes the math. When every tool reads
-from the same live model, the answer one tool computes is the answer the next tool
-starts from. There is no reconciliation step, no “does your inventory match my
-identity source,” no drift between the map and the policy that reads it.
+  <h2 id="one-graph">One graph, five surfaces</h2>
 
-This is why the suite is built the way it is: ingestion, query, interfaces, and
-trust all sit on top of one substrate. Each piece does one job, and the job
-includes being legible to the next piece.
+  A single suite reading from one graph changes the math. When every tool reads
+  from the same live model, the answer one tool computes is the answer the next tool
+  starts from. There is no reconciliation step, no “does your inventory match my
+  identity source,” no drift between the map and the policy that reads it.
 
-You can still start with one product. But the architecture is not a stack of
-islands; it is one graph with five surfaces on it.
+  This is why the suite is built the way it is: ingestion, query, interfaces, and
+  trust all sit on top of one substrate. Each piece does one job, and the job
+  includes being legible to the next piece.
+
+  <h2 id="start-anywhere">Start anywhere</h2>
+
+  You can still start with one product. But the architecture is not a stack of
+  islands; it is one graph with five surfaces on it.
+</PostLayout>

@@ -5,24 +5,36 @@ date: "2026-07-21"
 author: "Nanisoft Team"
 ---
 
-import { PostMeta } from '@/components/Blog/PostMeta'
+import { PostLayout } from '@/components/Blog/PostLayout'
 
-<PostMeta date="2026-07-21" author="Nanisoft Team" description="Atlas keeps a live map of every route through your systems so the path an attacker would take is visible before they take it." />
+<PostLayout
+  slug="every-path-mapped"
+  title="Every path into your systems, mapped"
+  description="Atlas keeps a live map of every route through your systems so the path an attacker would take is visible before they take it."
+  date="2026-07-21"
+  author="Nanisoft Team"
+>
+  <h2 id="paths-not-assets">Paths, not assets</h2>
 
-A system is not a list of assets. It is a set of paths — the routes by which
-something moves from an ingress point to something it can touch. Most security
-work is spent reconstructing those paths after the fact, in a spreadsheet or a
-ticket, and then watching the reconstruction go stale.
+  A system is not a list of assets. It is a set of paths — the routes by which
+  something moves from an ingress point to something it can touch. Most security
+  work is spent reconstructing those paths after the fact, in a spreadsheet or a
+  ticket, and then watching the reconstruction go stale.
 
-**Atlas** keeps the map current. It ingests state from cloud, on-prem, and edge
-sources, normalizes it into one graph model, and holds the relationships that
-matter: which identity can reach which service, which service can read which
-data, which asset sits at the end of which chain.
+  <h2 id="the-live-map">The live map</h2>
 
-The point is not the map itself. The point is that when you ask *“what can reach
-this asset?”* the answer comes back from the live graph, not from last quarter's
-audit. The path an attacker would take is the path the map already knows about.
+  **Atlas** keeps the map current. It ingests state from cloud, on-prem, and edge
+  sources, normalizes it into one graph model, and holds the relationships that
+  matter: which identity can reach which service, which service can read which
+  data, which asset sits at the end of which chain.
 
-That is the premise the rest of the suite reads from. Query it, traverse it, put
-an interface in front of it, prove what was decided against it — all of it starts
-with the map.
+  <h2 id="from-the-map">From the map</h2>
+
+  The point is not the map itself. The point is that when you ask *“what can reach
+  this asset?”* the answer comes back from the live graph, not from last quarter's
+  audit. The path an attacker would take is the path the map already knows about.
+
+  That is the premise the rest of the suite reads from. Query it, traverse it, put
+  an interface in front of it, prove what was decided against it — all of it starts
+  with the map.
+</PostLayout>
