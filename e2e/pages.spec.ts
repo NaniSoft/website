@@ -14,10 +14,44 @@ test.describe('marketing pages render', () => {
     expect(res?.ok(), 'products responded with a non-OK status').toBeTruthy()
     await expect(page.getByRole('heading', { level: 1, name: /One platform, five surfaces/i })).toBeVisible()
     for (const cat of PRODUCT_CATEGORIES) {
-      await expect(page.getByRole('heading', { name: cat })).toBeVisible()
+      // exact: the inline detail sections render "<product> is part of <cat>"
+      // h2s — a substring match would resolve to several headings.
+      await expect(page.getByRole('heading', { name: cat, exact: true })).toBeVisible()
     }
     // Atlas (Core flagship) anchors within the page.
     await expect(page.locator('#atlas')).toBeVisible()
+  })
+
+  test('/en/products renders all 21 inline product detail sections', async ({ page }) => {
+    await page.goto('/en/products')
+    // One inline `#<slug>-detail` section per product, rendered through the
+    // uniform ProductPageTemplate on the same page (no per-product routes).
+    await expect(page.locator('[id$="-detail"]')).toHaveCount(21)
+    // Each detail section exposes its product as an h1.
+    await expect(page.getByRole('heading', { level: 1, name: 'Atlas' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Pathfinder' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Aegis' })).toBeVisible()
+  })
+
+  test('clicking a product card scrolls to its inline #<slug>-detail section', async ({ page }) => {
+    await page.goto('/en/products')
+    // The Atlas card is an anchor link to #atlas-detail (no route transition).
+    await page.locator('#atlas').click()
+    await expect(page).toHaveURL(/#atlas-detail$/)
+    await expect(page.locator('#atlas-detail')).toBeVisible()
+  })
+
+  test('a shareable /en/products#<slug> deep-link lands below the sticky navbar', async ({ page }) => {
+    await page.goto('/en/products#atlas')
+    await expect(page.locator('#atlas')).toBeVisible()
+    const nav = page.getByRole('navigation', { name: 'Navigation Menu' })
+    const navBox = await nav.boundingBox()
+    const targetBox = await page.locator('#atlas').boundingBox()
+    expect(navBox).not.toBeNull()
+    expect(targetBox).not.toBeNull()
+    // The target's top sits at or below the navbar's bottom — the scroll-margin
+    // (`--nextra-navbar-height`) cleared it from under the sticky navbar.
+    expect(targetBox!.y).toBeGreaterThanOrEqual(navBox!.y + navBox!.height - 1)
   })
 
   test('/en/blog lists all four seed posts', async ({ page }) => {
