@@ -3,17 +3,19 @@ import { expect, test } from '@playwright/test'
 import {
   INDUSTRIES,
   PRODUCT_CATEGORIES,
+  SEED_BLOG_HEADLINES,
 } from './fixtures'
 
 /**
- * Homepage composition (impl ticket 03) — external-behavior e2e against
+ * Homepage composition (impl tickets 03 + 04) — external-behavior e2e against
  * `pnpm start` (port 7000 in CI). Covers the tabs-over-split hero (variant A),
- * the trust band, and the ecosystem, plus the partial section order
- * Hero → TrustBand → Ecosystem. Stays at the user-visible seam (headings, tab
- * roles, anchor hrefs, the active-tab highlight) — not markup. The remaining
- * below-fold sections (Services / GetInTouch / RecommendedReading) stay
- * composed from `HomeSections` until impl ticket 04 restyles them; the contact
- * form is covered by `contact.spec.ts`.
+ * the trust band, the ecosystem, and the below-fold sections (Services /
+ * GetInTouch / RecommendedReading / Newsletter), plus the full section order
+ * Hero → TrustBand → Ecosystem → Services → GetInTouch → RecommendedReading →
+ * Newsletter. Stays at the user-visible seam (headings, tab roles, anchor
+ * hrefs, the active-tab highlight) — not markup. The contact form's backend
+ * behaviour is covered by `contact.spec.ts`; here we only assert the
+ * `#get-in-touch` anchor survives so that spec's deep-link keeps resolving.
  */
 test.describe('homepage composition', () => {
   test('hero renders a tab per category with the gateway (Query & Traversal) active by default', async ({ page }) => {
@@ -103,18 +105,65 @@ test.describe('homepage composition', () => {
     await expect(atlas).toBeHidden()
   })
 
-  test('renders the hero, trust band, and ecosystem in order', async ({ page }) => {
+  test('services renders four service cards', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page.getByRole('heading', { level: 2, name: 'Services around the suite' })).toBeVisible()
+    const section = page.locator('section').filter({ hasText: 'Services around the suite' }).first()
+    // The 4 service names from `SERVICES` in home-content.ts.
+    for (const name of ['Assessment', 'Implementation', 'Managed Operation', 'Open Source Support']) {
+      await expect(section.getByRole('heading', { level: 3, name })).toBeVisible()
+    }
+  })
+
+  test('get-in-touch renders the #get-in-touch anchor and the embedded contact form', async ({ page }) => {
+    await page.goto('/en')
+    // The navbar "Contact" link and `e2e/contact.spec.ts` both point at this anchor.
+    await expect(page.locator('#get-in-touch')).toBeVisible()
+    await expect(page.getByRole('heading', { level: 2, name: /See your own attack paths/i })).toBeVisible()
+    // The real ContactForm is mounted (its Name field is present); backend
+    // behaviour is covered by contact.spec.ts.
+    await expect(page.getByRole('textbox', { name: /name/i }).first()).toBeVisible()
+  })
+
+  test('recommended reading surfaces the latest blog posts', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page.getByRole('heading', { level: 2, name: 'From the blog' })).toBeVisible()
+    const section = page.locator('section').filter({ hasText: 'From the blog' }).first()
+    // The 4 seed posts render as link cards into /en/blog.
+    for (const headline of SEED_BLOG_HEADLINES) {
+      await expect(section.getByRole('link', { name: headline })).toBeVisible()
+    }
+  })
+
+  test('newsletter renders the shared newsletter primitive', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page.getByRole('heading', { level: 3, name: /Notes from Nanisoft, monthly/i })).toBeVisible()
+    // The no-op email affordance is present.
+    await expect(page.getByLabel('Email address')).toBeVisible()
+  })
+
+  test('renders all seven homepage sections in order', async ({ page }) => {
     await page.goto('/en')
     const hero = page.getByRole('heading', { level: 1 }).first()
     const trust = page.getByText('Built for teams in environments like these', { exact: false })
     const ecosystem = page.getByRole('heading', { level: 2, name: 'One suite where point tools leave seams' })
-    await expect(hero).toBeVisible()
-    await expect(trust).toBeVisible()
-    await expect(ecosystem).toBeVisible()
-    const heroY = await hero.boundingBox().then(b => b?.y ?? 0)
-    const trustY = await trust.boundingBox().then(b => b?.y ?? 0)
-    const ecoY = await ecosystem.boundingBox().then(b => b?.y ?? 0)
-    expect(heroY).toBeLessThan(trustY)
-    expect(trustY).toBeLessThan(ecoY)
+    const services = page.getByRole('heading', { level: 2, name: 'Services around the suite' })
+    const getInTouch = page.getByRole('heading', { level: 2, name: /See your own attack paths/i })
+    const reading = page.getByRole('heading', { level: 2, name: 'From the blog' })
+    const newsletter = page.getByRole('heading', { level: 3, name: /Notes from Nanisoft, monthly/i })
+
+    for (const locator of [hero, trust, ecosystem, services, getInTouch, reading, newsletter]) {
+      await expect(locator).toBeVisible()
+    }
+
+    const ys = await Promise.all([
+      hero, trust, ecosystem, services, getInTouch, reading, newsletter,
+    ].map(async l => (await l.boundingBox())?.y ?? 0))
+
+    // Strictly increasing top-to-bottom: Hero < Trust < Ecosystem < Services
+    // < GetInTouch < RecommendedReading < Newsletter.
+    for (let i = 1; i < ys.length; i++) {
+      expect(ys[i - 1]).toBeLessThan(ys[i])
+    }
   })
 })

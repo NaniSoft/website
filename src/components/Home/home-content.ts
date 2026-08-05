@@ -115,3 +115,40 @@ export const TRUST_INDUSTRIES = [
   'Logistics',
   'Manufacturing',
 ] as const
+
+/** A homepage services card — what Nanisoft offers beyond the tools. */
+export interface Service {
+  name: string
+  /** One-line summary under the card heading. */
+  line: string
+  /** Short checklist of what the service covers. */
+  checks: readonly string[]
+}
+
+/**
+ * Services — 4 cards (Assessment / Implementation / Managed Operation / Open
+ * Source Support). Communicates what Nanisoft offers around the suite. The
+ * homepage `Services` section renders this; the shape is the test seam.
+ */
+export const SERVICES: readonly Service[] = [
+  {
+    name: 'Assessment',
+    line: 'We map your environment and rank the paths that matter.',
+    checks: ['Attack-path survey', 'Tooling gap analysis', 'Prioritized roadmap'],
+  },
+  {
+    name: 'Implementation',
+    line: 'We deploy the suite against your live graph and tune it to your teams.',
+    checks: ['Atlas rollout', 'Bedrock + Keystone integration', 'Runbook handoff'],
+  },
+  {
+    name: 'Managed Operation',
+    line: 'We run the suite so your team does not have to staff it.',
+    checks: ['24/7 monitoring', 'Weekly attack-path review', 'Quarterly tuning'],
+  },
+  {
+    name: 'Open Source Support',
+    line: 'We maintain the open source core and back your internal use.',
+    checks: ['Upstream maintenance', 'CVE response', 'SLA-backed support'],
+  },
+]

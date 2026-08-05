@@ -1,3 +1,7 @@
 export { Ecosystem } from './Ecosystem'
+export { GetInTouch } from './GetInTouch'
 export { Hero } from './Hero'
+export { Newsletter } from './Newsletter'
+export { RecommendedReading } from './RecommendedReading'
+export { Services } from './Services'
 export { TrustBand } from './TrustBand'

@@ -1,3 +1,10 @@
+'use client'
+
+// Client component — the no-op email form carries an `onSubmit` handler (prevent
+// default so the disabled affordance doesn't navigate), which cannot be passed
+// from a Server Component. Rendered on the homepage (server-rendered MDX) and
+// the blog chrome.
+
 import { SectionLabel } from './section-label'
 
 type NewsletterLayout = 'inline-card' | 'accordion' | 'full-band'

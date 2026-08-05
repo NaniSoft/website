@@ -14,7 +14,7 @@ import { expect, type Page } from '@playwright/test'
 /** Apex → /en redirect path. `next.config.ts` adds the redirect rule. */
 export const EN_PATH = /\/en/
 
-/** Agreed UI copy lists — sourced from the data modules and HomeSections. */
+/** Agreed UI copy lists — sourced from the data modules and `home-content.ts`. */
 export const PRODUCT_CATEGORIES = [
   'Core',
   'Ingestion',

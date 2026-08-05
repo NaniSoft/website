@@ -12,6 +12,11 @@ import { expect, test } from '@playwright/test'
 //
 // Both stubs match `**/api/contact-us` regardless of host/port so the spec is
 // robust to local-CI port differences (local: 8000, CI: 7000).
+//
+// The form locators are scoped to `#get-in-touch` because the homepage also
+// renders a Newsletter email affordance (impl ticket 04) — an unscoped
+// `getByRole('textbox', { name: /email/i })` would match both. Scoping keeps
+// this spec a regression guard for the contact form's preserved backend.
 test.describe('contact form', () => {
   test('a valid submission with a 200 success response shows the success toast', async ({ page }) => {
     await page.route('**/api/contact-us', route => {
@@ -23,11 +28,12 @@ test.describe('contact form', () => {
     })
 
     await page.goto('/en#get-in-touch')
-    await page.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
-    await page.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
-    await page.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
+    const form = page.locator('#get-in-touch')
+    await form.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
+    await form.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
+    await form.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
 
-    await page.getByRole('button', { name: /^Send$/ }).click()
+    await form.getByRole('button', { name: /^Send$/ }).click()
 
     // Success toast mirrors the server's success message verbatim.
     const toast = page.locator('[data-sonner-toast]').first()
@@ -45,22 +51,23 @@ test.describe('contact form', () => {
     })
 
     await page.goto('/en#get-in-touch')
-    await page.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
-    await page.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
-    await page.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
+    const form = page.locator('#get-in-touch')
+    await form.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
+    await form.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
+    await form.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
 
-    await page.getByRole('button', { name: /^Send$/ }).click()
+    await form.getByRole('button', { name: /^Send$/ }).click()
 
     // Inline fallback (ticket 13 degradation contract) surfaces a mailto:
     // link prefilled with name/email/notes.
-    const fallback = page.getByRole('link', { name: /email us directly/i })
+    const fallback = form.getByRole('link', { name: /email us directly/i })
     await expect(fallback).toBeVisible({ timeout: 5000 })
     await expect(fallback).toHaveAttribute('href', /^mailto:/)
   })
 
   test('inline validation rejects an empty submission before any POST', async ({ page }) => {
     await page.goto('/en#get-in-touch')
-    await page.getByRole('button', { name: /^Send$/ }).click()
+    await page.locator('#get-in-touch').getByRole('button', { name: /^Send$/ }).click()
 
     // react-hook-form messages, not network. The exact copy is the schema's.
     await expect(page.getByText(/please enter your name/i)).toBeVisible()
@@ -83,15 +90,16 @@ test.describe('contact form', () => {
     })
 
     await page.goto('/en#get-in-touch')
+    const form = page.locator('#get-in-touch')
     // Widget host is a `.cf-turnstile` div injected by Turnstile's script.
     // When the sitekey is unset, the client never renders the mount point
     // at all — `.cf-turnstile` is absent.
-    await expect(page.locator('.cf-turnstile')).toHaveCount(0)
+    await expect(form.locator('.cf-turnstile')).toHaveCount(0)
 
-    await page.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
-    await page.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
-    await page.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
-    await page.getByRole('button', { name: /^Send$/ }).click()
+    await form.getByRole('textbox', { name: /name/i }).fill('Asha Patel')
+    await form.getByRole('textbox', { name: /email/i }).fill('asha@acme.co')
+    await form.getByRole('textbox', { name: /what are you trying to see/i }).fill('Identity drift across tenants.')
+    await form.getByRole('button', { name: /^Send$/ }).click()
 
     // The form still posts — and the success path renders the toast.
     await expect.poll(() => posted).toBe(true)

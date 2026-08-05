@@ -7,14 +7,15 @@ import { productAnchor, productCategories } from '@/lib/products'
 import {
   categoryHeroes,
   gatewayCategory,
+  SERVICES,
   TRUST_INDUSTRIES,
 } from './home-content'
 
 // External-behavior tests at the data-module seam: the homepage hero category
-// copy and the trust-band industry list, joined to `src/lib/products.ts` so the
-// hero tabs and the `/en/products` page never diverge. Contracts and shape —
-// never markup. The hero presentation (tabs, cross-fade, gateway tile) is
-// covered by e2e, not here.
+// copy, the trust-band industry list, and the services cards, joined to
+// `src/lib/products.ts` so the hero tabs and the `/en/products` page never
+// diverge. Contracts and shape — never markup. The hero presentation (tabs,
+// cross-fade, gateway tile) is covered by e2e, not here.
 
 describe('homepage hero content', () => {
   it('has one hero entry per product category, in category order', () => {
@@ -92,5 +93,24 @@ describe('homepage trust band', () => {
   it('has no duplicate industries', () => {
     const values = TRUST_INDUSTRIES.map(i => i.trim())
     expect(new Set(values).size).toBe(values.length)
+  })
+})
+
+describe('homepage services', () => {
+  it('has four service cards, each with non-empty name, line, and checks', () => {
+    expect(SERVICES).toHaveLength(4)
+    for (const service of SERVICES) {
+      expect(service.name.trim()).not.toBe('')
+      expect(service.line.trim()).not.toBe('')
+      expect(service.checks.length).toBeGreaterThan(0)
+      for (const check of service.checks) {
+        expect(check.trim()).not.toBe('')
+      }
+    }
+  })
+
+  it('has unique service names', () => {
+    const names = SERVICES.map(s => s.name.trim())
+    expect(new Set(names).size).toBe(names.length)
   })
 })
