@@ -60,9 +60,9 @@ function BrandMark() {
 }
 
 /**
- * Nanisoft site footer. Replaces the upstream `CustomFooter` functionally; the
- * old file is deleted in a later cleanup ticket (expand-contract — new lands
- * beside old, old is removed once unreferenced).
+ * Nanisoft site footer — the guild-style 4-column footer (Brand + socials,
+ * flagship products, Resources, Company) rendered into Nextra's `<Footer>`
+ * slot from `app/[lang]/layout.tsx`.
  */
 export function SiteFooter() {
   return (
