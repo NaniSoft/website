@@ -41,13 +41,18 @@ export const SEED_BLOG_HEADLINES = [
   'What trust means in a security platform',
 ] as const
 
-/** Industry-segment badges rendered by the homepage trust strip. */
+/** Industry-segment badges rendered by the homepage trust band. Mirrors `TRUST_INDUSTRIES` in `src/components/Home/home-content.ts`. */
 export const INDUSTRIES = [
   'Financial Services',
   'Healthcare',
   'Critical Infrastructure',
   'Government',
   'Retail',
+  'Energy',
+  'Telecom',
+  'Cloud Platforms',
+  'Logistics',
+  'Manufacturing',
 ] as const
 
 /**
