@@ -1,0 +1,81 @@
+name: CI / Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cloudflare-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, Test, Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+        # pnpm version is resolved from package.json `packageManager` (pnpm@11.18.0)
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm -r run lint
+      - name: Unit tests
+        # pnpm -r runs only in packages that define the script; apps/playground
+        # and the shared packages without a `test` script are skipped silently.
+        run: pnpm -r run test
+      - name: Build
+        run: pnpm -r run build
+
+  deploy-landing:
+    name: Deploy landing → nanisoft worker
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build and deploy
+        # `pnpm --filter` runs the script from apps/landing, so OpenNext reads
+        # apps/landing/wrangler.jsonc and deploys worker `nanisoft` (nanisoft.com
+        # + www.nanisoft.com), updating the existing worker in place.
+        run: pnpm --filter @nanisoft/landing run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  deploy-playground:
+    name: Deploy playground → nanisoft-playground worker
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build and deploy
+        # Deploys worker `nanisoft-playground`. On the first run this creates
+        # the worker; afterwards add the playground.nanisoft.com custom domain
+        # + DNS record in the Cloudflare dashboard (one-time, manual).
+        run: pnpm --filter @nanisoft/playground run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,24 @@
+{
+  "name": "@nanisoft/identity",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The nanisoft \"Living Map\" identity system, shared by both apps: palette, typography, shape lock, motion, wordmark, and favicon. See .scratch/nanosoft-digital-twin/SPEC.md §2. Framework-agnostic plain TypeScript (no React/Next.js boundary) — both apps import it via workspace:* and render it themselves.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}

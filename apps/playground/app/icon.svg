@@ -1,0 +1,8 @@
+<!-- W3 monogram — the nanisoft "node + flow" favicon / dock fallback.
+     Generated from @nanisoft/identity monogramSvg(32). Regenerate if tokens change. -->
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="nanisoft monogram">
+  <rect width="32" height="32" rx="7" fill="#0C2A33"/>
+  <path d="M 15 12 Q 16 6 20 8" fill="none" stroke="#F4EFE6" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="10" cy="13" r="5" fill="none" stroke="#F4EFE6" stroke-width="2"/>
+  <circle cx="23" cy="8" r="3" fill="#F4EFE6"/>
+</svg>

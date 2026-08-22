@@ -1,0 +1,47 @@
+sequenceDiagram
+    participant Author as Schema Author
+    participant DG as DataGerry
+    participant Bridge as DataGerry Bridge
+    participant Bedrock as Bedrock Lakehouse
+    participant Airbyte
+    participant Source as Source System
+    participant Forge as Forge, Spark and dbt
+    participant Atlas
+    participant OPA
+    participant Overlook as Overlook, Trino
+    participant Compass
+    participant Analyst as Security Analyst
+
+    Note over Author,Bedrock: Phase 1: Schema definition
+    Author->>DG: define ObjectType Product, field Sensitive=bool
+    DG-->>Bridge: Type created or updated
+    Bridge->>Bedrock: CREATE or ALTER TABLE ext_product
+    Bridge->>Atlas: refresh SchemaRegistry cache
+    Atlas-->>Bridge: ack
+
+    Note over Airbyte,Bedrock: Phase 2: Ingestion, independent of Atlas
+    Airbyte->>Source: extract product and view-log records
+    Source-->>Airbyte: raw rows
+    Airbyte->>Bedrock: land raw records in Bronze
+
+    Note over Forge,Bedrock: Phase 3: Transform, conform, score, independent of Atlas
+    Forge->>Bedrock: read current Product schema, cached from Bridge sync
+    Forge->>Bedrock: write conformed Silver ext_product rows, dbt model
+    Forge->>Bedrock: dbt snapshot plus confidence scoring writes Gold graph_nodes and graph_edges
+
+    Note over Analyst,Compass: Phase 4: Investigation
+    Analyst->>Compass: open Graph Explorer
+    Analyst->>Compass: run Sensitive Product View Audit use case
+    Compass->>Atlas: GET use-cases/sensitive-product-view-audit/steps
+
+    Atlas->>OPA: can this user run this use case
+    OPA-->>Atlas: allow
+    Atlas->>Atlas: write audit log entry
+
+    Atlas->>Overlook: run seeded SQL, Views edges vs group membership
+    Overlook->>Bedrock: read Gold graph_nodes and graph_edges
+    Bedrock-->>Overlook: rows
+    Overlook-->>Atlas: anomalous view found, no group membership backing it
+
+    Atlas-->>Compass: highlighted path plus narrative steps
+    Compass-->>Analyst: renders traversal highlight, sensitive exposure visible

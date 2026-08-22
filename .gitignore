@@ -1,0 +1,28 @@
+node_modules
+.next
+out
+dist
+.DS_Store
+*.log
+.env*
+coverage
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# Local worktrees
+.worktrees/
+
+# Tooling symlinks and parent-tool state (not part of this project)
+.agents/
+.claude/
+skills-lock.json
+.playwright-mcp/
+
+# Next 16 auto-generates these AI-agent rule files on `next dev`; regenerate as
+# needed rather than tracking generated copies.
+AGENTS.md
+CLAUDE.md
+
+# OpenNext (Cloudflare Workers) build output + wrangler local state
+.open-next/
+.wrangler/

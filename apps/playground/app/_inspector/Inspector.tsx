@@ -1,0 +1,152 @@
+'use client';
+
+import { useState } from 'react';
+import { color, font, radius, surface } from '@nanisoft/identity';
+import { usePlayground } from '../_store/usePlayground';
+
+const TABS = ['Bronze', 'Silver', 'Gold', 'Schema', 'Audit'] as const;
+type Tab = (typeof TABS)[number];
+
+function esc(s: unknown): string {
+  return String(s ?? '');
+}
+
+export function Inspector() {
+  const state = usePlayground((s) => s.state);
+  const [tab, setTab] = useState<Tab>('Gold');
+
+  const bronzeRows = state.bronze.products.length + state.bronze.viewLogs.length;
+  const silverRows = state.silver.extProduct.length + state.silver.extViewLog.length;
+
+  const cardStyle: React.CSSProperties = {
+    background: surface.light.elevated,
+    border: `1px solid ${surface.light.border}`,
+    borderRadius: radius.card,
+    padding: 14,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+    minHeight: 360,
+  };
+  const labelStyle: React.CSSProperties = {
+    margin: 0,
+    fontFamily: font.data,
+    fontSize: 11,
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    color: surface.light.textMuted,
+  };
+  const bodyStyle: React.CSSProperties = {
+    fontFamily: font.data,
+    fontSize: 11.5,
+    color: surface.light.text,
+    background: surface.light.sunken,
+    borderRadius: radius.inner,
+    padding: 10,
+    flex: 1,
+    overflow: 'auto',
+    whiteSpace: 'pre-wrap',
+    lineHeight: 1.7,
+  };
+  const rowBorder: React.CSSProperties = { borderBottom: `1px dashed ${surface.light.border}`, padding: '3px 0' };
+  const emptyStyle: React.CSSProperties = { opacity: 0.55, fontStyle: 'italic' };
+  const k: React.CSSProperties = { color: color.teal };
+  const j: React.CSSProperties = { color: color.jade };
+
+  let body: React.ReactNode;
+  if (tab === 'Bronze') {
+    body = bronzeRows === 0 ? <div style={emptyStyle}>Bronze empty — no tables yet.</div> : (
+      <>
+        <div style={rowBorder}><span style={k}>ext_product</span> · {state.bronze.products.length} rows</div>
+        <div style={rowBorder}><span style={k}>view_logs</span> · {state.bronze.viewLogs.length} rows</div>
+      </>
+    );
+  } else if (tab === 'Silver') {
+    body = silverRows === 0 ? <div style={emptyStyle}>Silver empty — transform has not run.</div> : (
+      <>
+        <div style={rowBorder}><span style={k}>ext_product</span> · {state.silver.extProduct.length} rows · conformed + SCD2</div>
+        <div style={rowBorder}><span style={k}>view_logs</span> · {state.silver.extViewLog.length} rows · conformed</div>
+      </>
+    );
+  } else if (tab === 'Gold') {
+    body = (
+      <>
+        <div style={rowBorder}><span style={k}>graph_nodes</span> · <span style={k}>{state.gold.nodes.length}</span></div>
+        {state.gold.nodes.map((n) => (
+          <div key={n.id} style={rowBorder}>&nbsp;&nbsp;{esc(n.id)} <span style={k}>{esc(n.kind)}</span>{n.sensitive ? <span style={j}> · sensitive</span> : null}</div>
+        ))}
+        <div style={{ ...rowBorder, marginTop: 6 }}><span style={k}>graph_edges</span> · <span style={j}>{state.gold.edges.length}</span></div>
+        {state.gold.edges.map((e) => {
+          const dec = e.status === 'anomalous' ? <span style={j}> · anomalous</span> : e.status === 'ok' ? <span style={{ color: color.teal }}> · ok</span> : null;
+          return <div key={e.id} style={rowBorder}>&nbsp;&nbsp;{esc(e.from)} <span style={k}>-{esc(e.kind)}-&gt;</span> {esc(e.to)}{dec}</div>;
+        })}
+      </>
+    );
+  } else if (tab === 'Schema') {
+    const types = Object.keys(state.schemaRegistry);
+    body = types.length === 0 ? <div style={emptyStyle}>SchemaRegistry empty — no types defined yet.</div> : types.map((t) => {
+      const obj = state.schemaRegistry[t];
+      return (
+        <div key={t} style={rowBorder}>
+          <span style={k}>{esc(t)}</span> · table ext_product<br />
+          &nbsp;&nbsp;{obj.fields.map((f) => (
+            <span key={f.name} style={{ marginRight: 12 }}>
+              {f.name === 'Sensitive' ? <span style={j}>{f.name}</span> : <span style={k}>{f.name}</span>}:{f.type}
+            </span>
+          ))}
+        </div>
+      );
+    });
+  } else {
+    body = state.auditLog.length === 0 ? <div style={emptyStyle}>audit_log empty — no runs yet.</div> : state.auditLog.map((a, i) => (
+      <div key={i} style={rowBorder}><span style={k}>{esc(a.ts)}</span> · {esc(a.actor)} · {esc(a.useCase)} · <span style={j}>{esc(a.decision)}</span><br />&nbsp;&nbsp;{esc(a.detail)}</div>
+    ));
+  }
+
+  const counts: { label: string; value: number; accent?: 'teal' | 'jade' }[] = [
+    { label: 'Bronze', value: bronzeRows },
+    { label: 'Silver', value: silverRows, accent: 'teal' },
+    { label: 'Gold nodes', value: state.gold.nodes.length, accent: 'teal' },
+    { label: 'Gold edges', value: state.gold.edges.length, accent: 'jade' },
+    { label: 'Audit', value: state.auditLog.length },
+  ];
+
+  return (
+    <div style={cardStyle}>
+      <p style={labelStyle}>shared in-browser state · live</p>
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        {counts.map((c) => (
+          <div key={c.label} style={{ fontFamily: font.data, fontSize: 10, color: surface.light.textMuted }}>
+            {c.label}
+            <br />
+            <b style={{
+              fontSize: 15,
+              color: c.accent === 'jade' ? color.jade : c.accent === 'teal' ? color.teal : surface.light.text,
+            }}>{c.value}</b>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {TABS.map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            style={{
+              fontFamily: font.data,
+              fontSize: 10,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              background: t === tab ? surface.light.bg : 'transparent',
+              border: `1px solid ${surface.light.border}`,
+              color: t === tab ? surface.light.text : surface.light.textMuted,
+              padding: '5px 10px',
+              borderRadius: 8,
+              cursor: 'pointer',
+            }}
+          >{t}</button>
+        ))}
+      </div>
+      <div style={bodyStyle} aria-label="inspector-state">{body}</div>
+    </div>
+  );
+}

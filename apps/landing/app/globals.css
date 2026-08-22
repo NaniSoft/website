@@ -1,0 +1,77 @@
+:root {
+  --color-bg: #F7F9FC;
+  --color-bg-elev: #FFFFFF;
+  --color-bg-sunken: #F0F4FA;
+  --color-border: #E5EAF2;
+  --color-text: #0B1726;
+  --color-text-muted: #56627A;
+  --color-primary: #1E5BFF;
+  --color-accent: #00C2D6;
+  --color-success: #10A48B;
+  --color-warning: #D08C1A;
+  --color-danger: #D43A3A;
+}
+
+[data-theme='dark'] {
+  --color-bg: #0A1020;
+  --color-bg-elev: #111A2E;
+  --color-bg-sunken: #0E152A;
+  --color-border: #1E2A44;
+  --color-text: #E6ECF5;
+  --color-text-muted: #8A98B0;
+  --color-primary: #3B82F6;
+  --color-accent: #22D3EE;
+  --color-success: #34D399;
+  --color-warning: #F59E0B;
+  --color-danger: #F87171;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono { font-family: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace; }
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--color-primary); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a[href="#main"] {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 200;
+}
+a[href="#main"]:not(:focus) { left: -9999px; position: absolute; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ant-motion, [data-framer-component] { animation: none !important; transition: none !important; }
+}
+
+/* Right-rail Node Inspector preview (spec §5) — collapses below 960px */
+.node-inspector-preview-rail { display: flex; }
+@media (max-width: 959px) {
+  .node-inspector-preview-rail { display: none; }
+  .command-center-canvas-row { flex-direction: column; }
+}
