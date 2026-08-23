@@ -1,13 +1,17 @@
 /*
  * Semantic tokens for the nanisoft landing, mapped from @nanisoft/identity
  * (SPEC §2 "Living Map"). The identity package is the primitive layer and the
- * single source of truth for every value used here — no new hexes.
+ * single source of truth for all brand values below; the only non-identity
+ * values are the functional status colors (success/warning/danger), carried
+ * over from the previous theme until a token decision lands.
  *
  *   base = petrol + bone · secondary = teal
  *   accent = jade, reserved for live/active states ONLY (never decorative)
  *
  * Shape lock: card 20 / inner 12 / buttons pill. No purple, no neon, no pure
- * black, no pure white (ink is near-black petrol; bone is off-white).
+ * black, no pure white (ink is near-black petrol; bone is off-white). CSS
+ * cannot import TS values, so each var carries its identity-package name as
+ * a comment — keep them in sync when tokens change.
  */
 
 :root {

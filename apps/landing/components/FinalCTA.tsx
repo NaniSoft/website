@@ -1,7 +1,8 @@
 'use client';
 
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import { FINAL_CTA } from '@/lib/data';
+import { PillButton } from './PillButton';
 
 export function FinalCTA() {
   return (
@@ -11,8 +12,8 @@ export function FinalCTA() {
           {FINAL_CTA.h2}
         </Typography.Title>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
-          <Button type="primary" size="large" shape="round" href={FINAL_CTA.primary.href}>{FINAL_CTA.primary.label}</Button>
-          <Button size="large" shape="round" href={FINAL_CTA.secondary.href}>{FINAL_CTA.secondary.label}</Button>
+          <PillButton type="primary" size="large" href={FINAL_CTA.primary.href}>{FINAL_CTA.primary.label}</PillButton>
+          <PillButton size="large" href={FINAL_CTA.secondary.href}>{FINAL_CTA.secondary.label}</PillButton>
         </div>
         <div style={{ color: 'var(--color-text-muted)' }}>{FINAL_CTA.footnote}</div>
       </div>

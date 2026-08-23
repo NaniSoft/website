@@ -50,4 +50,4 @@ Jade discipline on the kept surface: the hero eyebrow live-dot pulse keeps accen
 
 ## Verification (no-vision, house precedent from ticket 11)
 
-No Playwright this batch. Green gates: `pnpm --filter @nanisoft/landing lint && build && test`; grep sweeps prove zero `Sentinel|TrueAccess|Inter|sentinel-theme|react-force-graph` occurrences in `apps/landing` source and zero retired-component imports. Human visual confirm deferred (19–21 will continue on this shell).
+No Playwright this batch. Green gates: `pnpm --filter @nanisoft/landing lint && build && test`. Grep sweeps prove zero `TrueAccess|Inter|sentinel-theme|react-force-graph` occurrences in `apps/landing` source; "Sentinel" appears only in negative test assertions (tests that prove its absence) and in the docs/plan records, never in rendered surface, metadata, or copy data. Zero retired-component imports. Human visual confirm deferred (19–21 will continue on this shell).

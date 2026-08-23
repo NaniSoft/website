@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Button } from 'antd';
 import { ThemeToggle } from './theme/ThemeToggle';
 import { Wordmark } from './Wordmark';
+import { PillButton } from './PillButton';
 import { BRAND } from '@/lib/data';
 
 // Anchors into the kept narrative sections (ticket 21 rewrites the copy).
@@ -43,8 +43,9 @@ export function TopNav() {
       <Link href="/" aria-label={BRAND.name} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <Wordmark height={26} />
         <span aria-hidden className="top-nav-tagline-rule" style={{ width: 1, height: 16, background: 'var(--color-border)' }} />
+        {/* Positioning line — the sentence-case tagline minus its period. */}
         <span className="top-nav-tagline" style={{ color: 'var(--color-text-muted)', fontSize: 13, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
-          digital twin of the IT estate
+          {BRAND.tagline.replace(/\.$/, '')}
         </span>
       </Link>
       <nav aria-label="Primary" className="top-nav-links" style={{ flex: 1, display: 'flex', gap: 20, marginLeft: 8 }}>
@@ -60,8 +61,7 @@ export function TopNav() {
       </nav>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <ThemeToggle />
-        {/* Pill button — shape lock. */}
-        <Button type="primary" shape="round" href="#final-cta">Request a demo</Button>
+        <PillButton type="primary" href="#final-cta">Request a demo</PillButton>
       </div>
       <style>{`
         @media (max-width: 1023px) {

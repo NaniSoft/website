@@ -1,6 +1,6 @@
 'use client';
 
-import { wordmarkSvg, surface } from '@nanisoft/identity';
+import { wordmarkSvg, surface, color } from '@nanisoft/identity';
 import { useTheme } from './theme/ThemeProvider';
 
 interface Props {
@@ -23,11 +23,15 @@ interface Props {
 export function Wordmark({ height = 26, band = 'bg' }: Props) {
   const { resolved } = useTheme();
   const mode = resolved === 'dark' ? surface.dark : surface.light;
+  // SPEC §2 W1 is "the rest of the mark is petrol" — that presumes a bone
+  // surface. On dark/petrol surfaces the mark inverts to bone (as the W3
+  // monogram glyph does); jade stays the single accent either way.
+  const ink = resolved === 'dark' ? color.bone : color.petrol;
   return (
     <span
       className="wordmark"
       style={{ display: 'inline-flex', height }}
-      dangerouslySetInnerHTML={{ __html: wordmarkSvg({ bg: mode[band], height }) }}
+      dangerouslySetInnerHTML={{ __html: wordmarkSvg({ bg: mode[band], ink, height }) }}
     />
   );
 }

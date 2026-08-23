@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Button, Tag } from 'antd';
+import { Tag } from 'antd';
 import { HERO, CUSTOMER_LOGOS } from '@/lib/data';
+import { PillButton } from './PillButton';
 
 // Placeholder hero holding the top of the page until ticket 19 replaces it
 // with the reactive digital-twin DAG (SPEC §3: pure spectacle, no buttons —
@@ -22,7 +23,16 @@ export function Hero() {
     >
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <Tag color="teal" style={{ borderRadius: 'var(--radius-pill)', padding: '2px 10px' }}>
+          {/* Status chip styled from tokens (antd preset colors are off-palette). */}
+          <Tag
+            style={{
+              background: 'var(--color-bg-sunken)',
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text-muted)',
+              borderRadius: 'var(--radius-pill)',
+              padding: '2px 10px',
+            }}
+          >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               {/* Live indicator — jade is reserved for live/active states. */}
               <span
@@ -46,9 +56,9 @@ export function Hero() {
             {HERO.sub}
           </p>
           <div style={{ marginBottom: 32 }}>
-            <Button type="primary" size="large" shape="round" href={HERO.primaryCta.href}>
+            <PillButton type="primary" size="large" href={HERO.primaryCta.href}>
               {HERO.primaryCta.label}
-            </Button>
+            </PillButton>
           </div>
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontSize: 12, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>

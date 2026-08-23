@@ -1,6 +1,6 @@
-// Shared data shapes for the landing's copy constants. The retired
-// Sentinel-demo graph/chat types (GraphNode, GraphEdge, ChatTranscript, …)
-// were removed with their components in ticket 18 — git history keeps them.
+// Shared data shapes for the landing's copy constants. The retired demo
+// graph/chat types (GraphNode, GraphEdge, ChatTranscript, …) were removed
+// with their components in ticket 18 — git history keeps them.
 
 export interface Integration {
   name: string;
