@@ -2,12 +2,12 @@
 
 import type { ReactElement } from 'react';
 import { Card } from 'antd';
-import { ApartmentOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons';
+import { ApartmentOutlined, DatabaseOutlined, SearchOutlined } from '@ant-design/icons';
 import { PROBLEM_CARDS } from '@/lib/data';
 
 const ICONS: Record<string, ReactElement> = {
-  fork: <ApartmentOutlined style={{ fontSize: 24, color: 'var(--color-primary)' }} />,
-  clock: <HistoryOutlined style={{ fontSize: 24, color: 'var(--color-primary)' }} />,
+  graph: <ApartmentOutlined style={{ fontSize: 24, color: 'var(--color-primary)' }} />,
+  stack: <DatabaseOutlined style={{ fontSize: 24, color: 'var(--color-primary)' }} />,
   magnify: <SearchOutlined style={{ fontSize: 24, color: 'var(--color-primary)' }} />,
 };
 
