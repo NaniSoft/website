@@ -190,22 +190,16 @@ All other components (Airbyte, Forge, Bedrock, Watchtower, Anchor, Conveyor, Ope
 
 ---
 
-## 5. Deployment (ticket 02; decision 15)
+## 5. Deployment (ticket 02 research → executed as ticket 22; decision 15)
 
-**Domains (fixed):** `nanisoft.com` (apex) + `playground.nanisoft.com` (subdomain).
+**Domains (fixed):** `nanisoft.com` (apex) + `www.nanisoft.com` + `playground.nanisoft.com`.
 
-**Default recommendation (recorded):** both apps on **Vercel Pro** ($20/mo, commercial-use required) — the only Next.js-verified adapter besides Bun; Next 16.3.1 fully supported; native two-project + pnpm-monorepo + two-subdomain wiring (apex **A-record** `nanisoft.com`, subdomain **CNAME** `playground.nanisoft.com`). The 16.3.0 standalone+adapter crash (#96646) is avoided at 16.3.1.
+**Executed decision (2026-08-22 — supersedes the recorded Vercel-Pro default):** both apps deploy to **Cloudflare Workers via `@opennextjs/cloudflare`**: landing → worker `nanisoft` (existing worker updated in place; apex + www custom domains already configured), playground → worker `nanisoft-playground`. One verify-gated workflow (`.github/workflows/deploy.yml`) lints/tests/builds on push/PR, then deploys both workers in parallel on push to `main`. Rationale: reuses the existing Cloudflare worker + API-token secrets; free tier, commercial use OK; the landing's demo-request API route needs a server runtime (rules out static export); no K8s cluster to reuse. The four open inputs from ticket 02 (cost posture, registrar/DNS host, cluster, server-feature needs) are answered de facto by this choice. CI deploy green at HEAD 2026-08-22; both domains verified live (HTTP 200) 2026-08-23 — nanisoft.com serves the pre-retheme shell until tickets 18–21 land. Design: `docs/superpowers/specs/2026-08-23-cloudflare-workers-deploy-design.md`; platform research: `research/deployment-findings.md`.
 
-**Alternatives (noted):**
-- **Cloudflare** (`@opennextjs/cloudflare` v1.20.2) — free / commercial-OK, but **not a verified adapter**; open `proxy.ts` gap (#1277; fix pending #1309) — workaround: keep `middleware.ts` + `--webpack`.
-- **K8s self-hosting** (`output:'standalone'` Docker + reverse proxy) — fully supported, matches a K8s ethos, but heaviest ops; only if a cluster exists.
-- Per-app split + static-export-to-Cloudflare-Pages fallback possible, **gated on no server features** per app.
-
-**Open user inputs (non-blocking for this spec; gather before build):**
-1. Cost / commercial-use posture (Vercel Pro $20/mo vs Cloudflare free).
-2. Existing registrar / DNS host for nanisoft.com.
-3. Existing infra — is there a K8s cluster to reuse, or is managed PaaS acceptable?
-4. Per-app server-feature needs (gates the free static-export fallback).
+**Alternatives (recorded, not chosen):**
+- **Vercel Pro** ($20/mo, commercial-use required) — the only Next.js-verified adapter besides Bun; native two-project + pnpm-monorepo + subdomain wiring. Retained as the documented fallback.
+- **K8s self-hosting** (`output:'standalone'` Docker + reverse proxy) — fully supported, heaviest ops; no cluster in play.
+- The ticket-02 Cloudflare caveat (open `proxy.ts` gap #1277; workaround "keep `middleware.ts` + `--webpack`") is **obsolete** — neither app carries middleware/proxy, and the OpenNext build deploys cleanly without it.
 
 **Subdomain serving is a deployment concern, not a build constraint** (ticket 01) — no build change needed for two subdomains.
 
@@ -222,6 +216,7 @@ All other components (Airbyte, Forge, Bedrock, Watchtower, Anchor, Conveyor, Ope
 - **Compass node-within-node containment** — richer Compass interaction, deferred (ticket 05).
 - **Playground step cadence** — ~1.1s/step in the prototype; tune at build.
 - **Seeded-dataset richness** — minimal seed is sufficient; a build-time tuning knob.
+- **Superset sandbox pre-run data** (surfaced by the 2026-08-23 audit) — the live store boots on `blankState()` whose Gold is empty until the flagship builds it (~step 10); `supersetDashboard` is cursor-independent and seed-ready at the pure-core level, but the pre-run dashboard renders empty charts. Decide: boot with seed-populated Gold vs. accept empty-before-run (§4.8 says "explorable before the flagship runs, from the seed").
 
 **Taste flow to consult during execution (decision 8):** `design-taste-frontend` (landing redesign base, anti-slop, audit-first), `high-end-visual-design` (spectacle hero + mouse-reactive motion, haptic depth, micro-interactions), `ui-ux-pro-max` (shared design-token + motion database across both apps).
 
@@ -239,6 +234,6 @@ All other components (Airbyte, Forge, Bedrock, Watchtower, Anchor, Conveyor, Ope
 | Playground stack / repo | Decision 5; ticket 01 |
 | Playground spine + state + playbook engine | Ticket 04; decisions 4, 11, 12 |
 | Mock fidelity (six tools) | Ticket 05 |
-| Deployment | Decision 15; ticket 02 |
+| Deployment | Decision 15; ticket 02 research; executed as ticket 22 (Cloudflare Workers/OpenNext, 2026-08-22) |
 
 Map: `.scratch/nanosoft-digital-twin/map.md` (Decisions-so-far index). Tickets: `.scratch/nanosoft-digital-twin/issues/01..05-*.md`. Prototypes: `.scratch/nanosoft-digital-twin/prototypes/03-identity-style-tile.html`, `04-playground-spine-state.html`. Architecture sources: `resources/TrueAccess_MVP_Architecture.mermaid`, `resources/TrueAccess_Schema_to_Visualization_Sequence.mermaid`, `resources/TrueAccess_MVP_Stack_and_Licensing.md`.
