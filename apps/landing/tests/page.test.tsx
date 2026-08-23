@@ -71,4 +71,15 @@ describe('Page shell (nanisoft)', () => {
     expect(screen.getByText(/the next section walks the full pipeline/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /built like a lakehouse/i })).toBeInTheDocument();
   });
+
+  it('names the flagship unlock and keeps the section free of dead links', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/Sensitive Product View Audit/)).toBeInTheDocument();
+    expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
+    const section = document.getElementById('use-cases');
+    expect(section?.querySelectorAll('a[href="#"]')).toHaveLength(0);
+    const more = screen.getByRole('link', { name: /see the flagship run today in the playground/i });
+    expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
+  });
 });
