@@ -4,10 +4,10 @@
 
 **Blocked by:** 09 (Playground spine rendered from the model), 18 (Landing shell).
 
-**Status:** ready-for-agent
+**Status:** done (2026-08-23)
 
-- [ ] The section reuses the spine render from 09 + the model from 07 to show the directed pipeline
-- [ ] Scroll-animated through Schema → Ingestion → Transform → Investigation (the phase band advances as you scroll)
-- [ ] Bridge CTA links to playground.nanisoft.com
-- [ ] Tokens from 08 applied; motion honors `prefers-reduced-motion`
-- [ ] Sits within the landing shell (18) in narrative position "how we build it"
+- [x] The section renders the directed pipeline from the model (07) via **a landing-local pure derivation** (`lib/spine-graph.ts`, reuse-strategy option b — batch-safe; literal reuse of 09's render was out of bounds during the parallel batch. Carry-forward: lift the shared derivation into `packages/architecture` and repoint both apps)
+- [x] Scroll-animated through Schema → Ingestion → Transform → Investigation (the phase band advances as you scroll)
+- [x] Bridge CTA links to playground.nanisoft.com
+- [x] Tokens from 08 applied; motion honors `prefers-reduced-motion`
+- [x] Sits within the landing shell (18) in narrative position "how we build it" *(integration: placed after Platform — ticket 21 repurposed Platform as how-we-build-it part one ending in a hand-off into this section)*

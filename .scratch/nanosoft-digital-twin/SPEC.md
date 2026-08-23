@@ -13,11 +13,14 @@ The **one source of truth** for the digital-twin architecture, consumed by *both
 
 ### Components (codenames kept — decision 10)
 
-**Custom (4):**
+**Custom (4)** *(classification reconciled 2026-08-23 to the stack doc + ticket-21 landing framing — Blueprint=DataGerry was mis-listed here as custom, and Scout was missing)*:
 - **Atlas** — core engine + API (FastAPI in the real arch; mocked in the playground). Owns the traversal API, authz enforcement, audit log, use-case step serving.
 - **Compass** — traversal UI (the product's differentiated value: graph exploration of the twin).
-- **Blueprint = DataGerry** — schema definition (Type/Field editor + sync bridge).
 - **DataGerry Bridge** — thin sync from DataGerry to Bedrock DDL + Atlas SchemaRegistry cache (a CronJob in the real arch).
+- **Scout** — residual connectors for genuinely bespoke internal systems the off-the-shelf ingestion catalog doesn't cover (small glue following the connector plugin interface, triggered by Airflow).
+
+**Schema authoring (off-the-shelf, codenamed):**
+- **Blueprint = DataGerry** — schema definition UI (Type/Field editor), AGPLv3 used unmodified (mock hides Section/Relation/Granularity richness — §4.8).
 
 **Orchestration / transform / lakehouse / serving (off-the-shelf, codenamed):**
 - **Trailhead = Airflow** — orchestration (DAGs).
@@ -81,7 +84,7 @@ A rebranded landing for nanisoft (decision 14 — restructure around the digital
 `what it is → how we build it → what it unlocks → our approach → try it in the playground`
 
 ### Sections
-1. **Hero** (decision 6, ticket 03) — a reactive, mouse-driven **digital-twin graph** hero: the directed DAG pipeline (§2 hero language), live + mouse-reactive, **no buttons** (pure spectacle). Wordmark + positioning line over it. Built with the validated stack (react-force-graph-2d or @xyflow/react for the DAG; client component — see §5 stack notes).
+1. **Hero** (decision 6, ticket 03) — a reactive, mouse-driven **digital-twin graph** hero: the directed DAG pipeline (§2 hero language), live + mouse-reactive, **no buttons** (pure spectacle). Wordmark + positioning line over it. *Executed stack note (ticket 19, 2026-08-23): hand-rolled SVG derived from `@nanisoft/architecture` — zero new dependencies, superseding the earlier react-force-graph-2d/@xyflow parenthetical; rationale matrix in `docs/superpowers/specs/2026-08-23-landing-hero-dag-design.md`.*
 2. **What it is** — the digital twin of an organization's IT estate, built via a multi-component datalake, so the org can see how its systems are connected and actually work. Access traversal is *one use-case*; more coming (decision 9).
 3. **How we build it** — the **architecture section** (decision 7): an interactive shared-spine, scroll-animated through `Schema → Ingestion → Transform → Investigation`, reusing `packages/architecture` (§1). Bridge CTA → playground.nanisoft.com.
 4. **What it unlocks** — use-cases (flagship: access traversal / Sensitive Product View Audit; more coming).
@@ -217,6 +220,8 @@ All other components (Airbyte, Forge, Bedrock, Watchtower, Anchor, Conveyor, Ope
 - **Playground step cadence** — ~1.1s/step in the prototype; tune at build.
 - **Seeded-dataset richness** — minimal seed is sufficient; a build-time tuning knob.
 - **Superset sandbox pre-run data** (surfaced by the 2026-08-23 audit) — the live store boots on `blankState()` whose Gold is empty until the flagship builds it (~step 10); `supersetDashboard` is cursor-independent and seed-ready at the pure-core level, but the pre-run dashboard renders empty charts. Decide: boot with seed-populated Gold vs. accept empty-before-run (§4.8 says "explorable before the flagship runs, from the seed").
+- **Spine-graph derivation dedupe** (surfaced by ticket 20, 2026-08-23) — the directed layout now exists twice: playground `_spine/spine-graph.ts` and landing `lib/spine-graph.ts`, both derived from the same model exports but shaped for different consumers (React Flow positions/handles vs SVG polylines + scroll-state reducer; landing's also carries a no-edge-crossing guard). Lift the shared core into `packages/architecture` and repoint both apps when next touched — deliberately not done during the 19–21 parallel batch (playground was out of bounds).
+- **Landing footer placeholder links** (18-era) — footer columns still carry generic placeholders (`Docs`, `Customer stories`, …); real destinations were out of scope for every ticket so far.
 
 **Taste flow to consult during execution (decision 8):** `design-taste-frontend` (landing redesign base, anti-slop, audit-first), `high-end-visual-design` (spectacle hero + mouse-reactive motion, haptic depth, micro-interactions), `ui-ux-pro-max` (shared design-token + motion database across both apps).
 
