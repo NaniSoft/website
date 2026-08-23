@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PHASES, type PhaseId } from '@nanisoft/architecture';
-import { font, radius } from '@nanisoft/identity';
+import { easing, font, radius } from '@nanisoft/identity';
 import { PillButton } from './PillButton';
 import {
   buildSectionGraph,
@@ -45,7 +45,6 @@ const PHASE_CAPTIONS: Record<PhaseId, ReactNode> = {
     'The twin is now queryable. Overlook surfaces the finding as a row, Compass draws it as edges, Superset charts it — governed by Atlas and OPA.',
 };
 
-const EASE = 'cubic-bezier(.32,.72,0,1)';
 const ACCENT = 'var(--color-accent)';
 const SECONDARY = 'var(--color-secondary)';
 
@@ -61,8 +60,10 @@ export function ArchitectureSection() {
   const graph = useMemo(() => buildSectionGraph(), []);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
-  // Reduced motion: settle immediately into the full four-phase end-state and
-  // never attach the scroll driver.
+  // Reduced motion: settle into the full four-phase end-state as soon as
+  // hydration allows (the global reduced-motion CSS makes the swap instant —
+  // no visible flip) and never attach the scroll driver. The check lives in an
+  // effect, not lazy state, so server and first client render agree.
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -96,9 +97,13 @@ export function ArchitectureSection() {
         });
       }
     };
+    // Compute once on entry so anchor links / scroll restoration land on the
+    // right phase without waiting for a scroll tick.
+    const initial = requestAnimationFrame(compute);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     return () => {
+      cancelAnimationFrame(initial);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
       if (raf) cancelAnimationFrame(raf);
@@ -189,7 +194,7 @@ export function ArchitectureSection() {
                           stroke: isSources ? 'transparent' : st === 'active' ? ACCENT : st === 'done' ? SECONDARY : 'var(--color-border)',
                           strokeWidth: st === 'active' ? 1.6 : 1,
                           strokeDasharray: isSources ? '4 4' : undefined,
-                          transition: `fill .35s ${EASE}, stroke .35s ${EASE}`,
+                          transition: `fill .35s ${easing}, stroke .35s ${easing}`,
                         }}
                       />
                       <text
@@ -204,7 +209,7 @@ export function ArchitectureSection() {
                           letterSpacing: '0.16em',
                           textTransform: 'uppercase',
                           fill: isSources ? 'var(--color-text-muted)' : 'var(--color-text)',
-                          transition: `fill .35s ${EASE}`,
+                          transition: `fill .35s ${easing}`,
                         }}
                       >
                         {b.name}
@@ -233,7 +238,7 @@ export function ArchitectureSection() {
                         stroke: st === 'idle' ? idleStroke : strokeFor(st),
                         strokeWidth: st === 'active' ? 2.2 : st === 'done' ? 1.8 : e.dotted ? 1.2 : 1.5,
                         strokeDasharray: st === 'active' ? '6 6' : e.dotted ? '2 5' : undefined,
-                        transition: `stroke .35s ${EASE}, stroke-width .35s ${EASE}`,
+                        transition: `stroke .35s ${easing}, stroke-width .35s ${easing}`,
                       }}
                     />
                   );
@@ -257,7 +262,7 @@ export function ArchitectureSection() {
                               : 'var(--color-bg-elev)',
                           stroke: strokeFor(st),
                           strokeWidth: st === 'active' ? 2 : st === 'done' ? 1.5 : 1,
-                          transition: `stroke .35s ${EASE}, fill .35s ${EASE}`,
+                          transition: `stroke .35s ${easing}, fill .35s ${easing}`,
                         }}
                       />
                       <text
@@ -318,9 +323,9 @@ export function ArchitectureSection() {
 
       <style>{`
         @keyframes arch-dash { to { stroke-dashoffset: -24; } }
-        .arch-edge-flow { animation: arch-dash 900ms ${EASE} infinite; }
+        .arch-edge-flow { animation: arch-dash 900ms ${easing} infinite; }
         @keyframes arch-caption-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-        .arch-caption { animation: arch-caption-in 450ms ${EASE} both; }
+        .arch-caption { animation: arch-caption-in 450ms ${easing} both; }
         @media (prefers-reduced-motion: reduce) {
           .arch-edge-flow, .arch-caption { animation: none !important; }
         }
