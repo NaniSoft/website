@@ -25,7 +25,7 @@ npm start
 ```
 
 ## Theming
-Theme is stored in `localStorage.sentinel-theme` as `light` | `dark` | `system`. The initial value is set by an inline script in `app/layout.tsx` before React hydrates, so there's no theme flash on hard reload.
+Theme is stored in `localStorage.nanisoft-theme` as `light` | `dark` | `system`. The initial value is set by an inline script in `app/layout.tsx` before React hydrates, so there's no theme flash on hard reload.
 
 Toggle from the top-right of the nav, or use the OS preference to follow the system.
 
