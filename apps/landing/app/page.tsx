@@ -2,6 +2,7 @@ import { TopNav } from '@/components/TopNav';
 import { Footer } from '@/components/Footer';
 import { Hero } from '@/components/Hero';
 import { Problem } from '@/components/Problem';
+import { ArchitectureSection } from '@/components/ArchitectureSection';
 import { Platform } from '@/components/Platform';
 import { UseCases } from '@/components/UseCases';
 import { Integrations } from '@/components/Integrations';
@@ -15,6 +16,7 @@ export default function Page() {
       <main id="main">
         <Hero />
         <Problem />
+        <ArchitectureSection />
         <Platform />
         <UseCases />
         <Integrations />
