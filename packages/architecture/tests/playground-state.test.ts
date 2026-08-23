@@ -7,6 +7,7 @@ import {
   importState,
   InvalidStateError,
   reduceToCursor,
+  SENSITIVE_PRODUCT_VIEW_AUDIT,
   type PlaybookStep,
 } from '../src/index';
 import { SEED } from '../src/dataset';
@@ -105,6 +106,27 @@ describe('export / import — SPEC §4.5 persistence', () => {
     const json = exportState(played);
     const back = importState(json);
     expect(back).toEqual(played);
+  });
+
+  // Ticket 17 criterion 4: export → reset → import of a COMPLETE flagship run
+  // must preserve the finding (the audit's whole point), the built Gold graph,
+  // and the audit log — not just cursor mechanics (covered by the fake above).
+  it('roundtrips a COMPLETE 22-step flagship run preserving the finding (ticket 17 criterion 4)', () => {
+    let played = blankState();
+    for (const step of SENSITIVE_PRODUCT_VIEW_AUDIT) played = applyStep(played, step);
+    const back = importState(exportState(played));
+    expect(back).toEqual(played);
+    expect(back.cursor).toBe(22);
+    expect(back.finding).toMatchObject({
+      user: 'j.harper',
+      product: 'P-1042',
+      productName: 'Payroll-NG',
+      sensitive: true,
+      missingMembership: true,
+    });
+    expect(back.gold.nodes).toHaveLength(5);
+    expect(back.gold.edges).toHaveLength(4);
+    expect(back.auditLog).toHaveLength(3);
   });
 
   it('rejects non-JSON', () => {
