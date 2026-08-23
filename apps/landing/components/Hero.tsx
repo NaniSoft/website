@@ -1,6 +1,5 @@
 import { HeroDag } from './hero/HeroDag';
 import { Wordmark } from './Wordmark';
-import { BRAND } from '@/lib/data';
 
 /**
  * The nanisoft hero (ticket 19 / SPEC §3.1): a reactive digital-twin pipeline

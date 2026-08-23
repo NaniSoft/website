@@ -106,9 +106,7 @@ const PLATFORM_IDS = COMPONENTS.filter(
   (c) => c.kind === 'platform' && !OBSERVER_COMPONENTS.includes(c.id),
 ).map((c) => c.id);
 
-interface RenderedIds extends Set<string> {}
-
-function renderedIds(): RenderedIds {
+function renderedIds(): Set<string> {
   return new Set([
     ...Object.values(STAGE_COMPONENTS).flat(),
     ...OBSERVER_COMPONENTS,

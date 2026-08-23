@@ -32,14 +32,6 @@ const FADE_OUT_MS = 520;
 /** Resting place of the settled wavefront: the Core column (Atlas's home). */
 const SETTLED_COL = 6;
 
-function prefersReducedMotion(): boolean {
-  try {
-    return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  } catch {
-    return false;
-  }
-}
-
 export function HeroDag() {
   const g = useMemo(() => buildHeroGraph(), []);
   const [reduced, setReduced] = useState(false);
@@ -217,6 +209,7 @@ export function HeroDag() {
         }}
       >
         <g className="hero-settle" style={{ animationDelay: `${Math.max(0, n.col) * 70}ms` }}>
+          <title>{`${n.component.codename}${sub ? ` (${sub})` : ''} — ${n.component.description}`}</title>
           <circle className="hero-ring" cx={n.cx} cy={n.cy} r={30} />
           <rect
             x={n.cx - n.w / 2}
@@ -239,7 +232,6 @@ export function HeroDag() {
               {sub}
             </text>
           )}
-          <title>{`${n.component.codename}${sub ? ` (${sub})` : ''} — ${n.component.description}`}</title>
         </g>
       </g>
     );
@@ -269,9 +261,10 @@ export function HeroDag() {
         </desc>
         <defs>
           <linearGradient id="hero-beam-grad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="var(--color-accent)" stopOpacity="0" />
-            <stop offset="0.5" stopColor="var(--color-accent)" stopOpacity="0.34" />
-            <stop offset="1" stopColor="var(--color-accent)" stopOpacity="0" />
+            {/* stop-color comes from CSS: var() does not resolve in attributes */}
+            <stop offset="0" className="hero-beam-stop" stopOpacity="0" />
+            <stop offset="0.5" className="hero-beam-stop" stopOpacity="0.34" />
+            <stop offset="1" className="hero-beam-stop" stopOpacity="0" />
           </linearGradient>
           <marker id="hero-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M 0 1 L 9 5 L 0 9 z" className="hero-arrow-body" />
@@ -392,9 +385,9 @@ export function HeroDag() {
           stroke-width: 1.5;
           filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-accent) 35%, transparent));
         }
-        .hero-label { font-size: 11.5px; fill: var(--color-text); transition: fill 200ms linear; }
-        .hero-node.is-active .hero-label { fill: var(--color-text); }
+        .hero-label { font-size: 11.5px; fill: var(--color-text); }
         .hero-sublabel { font-size: 8.5px; letter-spacing: 0.03em; fill: var(--color-text-muted); }
+        .hero-beam-stop { stop-color: var(--color-accent); }
 
         .hero-edge { stroke: var(--color-text-muted); stroke-width: 1.25; }
         .hero-edge.is-dotted { stroke-width: 1; stroke-dasharray: 2 5; }
