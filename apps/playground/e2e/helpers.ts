@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { color } from '@nanisoft/identity';
 
 /**
  * No-vision e2e helpers for the playground (ticket 17).
@@ -20,15 +21,8 @@ export interface ExportedState {
   [k: string]: unknown;
 }
 
-export interface StoreRead {
-  cursor: number;
-  running: boolean;
-  overlayComponent: string | null;
-  /** `exportJson()` of the live state at read time. */
-  json: string;
-}
-
-interface PlaygroundHook {
+/** Minimal shape of the dev-only store hook (`usePlayground.ts` sets it). */
+export interface PlaygroundHook {
   getState(): {
     state: { cursor: number };
     running: boolean;
@@ -36,6 +30,35 @@ interface PlaygroundHook {
     exportJson(): string;
     step(): void;
   };
+}
+
+/**
+ * Identity tokens arrive as hex; computed styles report rgb(). One converter,
+ * so specs never hardcode brand literals (the palette was retuned before).
+ */
+export function rgbOf(hex: string): string {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
+}
+
+/** The done-state border/text color, derived from the identity token. */
+export const TEAL_RGB = rgbOf(color.teal);
+
+/** Minimal shape of the exported PlaygroundState JSON the specs assert on. */
+export interface ExportedState {
+  cursor: number;
+  finding: Record<string, unknown> | null;
+  gold: { nodes: unknown[]; edges: unknown[] };
+  auditLog: unknown[];
+  [k: string]: unknown;
+}
+
+export interface StoreRead {
+  cursor: number;
+  running: boolean;
+  overlayComponent: string | null;
+  /** `exportJson()` of the live state at read time. */
+  json: string;
 }
 
 /**

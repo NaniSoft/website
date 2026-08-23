@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { makeConsoleCollector, readStore, resetViaUi } from './helpers';
+import { TEAL_RGB, makeConsoleCollector, readStore, resetViaUi, type PlaygroundHook } from './helpers';
 
 /**
  * Spec A — ticket 17 criterion 1: a complete auto-run of the 22-step flagship
@@ -8,9 +8,13 @@ import { makeConsoleCollector, readStore, resetViaUi } from './helpers';
  * Investigation phase band's computed done-color (teal), the visited tool
  * chips' border colors, and the live store (cursor/running). Console errors +
  * page errors are collected across the whole run and must be zero.
+ *
+ * Chip coverage note: five of the six mock tools sit ON the guided path and are
+ * asserted done-teal here. Superset is deliberately off-path (no playbook step
+ * carries `openTool: 'superset'` — SPEC §4.8 sandbox), so it never accumulates
+ * visited state; its reachability + rendering are proven in specs B/C via real
+ * chip clicks instead.
  */
-
-const TEAL_DONE = 'rgb(42, 140, 151)'; // color.teal — done chips/bands
 
 test('A — full auto-run: 22 steps, stops at the end, no console errors, spine shows the done state', async ({ page }) => {
   const collector = makeConsoleCollector(page);
@@ -24,9 +28,7 @@ test('A — full auto-run: 22 steps, stops at the end, no console errors, spine 
   // when it applies the last step (stop-at-end).
   await page.waitForFunction(
     () => {
-      const hook = (window as unknown as {
-        __playground?: { getState(): { state: { cursor: number }; running: boolean } };
-      }).__playground;
+      const hook = (window as unknown as { __playground?: PlaygroundHook }).__playground;
       return !!hook && hook.getState().state.cursor === 22 && !hook.getState().running;
     },
     { timeout: 90_000 },
@@ -48,7 +50,7 @@ test('A — full auto-run: 22 steps, stops at the end, no console errors, spine 
   await expect(band).toBeVisible();
   await expect
     .poll(async () => band.evaluate((el) => getComputedStyle(el).color), { timeout: 5_000 })
-    .toBe(TEAL_DONE);
+    .toBe(TEAL_RGB);
 
   // Every path tool node was visited (done = teal border): Blueprint (DataGerry),
   // Trailhead (Airflow), Atlas, Overlook (Trino), Compass.
@@ -56,6 +58,6 @@ test('A — full auto-run: 22 steps, stops at the end, no console errors, spine 
     const chip = page.getByRole('button', { name: `Open ${codename} mock` });
     await expect
       .poll(() => chip.evaluate((el) => getComputedStyle(el).borderColor), { timeout: 5_000 })
-      .toBe(TEAL_DONE);
+      .toBe(TEAL_RGB);
   }
 });

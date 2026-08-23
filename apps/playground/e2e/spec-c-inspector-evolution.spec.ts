@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { color } from '@nanisoft/identity';
 import { closeOverlay, openToolChip, resetViaUi, stepTo } from './helpers';
 
 /**
@@ -12,7 +13,7 @@ import { closeOverlay, openToolChip, resetViaUi, stepTo } from './helpers';
  * dashboard DATA after Gold exists. Resolving boot-from-seed is out of scope.
  */
 
-const JADE = '#14A77A'; // anomalous viewed edge stroke
+const JADE = color.jade; // anomalous viewed edge stroke (identity token)
 
 test('C — inspector evolves across 22 steps; three read lenses show the finding', async ({ page }) => {
   await page.goto('/');

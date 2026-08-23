@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { applyStep, SENSITIVE_PRODUCT_VIEW_AUDIT, type PlaygroundState } from '@nanisoft/architecture';
 import { closeOverlay, openToolChip, parseState, readStore, resetViaUi, stepTo } from './helpers';
 
@@ -21,7 +21,7 @@ import { closeOverlay, openToolChip, parseState, readStore, resetViaUi, stepTo }
 
 /** Perform a canonical action button and return { beforeJson, afterJson }. */
 async function performCanonicalAction(
-  page: import('@playwright/test').Page,
+  page: Page,
   codename: string,
   buttonName: string | RegExp,
 ): Promise<{ beforeJson: string; afterJson: string }> {
