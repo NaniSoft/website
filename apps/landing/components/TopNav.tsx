@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Layout, Menu, Button } from 'antd';
 import Link from 'next/link';
+import { Button } from 'antd';
 import { ThemeToggle } from './theme/ThemeToggle';
+import { Wordmark } from './Wordmark';
 import { BRAND } from '@/lib/data';
 
-const items = [
-  { key: 'platform', label: 'Platform' },
-  { key: 'solutions', label: 'Solutions' },
-  { key: 'resources', label: 'Resources' },
-  { key: 'pricing', label: 'Pricing' },
+// Anchors into the kept narrative sections (ticket 21 rewrites the copy).
+const NAV_ITEMS = [
+  { label: 'Platform', href: '#platform' },
+  { label: 'Use cases', href: '#use-cases' },
+  { label: 'Integrations', href: '#integrations' },
 ];
 
 export function TopNav() {
@@ -23,7 +24,7 @@ export function TopNav() {
   }, []);
 
   return (
-    <Layout.Header
+    <header
       style={{
         position: 'sticky',
         top: 0,
@@ -39,24 +40,37 @@ export function TopNav() {
         transition: 'background 200ms ease-out, border-color 200ms ease-out',
       }}
     >
-      <Link href="/" aria-label={BRAND.name} style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 18 }}>
-        <span
-          aria-hidden
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: 6,
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
-          }}
-        />
-        {BRAND.name}
+      <Link href="/" aria-label={BRAND.name} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <Wordmark height={26} />
+        <span aria-hidden className="top-nav-tagline-rule" style={{ width: 1, height: 16, background: 'var(--color-border)' }} />
+        <span className="top-nav-tagline" style={{ color: 'var(--color-text-muted)', fontSize: 13, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+          digital twin of the IT estate
+        </span>
       </Link>
-      <Menu mode="horizontal" items={items} selectable={false} style={{ flex: 1, background: 'transparent', borderBottom: 'none' }} />
+      <nav aria-label="Primary" className="top-nav-links" style={{ flex: 1, display: 'flex', gap: 20, marginLeft: 8 }}>
+        {NAV_ITEMS.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            style={{ color: 'var(--color-text-muted)', fontWeight: 500 }}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <ThemeToggle />
-        <Link href="/signin" style={{ color: 'var(--color-text-muted)' }}>Sign in</Link>
-        <Button type="primary" href="#final-cta">Request a demo</Button>
+        {/* Pill button — shape lock. */}
+        <Button type="primary" shape="round" href="#final-cta">Request a demo</Button>
       </div>
-    </Layout.Header>
+      <style>{`
+        @media (max-width: 1023px) {
+          .top-nav-links { display: none !important; }
+        }
+        @media (max-width: 639px) {
+          .top-nav-tagline, .top-nav-tagline-rule { display: none !important; }
+        }
+      `}</style>
+    </header>
   );
 }

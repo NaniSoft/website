@@ -42,7 +42,7 @@ describe('Accessibility smoke', () => {
       </ThemeProvider>
     );
     await flushAntd();
-    // Quick sanity: at least the brand and one avatar are labeled
-    expect(screen.getAllByLabelText(/Sentinel Lake/i).length).toBeGreaterThan(0);
+    // Quick sanity: the W1 wordmarks are labeled with the brand.
+    expect(screen.getAllByLabelText(/nanisoft/i).length).toBeGreaterThan(0);
   });
 });

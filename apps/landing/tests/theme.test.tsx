@@ -34,7 +34,7 @@ describe('ThemeProvider', () => {
     );
     act(() => { screen.getByText('dark').click(); });
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-    expect(localStorage.getItem('sentinel-theme')).toBe('dark');
+    expect(localStorage.getItem('nanisoft-theme')).toBe('dark');
   });
 
   it('ThemeToggle renders three options', () => {

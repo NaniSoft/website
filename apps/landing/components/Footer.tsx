@@ -1,11 +1,9 @@
-'use client';
-
-import { Layout } from 'antd';
 import { BRAND, FOOTER_LINKS } from '@/lib/data';
+import { Wordmark } from './Wordmark';
 
 export function Footer() {
   return (
-    <Layout.Footer
+    <footer
       style={{
         background: 'var(--color-bg-elev)',
         borderTop: '1px solid var(--color-border)',
@@ -20,17 +18,11 @@ export function Footer() {
           gridTemplateColumns: '1.5fr repeat(4, 1fr)',
           gap: 48,
         }}
+        className="footer-grid"
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 18, marginBottom: 12 }}>
-            <span
-              aria-hidden
-              style={{
-                width: 24, height: 24, borderRadius: 6,
-                background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
-              }}
-            />
-            {BRAND.name}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+            <Wordmark band="elevated" height={26} />
           </div>
           <p style={{ color: 'var(--color-text-muted)', maxWidth: 280 }}>{BRAND.tagline}</p>
         </div>
@@ -47,6 +39,7 @@ export function Footer() {
           </div>
         ))}
       </div>
+      <style>{`@media (max-width: 899px) { .footer-grid { grid-template-columns: repeat(2, 1fr) !important; } }`}</style>
       <div
         style={{
           maxWidth: 1200,
@@ -61,11 +54,11 @@ export function Footer() {
           gap: 12,
         }}
       >
-        <span>© 2026 {BRAND.name}, Inc. All rights reserved.</span>
+        <span>© 2026 {BRAND.name}. All rights reserved.</span>
         <span style={{ display: 'flex', gap: 24 }}>
           <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Status</a>
         </span>
       </div>
-    </Layout.Footer>
+    </footer>
   );
 }

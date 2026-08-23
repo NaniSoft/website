@@ -15,7 +15,18 @@ export function Platform() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 64 }} className="grid-4">
         {PLATFORM_FLOW.map((s) => (
           <Card key={s.step} variant="outlined" style={{ background: 'var(--color-bg-elev)' }}>
-            <Tag color="blue">{s.step}</Tag>
+            {/* Step number in the twin's data face — a supporting mark, not the accent. */}
+            <Tag
+              className="mono"
+              style={{
+                background: 'var(--color-bg-sunken)',
+                color: 'var(--color-text-muted)',
+                borderColor: 'var(--color-border)',
+                borderRadius: 'var(--radius-pill)',
+              }}
+            >
+              {s.step}
+            </Tag>
             <h3 style={{ fontSize: 22, fontWeight: 600, margin: '12px 0 8px' }}>{s.title}</h3>
             <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>{s.body}</p>
           </Card>

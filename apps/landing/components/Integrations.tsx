@@ -14,7 +14,7 @@ export function Integrations() {
         {INTEGRATIONS.map((i) => (
           <Card key={i.name} variant="outlined" style={{ background: 'var(--color-bg-elev)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div aria-hidden style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-bg-sunken)', display: 'grid', placeItems: 'center', fontWeight: 700 }}>
+              <div aria-hidden style={{ width: 40, height: 40, borderRadius: 'var(--radius-inner)', background: 'var(--color-bg-sunken)', display: 'grid', placeItems: 'center', fontWeight: 700 }}>
                 {i.name.slice(0, 1)}
               </div>
               <div>
