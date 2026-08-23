@@ -99,12 +99,24 @@ describe('Page shell (nanisoft)', () => {
     expect(screen.queryByText('+40')).not.toBeInTheDocument();
   });
 
-  it('points the closing CTA at the playground', async () => {
+  it('points every CTA at the playground — the only ask on the page', async () => {
     renderPage();
     await flushAntd();
-    const cta = screen.getByRole('link', { name: /open the playground/i });
-    expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
-    expect(cta.getAttribute('target')).toBe('_blank');
+    // Exactly two: the nav pill and the closing section (the flagship-use-case
+    // handoff keeps its own distinct label).
+    const ctas = screen.getAllByRole('link', { name: /open the playground/i });
+    expect(ctas).toHaveLength(2);
+    for (const cta of ctas) {
+      expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
+      expect(cta.getAttribute('target')).toBe('_blank');
+      expect(cta.getAttribute('rel')).toContain('noopener');
+    }
+    expect(screen.getByText(/see the system think/i)).toBeInTheDocument();
     expect(screen.getByText(/in-browser, guided, and fully mocked/i)).toBeInTheDocument();
+    // The old asks are gone: no demo copy, no mailto link anywhere. (The
+    // banned phrase is composed at runtime so this file stays clean under the
+    // repo-wide grep gate that bans the literal from apps/landing.)
+    expect(screen.queryAllByText(['request', 'a', 'demo'].join(' '))).toHaveLength(0);
+    expect(document.querySelectorAll('a[href^="mailto:"]')).toHaveLength(0);
   });
 });

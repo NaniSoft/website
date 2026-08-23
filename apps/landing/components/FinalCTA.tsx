@@ -11,7 +11,7 @@ export function FinalCTA() {
         <Typography.Title level={2} style={{ fontSize: 48, fontWeight: 700, margin: '0 0 24px' }}>
           {FINAL_CTA.h2}
         </Typography.Title>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+        <div>
           {/* External href → new tab, explicitly noopener (same convention as the UseCases link). */}
           <PillButton
             type="primary"
@@ -22,9 +22,8 @@ export function FinalCTA() {
           >
             {FINAL_CTA.primary.label}
           </PillButton>
-          <PillButton size="large" href={FINAL_CTA.secondary.href}>{FINAL_CTA.secondary.label}</PillButton>
         </div>
-        <div style={{ color: 'var(--color-text-muted)' }}>{FINAL_CTA.footnote}</div>
+        <div style={{ marginTop: 16, color: 'var(--color-text-muted)' }}>{FINAL_CTA.footnote}</div>
       </div>
     </section>
   );

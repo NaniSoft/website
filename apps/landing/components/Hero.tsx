@@ -3,7 +3,8 @@ import { Wordmark } from './Wordmark';
 
 /**
  * The nanisoft hero (ticket 19 / SPEC §3.1): a reactive digital-twin pipeline
- * graph as pure spectacle — no buttons, no CTA (FinalCTA owns demo requests) —
+ * graph as pure spectacle — no buttons, no CTA (the playground ask lives in
+ * the nav pill and the closing section) —
  * with the W1 wordmark and positioning line overlaid. The wordmark wrapper is
  * decorative here: TopNav carries the brand announcement for assistive tech,
  * so the page keeps exactly two labeled marks.

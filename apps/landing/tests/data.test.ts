@@ -77,9 +77,24 @@ describe('data module', () => {
     expect(INTEGRATIONS_NOTE).toMatch(/unmodified/i);
   });
 
-  it('points the primary CTA at the playground and keeps a demo request', () => {
-    expect(FINAL_CTA.primary.href).toBe('https://playground.nanisoft.com');
-    expect(FINAL_CTA.secondary.label.toLowerCase()).toContain('demo');
+  it('offers exactly one ask: open the playground', () => {
+    expect(FINAL_CTA.h2).toBe('See the system think.');
+    expect(FINAL_CTA.primary).toEqual({
+      label: 'Open the playground',
+      href: 'https://playground.nanisoft.com',
+    });
+    // No secondary/demo field survives the reshape.
+    expect(Object.keys(FINAL_CTA)).toEqual(['h2', 'primary', 'footnote']);
+  });
+
+  it('carries no demo or mailto ask anywhere in the copy constants', () => {
+    const dump = JSON.stringify([
+      BRAND, PROBLEM_CARDS, PLATFORM_FLOW,
+      PLATFORM_FEATURES, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
+      BUILT_IN_HOUSE, INTEGRATIONS_NOTE, FINAL_CTA, FOOTER_LINKS,
+    ]).toLowerCase();
+    expect(dump.includes('demo')).toBe(false);
+    expect(dump.includes('mailto')).toBe(false);
   });
 
   it('footer has 4 link columns', () => {

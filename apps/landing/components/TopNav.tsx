@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ThemeToggle } from './theme/ThemeToggle';
 import { Wordmark } from './Wordmark';
 import { PillButton } from './PillButton';
-import { BRAND } from '@/lib/data';
+import { BRAND, FINAL_CTA } from '@/lib/data';
 
 // Anchors into the kept narrative sections (ticket 21 rewrites the copy).
 const NAV_ITEMS = [
@@ -61,7 +61,16 @@ export function TopNav() {
       </nav>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <ThemeToggle />
-        <PillButton type="primary" href="#final-cta">Request a demo</PillButton>
+        {/* The only ask on the site: explore the playground (external href →
+            new tab, explicitly noopener — same convention as FinalCTA). */}
+        <PillButton
+          type="primary"
+          href={FINAL_CTA.primary.href}
+          target={FINAL_CTA.primary.href.startsWith('http') ? '_blank' : undefined}
+          rel={FINAL_CTA.primary.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+        >
+          {FINAL_CTA.primary.label}
+        </PillButton>
       </div>
       <style>{`
         @media (max-width: 1023px) {

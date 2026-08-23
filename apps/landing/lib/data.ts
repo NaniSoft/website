@@ -123,14 +123,14 @@ export const BUILT_IN_HOUSE: readonly CustomComponent[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Try it in the playground (FinalCTA)
+// See the system think (FinalCTA) — the page's only ask
 // ---------------------------------------------------------------------------
 
 export const FINAL_CTA = {
-  h2: 'Try it in the playground.',
+  h2: 'See the system think.',
   primary: { label: 'Open the playground', href: 'https://playground.nanisoft.com' },
-  secondary: { label: 'Request a demo', href: 'mailto:hello@nanisoft.com' },
-  footnote: 'In-browser, guided, and fully mocked — nothing to install.',
+  footnote:
+    'In-browser, guided, and fully mocked — nothing to install. Watch a query traverse the twin end to end.',
 };
 
 export const FOOTER_LINKS = {
