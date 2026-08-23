@@ -12,12 +12,13 @@ export function FinalCTA() {
           {FINAL_CTA.h2}
         </Typography.Title>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
-          {/* External href → new tab (browsers imply noopener for target="_blank"). */}
+          {/* External href → new tab, explicitly noopener (same convention as the UseCases link). */}
           <PillButton
             type="primary"
             size="large"
             href={FINAL_CTA.primary.href}
             target={FINAL_CTA.primary.href.startsWith('http') ? '_blank' : undefined}
+            rel={FINAL_CTA.primary.href.startsWith('http') ? 'noopener noreferrer' : undefined}
           >
             {FINAL_CTA.primary.label}
           </PillButton>

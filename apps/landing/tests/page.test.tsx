@@ -79,6 +79,8 @@ describe('Page shell (nanisoft)', () => {
     expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
     const section = document.getElementById('use-cases');
     expect(section?.querySelectorAll('a[href="#"]')).toHaveLength(0);
+    const finalSection = document.getElementById('final-cta');
+    expect(finalSection?.querySelectorAll('a[href="#"]')).toHaveLength(0);
     const more = screen.getByRole('link', { name: /see the flagship run today in the playground/i });
     expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
   });

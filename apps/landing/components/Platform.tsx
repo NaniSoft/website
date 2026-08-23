@@ -40,7 +40,7 @@ export function Platform() {
           </Card>
         ))}
       </div>
-      {/* Hands the reader down into the architecture walkthrough (Agent 2's section below this one). */}
+      {/* Hands the reader down into the architecture walkthrough, the section below this one. */}
       <p style={{ color: 'var(--color-text-muted)', maxWidth: 640 }}>
         That’s the data path. The next section walks the full pipeline — every component, from source systems to Compass.
       </p>
