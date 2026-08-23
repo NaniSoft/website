@@ -26,3 +26,7 @@ CLAUDE.md
 # OpenNext (Cloudflare Workers) build output + wrangler local state
 .open-next/
 .wrangler/
+
+# Playwright output (apps/playground)
+test-results/
+playwright-report/
