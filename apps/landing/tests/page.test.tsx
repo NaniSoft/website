@@ -82,4 +82,15 @@ describe('Page shell (nanisoft)', () => {
     const more = screen.getByRole('link', { name: /see the flagship run today in the playground/i });
     expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
   });
+
+  it('states the approach: sixteen off-the-shelf products, four built in-house', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/Sixteen proven open-source products carry the platform/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Built in-house' })).toBeInTheDocument();
+    for (const name of ['Atlas', 'Compass', 'DataGerry Bridge', 'Scout']) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    expect(screen.queryByText('+40')).not.toBeInTheDocument();
+  });
 });
