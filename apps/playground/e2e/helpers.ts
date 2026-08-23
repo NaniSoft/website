@@ -44,15 +44,6 @@ export function rgbOf(hex: string): string {
 /** The done-state border/text color, derived from the identity token. */
 export const TEAL_RGB = rgbOf(color.teal);
 
-/** Minimal shape of the exported PlaygroundState JSON the specs assert on. */
-export interface ExportedState {
-  cursor: number;
-  finding: Record<string, unknown> | null;
-  gold: { nodes: unknown[]; edges: unknown[] };
-  auditLog: unknown[];
-  [k: string]: unknown;
-}
-
 export interface StoreRead {
   cursor: number;
   running: boolean;
