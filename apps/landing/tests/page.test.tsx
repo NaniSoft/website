@@ -93,4 +93,13 @@ describe('Page shell (nanisoft)', () => {
     }
     expect(screen.queryByText('+40')).not.toBeInTheDocument();
   });
+
+  it('points the closing CTA at the playground', async () => {
+    renderPage();
+    await flushAntd();
+    const cta = screen.getByRole('link', { name: /open the playground/i });
+    expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
+    expect(cta.getAttribute('target')).toBe('_blank');
+    expect(screen.getByText(/in-browser, guided, and fully mocked/i)).toBeInTheDocument();
+  });
 });
