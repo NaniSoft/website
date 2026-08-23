@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import Page from '@/app/page';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
@@ -90,8 +90,11 @@ describe('Page shell (nanisoft)', () => {
     await flushAntd();
     expect(screen.getByText(/Sixteen proven open-source products carry the platform/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Built in-house' })).toBeInTheDocument();
+    // Scope to the Integrations section: the hero DAG and the architecture
+    // section also render "Atlas"/"Compass" as SVG node labels.
+    const integrations = within(document.getElementById('integrations') as HTMLElement);
     for (const name of ['Atlas', 'Compass', 'DataGerry Bridge', 'Scout']) {
-      expect(screen.getByText(name)).toBeInTheDocument();
+      expect(integrations.getByText(name)).toBeInTheDocument();
     }
     expect(screen.queryByText('+40')).not.toBeInTheDocument();
   });

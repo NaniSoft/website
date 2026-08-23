@@ -2,8 +2,8 @@ import { TopNav } from '@/components/TopNav';
 import { Footer } from '@/components/Footer';
 import { Hero } from '@/components/Hero';
 import { Problem } from '@/components/Problem';
-import { ArchitectureSection } from '@/components/ArchitectureSection';
 import { Platform } from '@/components/Platform';
+import { ArchitectureSection } from '@/components/ArchitectureSection';
 import { UseCases } from '@/components/UseCases';
 import { Integrations } from '@/components/Integrations';
 import { FinalCTA } from '@/components/FinalCTA';
@@ -16,8 +16,9 @@ export default function Page() {
       <main id="main">
         <Hero />
         <Problem />
-        <ArchitectureSection />
         <Platform />
+        {/* Interactive pipeline walkthrough — Platform's copy hands off into this section. */}
+        <ArchitectureSection />
         <UseCases />
         <Integrations />
         <FinalCTA />

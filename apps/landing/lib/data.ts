@@ -5,25 +5,6 @@ export const BRAND = {
   tagline: 'Digital twin of the IT estate.',
 } as const;
 
-export const HERO = {
-  eyebrow: 'Security Knowledge Graph · v2.4',
-  h1: 'See every asset, identity, and event in one temporal model.',
-  sub:
-    'nanisoft unifies IT, HR, IAM, cloud, and security telemetry into a single queryable graph — and lets AI agents answer your hardest forensic questions in seconds.',
-  primaryCta: { label: 'Request a demo', href: '#final-cta' },
-  trustCaption: 'Trusted by security teams at',
-  metrics: [
-    { label: 'events/day', value: '12 B' },
-    { label: 'entities', value: '47 M' },
-    { label: 'p95 query', value: '<200 ms' },
-  ],
-} as const;
-
-// Placeholder customer logos — render as text marks. Replace with real SVGs in production.
-export const CUSTOMER_LOGOS: readonly string[] = [
-  'Northwind', 'Helios', 'Aperture', 'Cascade', 'Meridian', 'Polaris', 'Vector', 'Lumen',
-];
-
 // ---------------------------------------------------------------------------
 // What it is (Problem)
 // ---------------------------------------------------------------------------

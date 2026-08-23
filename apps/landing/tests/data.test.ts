@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   BRAND,
-  HERO,
-  CUSTOMER_LOGOS,
   PROBLEM_CARDS,
   PLATFORM_FLOW,
   PLATFORM_FEATURES,
@@ -23,7 +21,7 @@ describe('data module', () => {
 
   it('carries no Sentinel/TrueAccess branding in any copy constant', () => {
     const dump = JSON.stringify([
-      BRAND, HERO, CUSTOMER_LOGOS, PROBLEM_CARDS, PLATFORM_FLOW,
+      BRAND, PROBLEM_CARDS, PLATFORM_FLOW,
       PLATFORM_FEATURES, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
       BUILT_IN_HOUSE, INTEGRATIONS_NOTE, FINAL_CTA, FOOTER_LINKS,
     ]);
@@ -82,10 +80,6 @@ describe('data module', () => {
   it('points the primary CTA at the playground and keeps a demo request', () => {
     expect(FINAL_CTA.primary.href).toBe('https://playground.nanisoft.com');
     expect(FINAL_CTA.secondary.label.toLowerCase()).toContain('demo');
-  });
-
-  it('hero has a primary CTA', () => {
-    expect(HERO.primaryCta.label).toBeTruthy();
   });
 
   it('footer has 4 link columns', () => {
