@@ -64,4 +64,11 @@ describe('Page shell (nanisoft)', () => {
     // No Sentinel branding anywhere on the rendered surface.
     expect(screen.queryAllByText(/Sentinel/i)).toHaveLength(0);
   });
+
+  it('hands off from the datalake path into the architecture walkthrough', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/the next section walks the full pipeline/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /built like a lakehouse/i })).toBeInTheDocument();
+  });
 });

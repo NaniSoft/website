@@ -15,10 +15,10 @@ export function Problem() {
   return (
     <section id="problem" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
       <h2 style={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
-        Most security data lives in silos. The answers shouldn&apos;t have to.
+        nanisoft builds a digital twin of your IT estate.
       </h2>
       <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 640, marginBottom: 48 }}>
-        Stitching evidence across IT, HR, IAM, cloud, and security tools is slow, lossy, and brittle.
+        Systems, people, and permissions modeled in one place, so you can see how your estate is connected — and how it actually works.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="grid-3">
         {PROBLEM_CARDS.map((c) => (
