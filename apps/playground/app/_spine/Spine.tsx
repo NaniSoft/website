@@ -1,7 +1,7 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   MarkerType,
   ReactFlow,
@@ -11,10 +11,11 @@ import {
   type Edge as RFEdge,
   type EdgeTypes,
   type Node as RFNode,
+  type NodeMouseHandler,
   type NodeTypes,
 } from '@xyflow/react';
 import { color, surface } from '@nanisoft/identity';
-import { PHASES, SENSITIVE_PRODUCT_VIEW_AUDIT, beckonToolId, deriveStatus } from '@nanisoft/architecture';
+import { COMPONENT_BY_ID, PHASES, SENSITIVE_PRODUCT_VIEW_AUDIT, beckonToolId, deriveStatus } from '@nanisoft/architecture';
 import { buildSpineGraph, type SpineEdge, type SpineNode } from './spine-graph';
 import { NodeChip, CHIP_W, CHIP_H, type NodeStatus } from './NodeChip';
 import { PhaseBand, type PhaseStatus } from './PhaseBand';
@@ -145,6 +146,22 @@ function SpineInner() {
     return () => cancelAnimationFrame(raf);
   }, [fitView, openId]);
 
+  // React Flow disables pointer events on a node wrapper unless the node is
+  // selectable/draggable/interactive — this graph sets none of those (the click
+  // handling lives inside NodeChip), which left every tool chip unclickable:
+  // real pointer events fell through to the pane (caught by e2e spec B).
+  // Passing onNodeClick restores wrapper pointer events AND routes node clicks
+  // through the store; it duplicates the chip's own onClick harmlessly (same
+  // idempotent openTool) and keeps keyboard activation on the chip untouched.
+  const onNodeClick = useCallback<NodeMouseHandler>(
+    (_, node) => {
+      if (node.type !== 'chip') return;
+      const component = COMPONENT_BY_ID[node.id];
+      if (component?.fullUi) openTool(component.id);
+    },
+    [openTool],
+  );
+
   return (
     <ReactFlow
       nodes={nodes.map((n) =>
@@ -153,6 +170,7 @@ function SpineInner() {
       edges={edges.map((e) => toRFEdge(e, activeEdgeId, status.doneEdgeIds))}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
+      onNodeClick={onNodeClick}
       onPaneClick={closeTool}
       fitView
       fitViewOptions={{ padding: 0.2 }}

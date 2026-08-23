@@ -27,6 +27,11 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3001',
     trace: 'retain-on-failure',
+    // Desktop-class viewport: the spine graph is authored for desktop widths
+    // (React Flow's minZoom clamp means it needs a ~1100px+ spine card to fit,
+    // i.e. a ≳1540px window beside the inspector rail). The default 1280x720
+    // clips the leftmost nodes half-out of the canvas.
+    viewport: { width: 1680, height: 900 },
   },
   webServer: {
     command: 'pnpm dev',

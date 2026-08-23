@@ -76,12 +76,13 @@ export async function stepTo(page: Page, target: number): Promise<void> {
     const { cursor } = await readStore(page);
     if (cursor >= target) return;
     await page.getByRole('button', { name: 'Step →' }).click();
+    // One click advances exactly one step; wait past the cursor we started from.
     await page.waitForFunction(
-      (t) => {
+      (from) => {
         const hook = (window as unknown as { __playground?: PlaygroundHook | undefined }).__playground;
-        return !!hook && hook.getState().state.cursor >= (t as number);
+        return !!hook && hook.getState().state.cursor > (from as number);
       },
-      target,
+      cursor,
     );
   }
   throw new Error(`stepTo(${target}) did not converge in 40 clicks`);
