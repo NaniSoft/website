@@ -80,10 +80,7 @@ export function Hero() {
             inset: auto;
             order: 2;
             height: 340px;
-            overflow-x: auto;
-            overflow-y: hidden;
           }
-          .hero-canvas svg { min-width: 900px; }
           .hero-overlay { order: 1; }
           .hero-wordmark { height: 44px; }
           .hero-wordmark .wordmark { height: 44px; }
