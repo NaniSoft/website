@@ -34,7 +34,10 @@ export function Controls() {
     padding: '8px 16px',
     borderRadius: 9999,
   };
-  const primary: React.CSSProperties = { ...btn, background: color.jade, color: surface.light.bg, borderColor: color.jade };
+  // Full `border` shorthand (not `borderColor`) so the Run/Pause toggle never
+  // mixes shorthand + longhand across rerenders — React errors on that diff
+  // ("can lead to styling bugs"), caught by e2e spec A.
+  const primary: React.CSSProperties = { ...btn, background: color.jade, color: surface.light.bg, border: `1px solid ${color.jade}` };
   const disabled: React.CSSProperties = { ...btn, opacity: 0.4, cursor: 'not-allowed' };
 
   function onExport() {

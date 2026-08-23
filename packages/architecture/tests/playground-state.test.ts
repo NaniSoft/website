@@ -98,6 +98,23 @@ describe('deriveStatus — SPEC §4.3 reactivity', () => {
     expect(st.doneEdgeIds.has('blueprint__bridge')).toBe(true);
     expect(st.doneEdgeIds.has('bridge__bedrock')).toBe(true);
   });
+
+  // Ticket 17 spec A caught this: a step's beckoned tool participates in the
+  // step, so once the step applies its node is visited — even when it is NOT
+  // the actor. Airflow/Trailhead is the one such node (steps 5–7 act as
+  // `airbyte`; step 7's openTool is `trailhead`), so without this the Trailhead
+  // chip alone never reflects the run.
+  it('openTool nodes count as visited once their step applies (trailhead via step 7)', () => {
+    const before = deriveStatus(SENSITIVE_PRODUCT_VIEW_AUDIT, 6);
+    expect(before.doneNodeIds.has('trailhead')).toBe(false); // step 7 not yet applied
+    const after = deriveStatus(SENSITIVE_PRODUCT_VIEW_AUDIT, 7);
+    expect(after.doneNodeIds.has('trailhead')).toBe(true);
+    expect(after.activeNodeId).toBe('airbyte'); // actor still lights jade
+    const end = deriveStatus(SENSITIVE_PRODUCT_VIEW_AUDIT, 22);
+    for (const tool of ['blueprint', 'trailhead', 'atlas', 'overlook', 'compass']) {
+      expect(end.doneNodeIds.has(tool), tool).toBe(true);
+    }
+  });
 });
 
 describe('export / import — SPEC §4.5 persistence', () => {

@@ -125,9 +125,13 @@ export function reduceToCursor(steps: readonly PlaybookStep[], target: number): 
 
 /**
  * Derive spine reactivity status from the cursor. `doneNodeIds`/`doneEdgeIds`
- * include every applied step's actor/edge (including the currently-active one);
- * the spine renders active > done > idle so an edge that is both shows active.
- * At cursor === steps.length there is no active step (run complete, all done).
+ * include every applied step's actor/edge (including the currently-active one)
+ * plus each applied step's `openTool` node — a beckoned tool participates in
+ * its step, so it counts as visited once the step applies even when it is not
+ * the actor (Airflow/Trailhead: steps 5–7 act as `airbyte`, step 7 beckons
+ * `trailhead`). The spine renders active > done > idle so an edge that is both
+ * shows active. At cursor === steps.length there is no active step (run
+ * complete, all done).
  */
 export function deriveStatus(steps: readonly PlaybookStep[], cursor: number): StepStatus {
   const doneNodeIds = new Set<string>();
@@ -136,6 +140,7 @@ export function deriveStatus(steps: readonly PlaybookStep[], cursor: number): St
   for (let i = 0; i < applied; i++) {
     const s = steps[i];
     doneNodeIds.add(s.actor);
+    if (s.openTool) doneNodeIds.add(s.openTool);
     if (s.edge) doneEdgeIds.add(`${s.edge[0]}__${s.edge[1]}`);
   }
   let activeNodeId: string | null = null;
