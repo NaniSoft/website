@@ -22,7 +22,6 @@ import {
   color,
   easing,
   font,
-  motion,
   radius,
   role,
   withReducedMotion,

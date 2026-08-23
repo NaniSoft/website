@@ -465,7 +465,7 @@ export function HeroFlow() {
           <text
             className="mono hf-gloss"
             x={L.kind === 'vertical' ? L.width / 2 : 92}
-            y={L.kind === 'vertical' ? 20 : 266}
+            y={L.kind === 'vertical' ? 16 : 266}
             textAnchor="middle"
           >
             Raw estate

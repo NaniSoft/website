@@ -25,6 +25,7 @@ export function TopNav() {
 
   return (
     <header
+      className="site-header"
       style={{
         position: 'sticky',
         top: 0,
@@ -76,8 +77,22 @@ export function TopNav() {
         @media (max-width: 1023px) {
           .top-nav-links { display: none !important; }
         }
-        @media (max-width: 639px) {
+        /* Tagline hides below md: with it shown, the row's min-content is
+           ~643px, which clipped 640–659px viewports (task 5 [A] sweep). */
+        @media (max-width: 767px) {
           .top-nav-tagline, .top-nav-tagline-rule { display: none !important; }
+        }
+        @media (max-width: 639px) {
+          /* Below 640px even brand + toggle + "Open the playground" pill
+             (~500px min-content) exceed the viewport, so the ask group wraps
+             to its own line instead of clipping the pill (task 5 [A]).
+             !important beats the inline flex/height. */
+          .site-header {
+            flex-wrap: wrap !important;
+            height: auto !important;
+            min-height: 64px;
+            row-gap: 4px !important;
+          }
         }
       `}</style>
     </header>

@@ -129,7 +129,7 @@ describe('Hero motion contract', () => {
     const root = document.querySelector('.hero-flow');
     expect(root?.getAttribute('data-orientation')).toBe('vertical');
     const svg = root?.querySelector('svg');
-    expect(svg?.getAttribute('viewBox')).toBe('0 0 340 620');
+    expect(svg?.getAttribute('viewBox')).toBe('0 0 340 536');
     // Message identical on every device.
     expect(screen.getByText('Who can reach this system?')).toBeInTheDocument();
     expect(screen.getByText('Serve')).toBeInTheDocument();

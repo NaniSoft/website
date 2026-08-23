@@ -64,17 +64,30 @@ async function measure(page: Page): Promise<Report> {
   });
 }
 
-for (const vp of VIEWPORTS) {
-  for (const path of PATHS) {
-    test(`${path} @ ${vp.width}×${vp.height}`, async ({ page }) => {
-      await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto(path);
-      await page.evaluate(() => document.fonts.ready);
-      const m = await measure(page);
-      const where = `${path} @ ${vp.width}×${vp.height}`;
-      const hint = m.offenders.length ? ` — offenders: ${m.offenders.join(' | ')}` : '';
-      expect(m.de[0], `documentElement ${where}${hint}`).toBeLessThanOrEqual(m.de[1]);
-      expect(m.se[0], `scrollingElement ${where}${hint}`).toBeLessThanOrEqual(m.se[1]);
-    });
+/** Both modes must obey the law (task 5): the shared nanisoft-theme storage
+ *  key is pre-seeded before load, and data-theme asserts the mode engaged. */
+const THEMES = ['light', 'dark'] as const;
+
+for (const theme of THEMES) {
+  for (const vp of VIEWPORTS) {
+    for (const path of PATHS) {
+      test(`${path} @ ${vp.width}×${vp.height} [${theme}]`, async ({ page }) => {
+        await page.addInitScript(
+          (t) => localStorage.setItem('nanisoft-theme', t),
+          theme,
+        );
+        await page.setViewportSize({ width: vp.width, height: vp.height });
+        await page.goto(path);
+        await page.evaluate(() => document.fonts.ready);
+        // Guard: if the mode didn't engage, the "dark" run silently measured
+        // light. Assert it before trusting the geometry.
+        expect(await page.locator('html').getAttribute('data-theme')).toBe(theme);
+        const m = await measure(page);
+        const where = `${path} @ ${vp.width}×${vp.height} [${theme}]`;
+        const hint = m.offenders.length ? ` — offenders: ${m.offenders.join(' | ')}` : '';
+        expect(m.de[0], `documentElement ${where}${hint}`).toBeLessThanOrEqual(m.de[1]);
+        expect(m.se[0], `scrollingElement ${where}${hint}`).toBeLessThanOrEqual(m.se[1]);
+      });
+    }
   }
 }

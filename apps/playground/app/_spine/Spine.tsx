@@ -15,7 +15,7 @@ import {
   type NodeTypes,
 } from '@xyflow/react';
 import { color } from '@nanisoft/identity';
-import { COMPONENT_BY_ID, PHASES, SENSITIVE_PRODUCT_VIEW_AUDIT, beckonToolId, deriveStatus } from '@nanisoft/architecture';
+import { COMPONENT_BY_ID, SENSITIVE_PRODUCT_VIEW_AUDIT, beckonToolId, deriveStatus } from '@nanisoft/architecture';
 import { buildSpineGraph, type SpineEdge, type SpineNode } from './spine-graph';
 import { NodeChip, CHIP_W, CHIP_H, type NodeStatus } from './NodeChip';
 import { PhaseBand, type PhaseStatus } from './PhaseBand';
@@ -32,10 +32,6 @@ const PETROL_SOFT = color.petrolSoft; // solid idle data-flow edges
 const PETROL_TINT = color.petrolTint; // dotted idle platform/observe edges
 const JADE = color.jade;              // active edge
 const TEAL = color.teal;              // done edge
-
-function orderOf(phaseId: string): number {
-  return PHASES.findIndex((p) => p.id === phaseId);
-}
 
 function chipStatus(id: string, active: string | null, done: Set<string>): NodeStatus {
   if (id === active) return 'active';

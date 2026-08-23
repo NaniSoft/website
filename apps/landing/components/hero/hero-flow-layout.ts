@@ -5,7 +5,7 @@
  *   horizontal (desktop ≥720px): sources → Land → Conform → Graph → Serve,
  *     left → right, viewBox ≈ 1000×340;
  *   vertical (narrow <720px): the same stages stacked top → bottom, sources
- *     as a row on top, viewBox ≈ 340×620 — sized so the SVG scales to a
+ *     as a row on top, viewBox ≈ 340×536 — sized so the SVG scales to a
  *     320px-wide content box without ever widening the document.
  *
  * No React, no DOM. HeroFlow.tsx renders this and drives motion from it;
@@ -169,10 +169,13 @@ function buildHorizontal(): FlowLayout {
 
 function buildVertical(): FlowLayout {
   const width = 340;
-  const height = 620;
+  // Compressed vertical budget (task 5 [B]): 86px station pitch (40px clear
+  // between 46px faces — tight but uncrammed) puts the Serve payoff ~80px
+  // closer to a 375×667 first fold than the original 100px-pitch 620 layout.
+  const height = 536;
 
   // Sources as one row across the top (fits a 272px content box when scaled).
-  const sourceCy = 52;
+  const sourceCy = 44;
   const sources: FlowSource[] = SOURCE_NAMES.map((name, i) => ({
     id: `src-${name.toLowerCase()}`,
     name,
@@ -182,9 +185,9 @@ function buildVertical(): FlowLayout {
     h: 34,
   }));
 
-  // Land's top edge (cy 180 − half of chip height 46).
-  const landTop = 157;
-  const stationCys = [180, 280, 380, 476];
+  // Land's top edge (cy 142 − half of chip height 46).
+  const landTop = 119;
+  const stationCys = [142, 228, 314, 400];
   const stations: FlowStation[] = STATIONS.map((s, i) => ({
     ...s,
     cx: 170,
@@ -195,7 +198,7 @@ function buildVertical(): FlowLayout {
 
   // Feeds drop from each source and fan into Land's top; staggered turn
   // heights keep the three strokes from sharing a lane.
-  const turnYs = [112, 0, 124]; // middle source runs straight down
+  const turnYs = [88, 0, 100]; // middle source runs straight down
   const feedWaypoints: FlowPoint[][] = sources.map((src, i) =>
     i === 1
       ? [
@@ -240,15 +243,15 @@ function buildVertical(): FlowLayout {
     // The twin glyph sits beside the Gold chip.
     twin: {
       nodes: [
-        { x: 277, y: 372 },
-        { x: 305, y: 388 },
+        { x: 277, y: 306 },
+        { x: 305, y: 322 },
       ],
       line: [
-        { x: 277, y: 372 },
-        { x: 305, y: 388 },
+        { x: 277, y: 306 },
+        { x: 305, y: 322 },
       ],
     },
-    answer: { cx: 170, cy: 566, w: 280, h: 62 },
+    answer: { cx: 170, cy: 492, w: 280, h: 62 },
     ringR: 28,
   };
 }

@@ -30,7 +30,7 @@ Theme is stored in `localStorage.sentinel-theme` as `light` | `dark` | `system`.
 Toggle from the top-right of the nav, or use the OS preference to follow the system.
 
 ## Project layout
-- `app/` — Next.js App Router entry, layout, page composition, demo API
+- `app/` — Next.js App Router entry, layout, page composition
 - `components/` — all UI sections; `components/theme/` for theming primitives
 - `lib/` — typed copy/data (data.ts), KG nodes/edges (graph-data.ts), chat transcripts (chat-transcripts.ts)
 - `tests/` — Vitest suites
@@ -38,4 +38,4 @@ Toggle from the top-right of the nav, or use the OS preference to follow the sys
 ## Notes
 - All customer/company references are placeholders.
 - KG data is a hand-curated sample illustrating the concept.
-- The demo-request CTA posts to `/api/demo-request` which returns `{ ok: true }`.
+- There is no sales surface or API layer: the single ask is the nav's “Open the playground” pill, which links out to the playground app.
