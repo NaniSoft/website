@@ -1,6 +1,5 @@
 import { render, screen, act, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { COMPONENTS, OBSERVER_COMPONENTS, STAGE_COMPONENTS } from '@nanisoft/architecture';
 import Page from '@/app/page';
 import { Hero } from '@/components/Hero';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
@@ -16,11 +15,15 @@ async function flushAntd() {
 
 type MqListener = (event: { matches: boolean }) => void;
 
-/** Replace the setup.ts matchMedia stub with one reporting a fixed preference. */
-function mockMatchMedia(matches: boolean) {
+/**
+ * Replace the setup.ts matchMedia stub. `pick` decides which queries report
+ * matches:true (e.g. `(prefers-reduced-motion: reduce)` or
+ * `(max-width: 719px)`), everything else reports false.
+ */
+function mockMatchMedia(pick: (query: string) => boolean) {
   const listeners = new Set<MqListener>();
   const mq = (query: string) => ({
-    matches,
+    matches: pick(query),
     media: query,
     onchange: null,
     addListener: vi.fn(),
@@ -30,75 +33,61 @@ function mockMatchMedia(matches: boolean) {
     dispatchEvent: vi.fn(),
   });
   Object.defineProperty(window, 'matchMedia', { writable: true, configurable: true, value: mq });
-  return listeners;
 }
 
+const motionReduced = () => mockMatchMedia((q) => q.includes('prefers-reduced-motion'));
+const narrowScreen = () =>
+  mockMatchMedia((q) => !q.includes('prefers-reduced-motion') && q.includes('max-width'));
+
 afterEach(() => {
-  // Restore a neutral stub (setup.ts default reports matches:false).
-  mockMatchMedia(false);
+  // Restore a neutral stub (setup.ts default reports matches:false everywhere).
+  mockMatchMedia(() => false);
 });
 
-// Recompute the model-derived rendered set exactly as hero-graph.ts does.
-const expectedIds = [
-  ...Object.values(STAGE_COMPONENTS).flat(),
-  ...OBSERVER_COMPONENTS,
-  ...COMPONENTS.filter((c) => c.kind === 'platform' && c.id !== 'watchtower').map((c) => c.id),
-];
+function renderHero() {
+  return render(
+    <ThemeProvider>
+      <Hero />
+    </ThemeProvider>,
+  );
+}
 
-describe('Hero DAG diagram', () => {
-  it('renders an accessible SVG diagram of the pipeline', () => {
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    const svg = screen.getByRole('img', { name: /pipeline/i });
-    expect(svg).toBeInTheDocument();
+describe('HeroFlow story', () => {
+  it('renders an accessible SVG narrating the estate-to-answer journey', () => {
+    renderHero();
+    const svg = screen.getByRole('img', { name: /estate-to-answer journey/i });
     expect(svg.tagName.toLowerCase()).toBe('svg');
+    const desc = svg.querySelector('desc')?.textContent ?? '';
+    expect(desc).toContain('Bronze');
+    expect(desc).toContain('one person is one node');
+    expect(desc).toContain('nodes and edges');
+    expect(desc).toContain('Atlas');
+    expect(desc).toContain('reduced motion');
   });
 
-  it('renders every model-derived component as a labeled node', () => {
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    for (const id of expectedIds) {
-      expect(document.querySelector(`[data-node-id="${id}"]`), `node ${id}`).not.toBeNull();
-    }
-    // Codenames are real text (JetBrains Mono data face).
-    for (const name of ['Atlas', 'Compass', 'Watchtower', 'Bedrock', 'Trailhead']) {
+  it('tells the one story: sources, four stations, and the answered question', () => {
+    renderHero();
+    // The raw estate.
+    for (const name of ['Directory', 'HR', 'Databases']) {
       expect(screen.getByText(name)).toBeInTheDocument();
     }
-  });
-
-  it('routes more than ten directed edges with arrowhead markers', () => {
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    expect(document.querySelectorAll('[data-edge-id]').length).toBeGreaterThan(10);
-    expect(document.querySelectorAll('marker').length).toBeGreaterThanOrEqual(2);
-  });
-
-  it('keeps the four phase names readable', () => {
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    for (const phase of ['Schema', 'Ingestion', 'Transform', 'Investigation']) {
-      expect(screen.getByText(phase)).toBeInTheDocument();
+    // The stages.
+    for (const name of ['Land', 'Conform', 'Graph', 'Serve']) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    // The payoff.
+    expect(screen.getByText('Who can reach this system?')).toBeInTheDocument();
+    expect(screen.getByText('policy')).toBeInTheDocument();
+    expect(screen.getByText('audited')).toBeInTheDocument();
+    expect(screen.getAllByText('✓')).toHaveLength(2);
+    // Phase-label language echoes the old hero: mono uppercase tiers.
+    for (const tier of ['Bronze', 'Silver', 'Gold', 'Atlas']) {
+      expect(screen.getByText(tier)).toBeInTheDocument();
     }
   });
 
   it('is pure spectacle: no buttons or links anywhere in the hero', () => {
-    const { container } = render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
+    const { container } = renderHero();
     const section = container.querySelector('#hero');
     expect(section).not.toBeNull();
     expect(within(section as HTMLElement).queryAllByRole('button')).toHaveLength(0);
@@ -108,30 +97,69 @@ describe('Hero DAG diagram', () => {
 
 describe('Hero motion contract', () => {
   it('runs live by default (data-motion="live")', () => {
-    mockMatchMedia(false);
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    const svg = screen.getByRole('img', { name: /pipeline/i });
+    mockMatchMedia(() => false);
+    renderHero();
+    const svg = screen.getByRole('img', { name: /estate-to-answer journey/i });
     expect(svg.closest('[data-motion]')?.getAttribute('data-motion')).toBe('live');
   });
 
-  it('reduced motion settles the wavefront with content intact', () => {
-    mockMatchMedia(true);
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    const svg = screen.getByRole('img', { name: /pipeline/i });
+  it('settles under reduced motion with the COMPLETE story incl. answer + badges', () => {
+    motionReduced();
+    renderHero();
+    const svg = screen.getByRole('img', { name: /estate-to-answer journey/i });
     const root = svg.closest('[data-motion]');
     expect(root?.getAttribute('data-motion')).toBe('settled');
-    // Content intact: identical node set in the settled state.
-    for (const id of expectedIds) {
-      expect(root?.querySelector(`[data-node-id="${id}"]`)).not.toBeNull();
+    // Content intact: every stage and the payoff are present.
+    for (const name of ['Land', 'Conform', 'Graph', 'Serve']) {
+      expect(root?.querySelector(`[data-chip-id="${name.toLowerCase()}"]`)).not.toBeNull();
     }
+    expect(within(root as HTMLElement).getByText('Who can reach this system?')).toBeInTheDocument();
+    expect(within(root as HTMLElement).getByText('policy')).toBeInTheDocument();
+    expect(within(root as HTMLElement).getByText('audited')).toBeInTheDocument();
+    // The pulse rests at Graph in the settled frame (server markup IS it).
+    expect(svg.getAttribute('viewBox')).toBe('0 0 1000 340');
+    const trunkDot = svg.querySelectorAll('.hf-dot')[3] as SVGGElement | null;
+    expect(trunkDot?.style.transform).toBe('translate(640px, 170px)');
+    expect(root?.getAttribute('data-orientation')).toBe('horizontal');
+  });
+
+  it('narrow screens switch to the vertical arrangement of the same story', () => {
+    narrowScreen();
+    renderHero();
+    const root = document.querySelector('.hero-flow');
+    expect(root?.getAttribute('data-orientation')).toBe('vertical');
+    const svg = root?.querySelector('svg');
+    expect(svg?.getAttribute('viewBox')).toBe('0 0 340 620');
+    // Message identical on every device.
+    expect(screen.getByText('Who can reach this system?')).toBeInTheDocument();
+    expect(screen.getByText('Serve')).toBeInTheDocument();
+  });
+
+  it('marks purely decorative layers aria-hidden (pulse, rings, connectors, twin glyph)', () => {
+    renderHero();
+    const svg = screen.getByRole('img', { name: /estate-to-answer journey/i });
+    const hiddenGroups = svg.querySelectorAll('g[aria-hidden]');
+    expect(hiddenGroups.length).toBeGreaterThanOrEqual(4);
+    expect(svg.querySelector('[class*="hf-ring"]')).not.toBeNull();
+  });
+});
+
+describe('Retired DAG is gone', () => {
+  it('renders none of the ~20-component architecture (that lives in its own section)', () => {
+    renderHero();
+    for (const marker of ['Watchtower', 'Bedrock', 'Trailhead', 'Blueprint', 'Forge']) {
+      expect(screen.queryByText(marker)).not.toBeInTheDocument();
+    }
+    expect(document.querySelectorAll('[data-node-id]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-edge-id]')).toHaveLength(0);
+  });
+
+  it('keeps the element budget small — three sources, four stations, one answer', () => {
+    renderHero();
+    const svg = screen.getByRole('img', { name: /estate-to-answer journey/i });
+    // 3 source chips + 4 station chips + 1 answer chip = 8 faces, never ~20.
+    expect(svg.querySelectorAll('.hf-face').length).toBe(7);
+    expect(svg.querySelectorAll('.hf-answer-face').length).toBe(1);
   });
 });
 
@@ -141,11 +169,7 @@ describe('Hero shell', () => {
   const RETIRED_DEMO_ASK = ['request', 'a', 'demo'].join(' ');
 
   it('overlays the W1 wordmark (decorative here — the nav announces the brand)', () => {
-    const { container } = render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
+    const { container } = renderHero();
     expect(container.querySelector('#hero .wordmark')).not.toBeNull();
     // Decorative: excluded from the accessibility tree (TopNav owns the
     // announcement; page.test asserts exactly two labeled marks page-wide).
@@ -154,12 +178,10 @@ describe('Hero shell', () => {
   });
 
   it('makes the positioning line the page-heading of the hero', () => {
-    render(
-      <ThemeProvider>
-        <Hero />
-      </ThemeProvider>,
-    );
-    expect(screen.getByRole('heading', { level: 1, name: /digital twin of the IT estate/i })).toBeInTheDocument();
+    renderHero();
+    expect(
+      screen.getByRole('heading', { level: 1, name: /digital twin of the IT estate/i }),
+    ).toBeInTheDocument();
   });
 
   it('keeps the retired demo chrome off the page', async () => {

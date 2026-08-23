@@ -90,8 +90,8 @@ describe('Page shell (nanisoft)', () => {
     await flushAntd();
     expect(screen.getByText(/Sixteen proven open-source products carry the platform/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Built in-house' })).toBeInTheDocument();
-    // Scope to the Integrations section: the hero DAG and the architecture
-    // section also render "Atlas"/"Compass" as SVG node labels.
+    // Scope to the Integrations section: the architecture section renders
+    // "Atlas"/"Compass" as SVG node labels (the hero tells its own story).
     const integrations = within(document.getElementById('integrations') as HTMLElement);
     for (const name of ['Atlas', 'Compass', 'DataGerry Bridge', 'Scout']) {
       expect(integrations.getByText(name)).toBeInTheDocument();

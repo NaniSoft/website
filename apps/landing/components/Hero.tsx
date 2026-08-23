@@ -1,23 +1,23 @@
-import { HeroDag } from './hero/HeroDag';
+import { HeroFlow } from './hero/HeroFlow';
 import { Wordmark } from './Wordmark';
 
 /**
- * The nanisoft hero (ticket 19 / SPEC §3.1): a reactive digital-twin pipeline
- * graph as pure spectacle — no buttons, no CTA (the playground ask lives in
- * the nav pill and the closing section) —
- * with the W1 wordmark and positioning line overlaid. The wordmark wrapper is
- * decorative here: TopNav carries the brand announcement for assistive tech,
- * so the page keeps exactly two labeled marks.
+ * The nanisoft hero (task 4): ONE story — the estate flowing through the
+ * platform and coming out as an answered, governed question — self-running
+ * beneath the W1 wordmark and positioning line. No buttons, no CTA (the
+ * playground ask lives in the nav pill and the closing section).
  *
- * Server Component; HeroDag is the client boundary ('use client' in its own
- * file — no dynamic({ssr:false}) needed or allowed).
+ * The wordmark wrapper is decorative here: TopNav carries the brand
+ * announcement for assistive tech, so the page keeps exactly two labeled
+ * marks.
+ *
+ * Server Component; HeroFlow is the client boundary ('use client' in its own
+ * file). The canvas always fits its container now — statement above, story
+ * below, on every device; no overflow/pan scaffolding anywhere.
  */
 export function Hero() {
   return (
     <section id="hero" className="hero" aria-labelledby="hero-positioning">
-      <div className="hero-canvas">
-        <HeroDag />
-      </div>
       <div className="hero-overlay">
         <span className="hero-wordmark" aria-hidden>
           <Wordmark height={64} band="bg" />
@@ -26,16 +26,19 @@ export function Hero() {
           Digital <em>twin</em> of the IT estate.
         </h1>
       </div>
+      <div className="hero-canvas">
+        <HeroFlow />
+      </div>
       <style>{`
         .hero {
           position: relative;
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          justify-content: center;
+          gap: clamp(24px, 5vh, 44px);
           min-height: min(88vh, 860px);
           padding: 96px 24px 40px;
-          overflow: hidden;
         }
-        .hero-canvas { position: absolute; inset: 0; }
         .hero-overlay {
           position: relative;
           z-index: 1;
@@ -43,18 +46,6 @@ export function Hero() {
           max-width: 1240px;
           margin: 0 auto;
           pointer-events: none;
-        }
-        /* Legibility scrim behind the statement, tuned from tokens. */
-        .hero-overlay::before {
-          content: '';
-          position: absolute;
-          inset: -48px -32px;
-          background: radial-gradient(
-            620px 420px at 22% 42%,
-            color-mix(in srgb, var(--color-bg) 82%, transparent),
-            transparent 72%
-          );
-          z-index: -1;
         }
         .hero-wordmark { display: inline-flex; height: 64px; }
         .hero-wordmark .wordmark { height: 64px; }
@@ -67,24 +58,22 @@ export function Hero() {
           max-width: 12ch;
         }
         .hero-h1 em { font-style: italic; }
+        .hero-canvas {
+          position: relative;
+          z-index: 0;
+          width: 100%;
+          max-width: 1240px;
+          margin: 0 auto;
+        }
 
+        /* Only sizing survives from the old mobile block — the canvas itself
+           always fits now (HeroFlow switches to its vertical arrangement).
+           !important is required to beat Wordmark's inline height (the old
+           layout hid the mismatch with overflow:hidden instead). */
         @media (max-width: 719px) {
-          .hero {
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            gap: 8px;
-            padding-top: 72px;
-          }
-          .hero-canvas {
-            position: relative;
-            inset: auto;
-            order: 2;
-            height: 340px;
-          }
-          .hero-overlay { order: 1; }
-          .hero-wordmark { height: 44px; }
-          .hero-wordmark .wordmark { height: 44px; }
+          .hero { padding-top: 72px; }
+          .hero-wordmark { height: 44px !important; }
+          .hero-wordmark .wordmark { height: 44px !important; }
         }
       `}</style>
     </section>
