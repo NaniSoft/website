@@ -1,17 +1,16 @@
 import type { Integration, UseCase } from './types';
 
 export const BRAND = {
-  name: 'Sentinel Lake',
-  tagline: 'See every asset, identity, and event in one temporal model.',
+  name: 'nanisoft',
+  tagline: 'Digital twin of the IT estate.',
 } as const;
 
 export const HERO = {
   eyebrow: 'Security Knowledge Graph · v2.4',
   h1: 'See every asset, identity, and event in one temporal model.',
   sub:
-    'Sentinel Lake unifies IT, HR, IAM, cloud, and security telemetry into a single queryable graph — and lets AI agents answer your hardest forensic questions in seconds.',
+    'nanisoft unifies IT, HR, IAM, cloud, and security telemetry into a single queryable graph — and lets AI agents answer your hardest forensic questions in seconds.',
   primaryCta: { label: 'Request a demo', href: '#final-cta' },
-  secondaryCta: { label: 'Watch 2-min walkthrough', href: '#agents' },
   trustCaption: 'Trusted by security teams at',
   metrics: [
     { label: 'events/day', value: '12 B' },
@@ -108,22 +107,10 @@ export const INTEGRATIONS: readonly Integration[] = [
   { name: 'Zendesk', category: 'Support' },
 ];
 
-export const TESTIMONIAL = {
-  quote:
-    'Sentinel Lake cut our M&A security diligence from six weeks to four days. The graph view is the first time our security, IT, and HR data have agreed on a single picture.',
-  author: 'Priya Raman',
-  title: 'CISO, Northwind Financial',
-  metrics: [
-    { value: '85%', label: 'faster M&A diligence' },
-    { value: '60%', label: 'less time on audit prep' },
-    { value: '12×', label: 'more entities correlated' },
-  ],
-};
-
 export const FINAL_CTA = {
   h2: 'Bring every signal into one model.',
   primary: { label: 'Request a demo', href: '/api/demo-request' },
-  secondary: { label: 'Talk to sales', href: 'mailto:sales@sentinellake.example' },
+  secondary: { label: 'Talk to sales', href: 'mailto:hello@nanisoft.com' },
   footnote: 'or start a free 14-day pilot',
 };
 

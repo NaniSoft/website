@@ -1,29 +1,63 @@
+/*
+ * Semantic tokens for the nanisoft landing, mapped from @nanisoft/identity
+ * (SPEC §2 "Living Map"). The identity package is the primitive layer and the
+ * single source of truth for all brand values below; the only non-identity
+ * values are the functional status colors (success/warning/danger), carried
+ * over from the previous theme until a token decision lands.
+ *
+ *   base = petrol + bone · secondary = teal
+ *   accent = jade, reserved for live/active states ONLY (never decorative)
+ *
+ * Shape lock: card 20 / inner 12 / buttons pill. No purple, no neon, no pure
+ * black, no pure white (ink is near-black petrol; bone is off-white). CSS
+ * cannot import TS values, so each var carries its identity-package name as
+ * a comment — keep them in sync when tokens change.
+ */
+
 :root {
-  --color-bg: #F7F9FC;
-  --color-bg-elev: #FFFFFF;
-  --color-bg-sunken: #F0F4FA;
-  --color-border: #E5EAF2;
-  --color-text: #0B1726;
-  --color-text-muted: #56627A;
-  --color-primary: #1E5BFF;
-  --color-accent: #00C2D6;
+  /* Light mode surfaces (bone family). */
+  --color-bg: #F4EFE6;        /* color.bone */
+  --color-bg-elev: #FBF7EF;   /* color.boneElev */
+  --color-bg-sunken: #EAE2D3; /* color.boneSunken */
+  --color-border: #EAE2D3;    /* color.boneSunken */
+  --color-text: #102A30;      /* color.ink */
+  --color-text-muted: #4A5E64; /* color.inkMuted */
+
+  /* Interactive base: petrol in light mode; text on it is bone. */
+  --color-primary: #0C2A33;   /* color.petrol */
+  --color-on-primary: #F4EFE6; /* color.bone */
+
+  /* Secondary (supporting marks) and the locked live/active accent. */
+  --color-secondary: #2A8C97; /* color.teal */
+  --color-accent: #14A77A;    /* color.jade — live/active only */
+
+  /* Functional statuses (not brand hues). */
   --color-success: #10A48B;
   --color-warning: #D08C1A;
   --color-danger: #D43A3A;
+
+  /* Shape lock. */
+  --radius-card: 20px;
+  --radius-inner: 12px;
+  --radius-pill: 9999px;
 }
 
 [data-theme='dark'] {
-  --color-bg: #0A1020;
-  --color-bg-elev: #111A2E;
-  --color-bg-sunken: #0E152A;
-  --color-border: #1E2A44;
-  --color-text: #E6ECF5;
-  --color-text-muted: #8A98B0;
-  --color-primary: #3B82F6;
-  --color-accent: #22D3EE;
-  --color-success: #34D399;
-  --color-warning: #F59E0B;
-  --color-danger: #F87171;
+  /* Dark mode surfaces (petrol family). */
+  --color-bg: #0C2A33;        /* color.petrol */
+  --color-bg-elev: #15414A;   /* color.petrolMid */
+  --color-bg-sunken: #08222A; /* color.petrolDeep */
+  --color-border: #3C6770;    /* color.petrolSoft */
+  --color-text: #F4EFE6;      /* color.bone */
+  --color-text-muted: #8FB0B6; /* color.petrolTint */
+
+  /* Interactive base inverts to bone on petrol. */
+  --color-primary: #FBF7EF;   /* color.boneElev */
+  --color-on-primary: #0C2A33; /* color.petrol */
+
+  /* Secondary and accent are mode-invariant identity values. */
+  --color-secondary: #2A8C97; /* color.teal */
+  --color-accent: #14A77A;    /* color.jade — live/active only */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -31,17 +65,18 @@ html, body { margin: 0; padding: 0; }
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-satoshi), 'Satoshi', system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
+/* The twin's data face: tables, query, logs, node labels. */
 .mono { font-family: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace; }
 
 a { color: inherit; text-decoration: none; }
 
-::selection { background: var(--color-primary); color: #fff; }
+::selection { background: var(--color-primary); color: var(--color-on-primary); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -51,16 +86,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-secondary);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: var(--radius-inner);
 }
 
 a[href="#main"] {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-inner);
   z-index: 200;
 }
 a[href="#main"]:not(:focus) { left: -9999px; position: absolute; }
@@ -69,9 +104,11 @@ a[href="#main"]:not(:focus) { left: -9999px; position: absolute; }
   .ant-motion, [data-framer-component] { animation: none !important; transition: none !important; }
 }
 
-/* Right-rail Node Inspector preview (spec §5) — collapses below 960px */
-.node-inspector-preview-rail { display: flex; }
-@media (max-width: 959px) {
-  .node-inspector-preview-rail { display: none; }
-  .command-center-canvas-row { flex-direction: column; }
-}
+/*
+ * W1 wordmark: wordmarkSvg() sets font-family="'Satoshi', …" as a presentation
+ * attribute, but next/font/local registers the webfont under a hashed family
+ * name exposed via --font-satoshi. A CSS rule reaches into the inline SVG and
+ * re-points <text> at that variable so the mark renders in the real Satoshi.
+ */
+.wordmark svg { display: block; height: 100%; width: auto; }
+.wordmark svg text { font-family: var(--font-satoshi), 'Satoshi', system-ui, sans-serif; }

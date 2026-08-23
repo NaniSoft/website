@@ -26,6 +26,13 @@ export interface WordmarkOptions {
   height?: number;
   /** X center of the "i" node, tuned against a render. Default 118. */
   iX?: number;
+  /**
+   * Mark ink: the word fill and node-ring stroke. Defaults to petrol (the
+   * spec surface is bone); pass the light-surface text color when the mark
+   * sits on a dark/petrol surface so it stays visible. The jade live link is
+   * never affected — jade remains the single accent in the mark.
+   */
+  ink?: Hex;
 }
 
 /**
@@ -36,19 +43,20 @@ export function wordmarkSvg(options: WordmarkOptions = {}): string {
   const bg = options.bg ?? color.bone;
   const height = options.height ?? 56;
   const iX = options.iX ?? 118;
+  const ink = options.ink ?? color.petrol;
   const baseline = Math.round(height * 1.04);
   const width = Math.round(height * 5.0);
 
   // Mask the font's native "i" dot with the background, then draw the ringed
-  // node (petrol) and the single trailing live link (jade).
+  // node (the mark ink) and the single trailing live link (jade).
   const nodeR = Math.round(height * 0.14);
   const nodeY = Math.round(height * 0.27);
   const linkEndX = iX + Math.round(height * 0.5);
 
   return `<svg viewBox="0 0 ${width} ${baseline}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="nanisoft">
-  <text x="0" y="${baseline - Math.round(height * 0.06)}" font-family="'Satoshi', system-ui, sans-serif" font-weight="700" font-size="${height}" fill="${color.petrol}" letter-spacing="-0.01em">nanisoft</text>
+  <text x="0" y="${baseline - Math.round(height * 0.06)}" font-family="'Satoshi', system-ui, sans-serif" font-weight="700" font-size="${height}" fill="${ink}" letter-spacing="-0.01em">nanisoft</text>
   <circle cx="${iX}" cy="${nodeY}" r="${nodeR + 2}" fill="${bg}"/>
-  <circle cx="${iX}" cy="${nodeY}" r="${nodeR}" fill="none" stroke="${color.petrol}" stroke-width="${Math.max(2, Math.round(height * 0.045))}"/>
+  <circle cx="${iX}" cy="${nodeY}" r="${nodeR}" fill="none" stroke="${ink}" stroke-width="${Math.max(2, Math.round(height * 0.045))}"/>
   <path d="M ${iX + nodeR} ${nodeY - 2} Q ${(iX + linkEndX) / 2} ${nodeY - Math.round(height * 0.12)} ${linkEndX} ${nodeY - Math.round(height * 0.04)}" fill="none" stroke="${color.jade}" stroke-width="${Math.max(2, Math.round(height * 0.04))}" stroke-linecap="round"/>
 </svg>`;
 }

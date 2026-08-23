@@ -23,7 +23,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'sentinel-theme';
+const STORAGE_KEY = 'nanisoft-theme';
 
 // Theme mode lives in localStorage; the OS preference lives in matchMedia. Both
 // are external stores, so the React 19 idiom is useSyncExternalStore — this

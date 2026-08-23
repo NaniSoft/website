@@ -46,6 +46,16 @@ describe('W1 wordmark — "node + flow"', () => {
     expect(svg).toContain(`stroke="${color.jade}"`);
     expect(svg).not.toContain(`fill="${color.jade}"`);
   });
+
+  it('accepts an alternate ink for dark surfaces without touching the jade link', () => {
+    const dark = wordmarkSvg({ ink: color.bone });
+    // Word + ring re-point at the given ink; the petrol default is gone.
+    expect(dark).toContain(`fill="${color.bone}"`);
+    expect(dark).toContain(`stroke="${color.bone}"`);
+    expect(dark).not.toContain(`stroke="${color.petrol}"`);
+    // Jade still appears exactly once — the live link.
+    expect(countHex(dark, color.jade)).toBe(1);
+  });
 });
 
 describe('W3 monogram — favicon / dock fallback', () => {

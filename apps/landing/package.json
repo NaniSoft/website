@@ -19,7 +19,6 @@
     "react-dom": "19.2.8",
     "antd": "6.6.1",
     "@ant-design/icons": "6.3.2",
-    "react-force-graph-2d": "1.29.1",
     "motion": "13.1.0",
     "@nanisoft/architecture": "workspace:*",
     "@nanisoft/identity": "workspace:*"
