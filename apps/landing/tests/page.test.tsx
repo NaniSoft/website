@@ -64,4 +64,44 @@ describe('Page shell (nanisoft)', () => {
     // No Sentinel branding anywhere on the rendered surface.
     expect(screen.queryAllByText(/Sentinel/i)).toHaveLength(0);
   });
+
+  it('hands off from the datalake path into the architecture walkthrough', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/the next section walks the full pipeline/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /built like a lakehouse/i })).toBeInTheDocument();
+  });
+
+  it('names the flagship unlock and keeps the section free of dead links', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/Sensitive Product View Audit/)).toBeInTheDocument();
+    expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
+    const section = document.getElementById('use-cases');
+    expect(section?.querySelectorAll('a[href="#"]')).toHaveLength(0);
+    const finalSection = document.getElementById('final-cta');
+    expect(finalSection?.querySelectorAll('a[href="#"]')).toHaveLength(0);
+    const more = screen.getByRole('link', { name: /see the flagship run today in the playground/i });
+    expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
+  });
+
+  it('states the approach: sixteen off-the-shelf products, four built in-house', async () => {
+    renderPage();
+    await flushAntd();
+    expect(screen.getByText(/Sixteen proven open-source products carry the platform/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Built in-house' })).toBeInTheDocument();
+    for (const name of ['Atlas', 'Compass', 'DataGerry Bridge', 'Scout']) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    expect(screen.queryByText('+40')).not.toBeInTheDocument();
+  });
+
+  it('points the closing CTA at the playground', async () => {
+    renderPage();
+    await flushAntd();
+    const cta = screen.getByRole('link', { name: /open the playground/i });
+    expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
+    expect(cta.getAttribute('target')).toBe('_blank');
+    expect(screen.getByText(/in-browser, guided, and fully mocked/i)).toBeInTheDocument();
+  });
 });

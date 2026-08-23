@@ -1,9 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-import { Card } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
-import { USE_CASES } from '@/lib/data';
+import type { CSSProperties } from 'react';
+import { Card, Tag } from 'antd';
+import { USE_CASES, USE_CASES_MORE } from '@/lib/data';
 
 // Illustration covers are decorative — quiet teal/petrol washes over the
 // sunken surface. Jade never appears here (live/active states only).
@@ -13,12 +12,35 @@ const ILLU_BG: Record<string, string> = {
   clock: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 14%, transparent), color-mix(in srgb, var(--color-secondary) 8%, transparent)), var(--color-bg-sunken)',
 };
 
+// Status is honest, not decorative: the flagship is available today; the rest
+// are roadmap. Teal/muted only — jade stays locked to live/active states.
+const STATUS_TAG: Record<'available' | 'planned', { label: string; style: CSSProperties }> = {
+  available: {
+    label: 'Flagship · available today',
+    style: {
+      background: 'color-mix(in srgb, var(--color-secondary) 14%, transparent)',
+      color: 'var(--color-secondary)',
+      borderColor: 'transparent',
+      borderRadius: 'var(--radius-pill)',
+    },
+  },
+  planned: {
+    label: 'Planned',
+    style: {
+      background: 'var(--color-bg-sunken)',
+      color: 'var(--color-text-muted)',
+      borderColor: 'transparent',
+      borderRadius: 'var(--radius-pill)',
+    },
+  },
+};
+
 export function UseCases() {
   return (
     <section id="use-cases" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 40, fontWeight: 700, margin: '0 0 12px' }}>Where teams use nanisoft.</h2>
+      <h2 style={{ fontSize: 40, fontWeight: 700, margin: '0 0 12px' }}>What it unlocks.</h2>
       <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 640, marginBottom: 48 }}>
-        From high-stakes transactions to everyday audits, the same graph powers every answer.
+        One twin, many questions. Today, the flagship is access.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="grid-3">
         {USE_CASES.map((u) => (
@@ -32,17 +54,26 @@ export function UseCases() {
             }
           >
             <div style={{ padding: 24 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 600, margin: '0 0 12px' }}>{u.title}</h3>
-              <ul style={{ paddingLeft: 18, color: 'var(--color-text-muted)', margin: '0 0 16px' }}>
+              <Tag style={STATUS_TAG[u.status].style}>{STATUS_TAG[u.status].label}</Tag>
+              <h3 style={{ fontSize: 22, fontWeight: 600, margin: '12px 0' }}>{u.title}</h3>
+              <ul style={{ paddingLeft: 18, color: 'var(--color-text-muted)', margin: 0 }}>
                 {u.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
               </ul>
-              <Link href="#" style={{ color: 'var(--color-primary)', fontWeight: 500 }}>
-                Read the full story <ArrowRightOutlined />
-              </Link>
             </div>
           </Card>
         ))}
       </div>
+      <p style={{ color: 'var(--color-text-muted)', marginTop: 40, maxWidth: 720 }}>
+        {USE_CASES_MORE.line}{' '}
+        <a
+          href={USE_CASES_MORE.cta.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'var(--color-primary)', fontWeight: 500 }}
+        >
+          {USE_CASES_MORE.cta.label}
+        </a>
+      </p>
       <style>{`@media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr !important; } }`}</style>
     </section>
   );

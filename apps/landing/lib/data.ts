@@ -1,4 +1,4 @@
-import type { Integration, UseCase } from './types';
+import type { CustomComponent, StackProduct, UseCase } from './types';
 
 export const BRAND = {
   name: 'nanisoft',
@@ -24,94 +24,132 @@ export const CUSTOMER_LOGOS: readonly string[] = [
   'Northwind', 'Helios', 'Aperture', 'Cascade', 'Meridian', 'Polaris', 'Vector', 'Lumen',
 ];
 
+// ---------------------------------------------------------------------------
+// What it is (Problem)
+// ---------------------------------------------------------------------------
+
 export const PROBLEM_CARDS = [
   {
-    icon: 'fork',
-    title: 'Fragmented sources',
-    body: 'IT, HR, IAM, cloud, and security tools each hold a sliver of the truth. Nothing agrees on identities, time, or scope.',
+    icon: 'graph',
+    title: 'Everything in one graph',
+    body: 'Directories, HR systems, databases, and applications become nodes. Memberships, grants, and activity become edges. The estate finally agrees with itself.',
   },
   {
-    icon: 'clock',
-    title: 'No temporal context',
-    body: 'Most tools answer "what is true now." Almost none answer "what was true at 2 AM on a Tuesday three weeks ago."',
+    icon: 'stack',
+    title: 'Produced, not assembled',
+    body: 'The twin comes off a real data platform — ingestion, transformation, quality gates, versioned layers — so it stays trustworthy as the estate changes.',
   },
   {
     icon: 'magnify',
-    title: 'Slow forensic answers',
-    body: 'Even basic questions — where is this data, who touched it, was it compliant — take days of stitching logs together.',
+    title: 'Built for questions',
+    body: 'Who can reach this system? What did access look like last quarter? The twin answers by traversal, not stitched exports. Access is the first use-case; more are coming.',
   },
 ] as const;
 
+// ---------------------------------------------------------------------------
+// How we build it, part one (Platform) — the datalake path
+// ---------------------------------------------------------------------------
+
 export const PLATFORM_FLOW = [
-  { step: '01', title: 'Ingest', body: 'Pull metadata, logs, access records, and policies from every source.' },
-  { step: '02', title: 'Normalize', body: 'Map everything to a common schema with stable identity resolution.' },
-  { step: '03', title: 'Graph', body: 'Build a temporal knowledge graph: every entity, relation, and event timestamped.' },
-  { step: '04', title: 'Query', body: 'Ask plain-English questions; get cited answers with the path through the graph.' },
+  { step: '01', title: 'Land', body: 'Raw source data lands untouched in Bronze. Nothing is interpreted at the door.' },
+  { step: '02', title: 'Conform', body: 'Records are cleaned, joined, and resolved until identities are stable. One person, one node — that’s Silver.' },
+  { step: '03', title: 'Graph', body: 'Conformed facts resolve into Gold: nodes and edges. This graph is the twin.' },
+  { step: '04', title: 'Serve', body: 'Atlas serves traversals, checks every question against policy, and writes an audit trail.' },
 ] as const;
 
 export const PLATFORM_FEATURES = [
-  { icon: 'schema', title: 'Unified Schema', body: 'One model across IT, HR, IAM, cloud, apps, and security controls.' },
-  { icon: 'graph', title: 'Temporal Knowledge Graph', body: 'Every fact and event carries a timestamp. Replay the past at any moment.' },
-  { icon: 'spark', title: 'AI Agents', body: 'Cited answers to forensic and compliance questions, with the graph path shown.' },
-  { icon: 'search', title: 'Forensic Querying', body: 'Trace sensitive data lineage, blast radius, and access history in one query.' },
-  { icon: 'policy', title: 'Policy-as-Code', body: 'Express controls as code, evaluate them against the graph at any point in time.' },
-  { icon: 'plug', title: 'Open Integrations', body: '50+ first-party connectors and a typed SDK for everything else.' },
+  { title: 'Orchestrated end to end', body: 'Trailhead sequences every move — ingestion, promotion, maintenance — as reviewable DAGs.' },
+  { title: 'Versioned at every layer', body: 'The lakehouse catalog keeps history, so last quarter’s twin can be reproduced exactly.' },
+  { title: 'Promoted only when clean', body: 'Quality gates decide what advances. Bad input stops at the boundary and never reaches the twin.' },
+  { title: 'Watched continuously', body: 'Watchtower observes every component — pipelines, queries, engine — from one place.' },
+  { title: 'Governed by default', body: 'Policy checks sit in front of the graph, and every answer is logged.' },
+  { title: 'Declared as code', body: 'Anchor declares the infrastructure; Conveyor delivers it. No snowflake deployments.' },
 ] as const;
+
+// ---------------------------------------------------------------------------
+// What it unlocks (UseCases)
+// ---------------------------------------------------------------------------
 
 export const USE_CASES: readonly UseCase[] = [
   {
-    title: 'M&A due diligence',
+    title: 'Access traversal — Sensitive Product View Audit',
+    status: 'available',
     illustration: 'graph',
     bullets: [
-      'Unify target IT, HR, and identity data in days, not months.',
-      'Surface hidden access paths and orphaned privileged accounts.',
-      'Export evidence packs for auditors and legal.',
+      'Trace every path between a person and a sensitive product: group memberships, direct grants, inherited rights.',
+      'The audit surfaces views of sensitive products with no membership backing them. Each one is a finding.',
+      'Read the same finding three ways — as graph edges, as a table row, as a dashboard chart.',
     ],
   },
   {
-    title: 'Incident response',
+    title: 'Blast radius',
+    status: 'planned',
     illustration: 'shield',
     bullets: [
-      'Reconstruct the exact blast radius of any compromise.',
-      'Replay access events across every affected system.',
-      'Hand responders a single, citable timeline.',
+      'Ask what an account, a key, or a host can actually reach from where it sits.',
+      'Rehearse containment before you need it, against the graph you already have.',
+      'Next on the roadmap — designed on the twin, no new connectors.',
     ],
   },
   {
-    title: 'Continuous compliance',
+    title: 'Stale and unused access',
+    status: 'planned',
     illustration: 'clock',
     bullets: [
-      'Evaluate controls against the live graph on every change.',
-      'Prove "was access compliant at time T" with evidence.',
-      'Cut audit prep from weeks to hours.',
+      'Find memberships nobody remembers granting and privileges nobody has exercised.',
+      'Feed clean-up work with evidence instead of anecdotes.',
+      'Planned alongside blast radius; both fall out of the same graph.',
     ],
   },
 ];
 
-export const INTEGRATIONS: readonly Integration[] = [
-  { name: 'AWS', category: 'Cloud' },
-  { name: 'Azure', category: 'Cloud' },
-  { name: 'GCP', category: 'Cloud' },
-  { name: 'Okta', category: 'Identity' },
-  { name: 'Active Directory', category: 'Identity' },
-  { name: 'ServiceNow', category: 'ITSM' },
-  { name: 'Jira', category: 'ITSM' },
-  { name: 'Splunk', category: 'SIEM' },
-  { name: 'CrowdStrike', category: 'Endpoint' },
-  { name: 'Snowflake', category: 'Data' },
-  { name: 'Workday', category: 'Identity' },
-  { name: 'GitHub', category: 'DevTools' },
-  { name: 'Datadog', category: 'SIEM' },
-  { name: 'Slack', category: 'Productivity' },
-  { name: 'Salesforce', category: 'CRM' },
-  { name: 'Zendesk', category: 'Support' },
+export const USE_CASES_MORE = {
+  line: 'More use-cases are coming — small utilities, composed largely from open-source parts.',
+  cta: { label: 'See the flagship run today in the playground.', href: 'https://playground.nanisoft.com' },
+} as const;
+
+// ---------------------------------------------------------------------------
+// Our approach (Integrations) — buy first, compose open source
+// ---------------------------------------------------------------------------
+
+export const STACK_PRODUCTS: readonly StackProduct[] = [
+  { name: 'Trailhead', role: 'Orchestration' },
+  { name: 'Forge', role: 'Transform' },
+  { name: 'Bedrock', role: 'Lakehouse' },
+  { name: 'Overlook', role: 'Query' },
+  { name: 'Blueprint', role: 'Schema' },
+  { name: 'Watchtower', role: 'Observability' },
+  { name: 'Anchor', role: 'Infrastructure as code' },
+  { name: 'Conveyor', role: 'GitOps' },
+  { name: 'Airbyte', role: 'Ingestion' },
+  { name: 'Zingg', role: 'Entity resolution' },
+  { name: 'Great Expectations', role: 'Quality gates' },
+  { name: 'Superset', role: 'Dashboards' },
+  { name: 'OPA', role: 'Authorization' },
+  { name: 'OpenBao', role: 'Secrets' },
+  { name: 'CloudNativePG', role: 'Databases' },
+  { name: 'Valkey', role: 'Cache' },
 ];
 
+export const INTEGRATIONS_NOTE =
+  'Every off-the-shelf product runs unmodified — integrated through its APIs, configured, never forked.';
+
+export const BUILT_IN_HOUSE: readonly CustomComponent[] = [
+  { name: 'Atlas', blurb: 'The core engine: traversal API, policy enforcement, audit log.' },
+  { name: 'Compass', blurb: 'The traversal UI: explore the twin as a graph.' },
+  { name: 'DataGerry Bridge', blurb: 'Glue that syncs authored schema into the lakehouse and the engine.' },
+  { name: 'Scout', blurb: 'Connectors for internal systems no catalog covers.' },
+];
+
+// ---------------------------------------------------------------------------
+// Try it in the playground (FinalCTA)
+// ---------------------------------------------------------------------------
+
 export const FINAL_CTA = {
-  h2: 'Bring every signal into one model.',
-  primary: { label: 'Request a demo', href: '/api/demo-request' },
-  secondary: { label: 'Talk to sales', href: 'mailto:hello@nanisoft.com' },
-  footnote: 'or start a free 14-day pilot',
+  h2: 'Try it in the playground.',
+  primary: { label: 'Open the playground', href: 'https://playground.nanisoft.com' },
+  secondary: { label: 'Request a demo', href: 'mailto:hello@nanisoft.com' },
+  footnote: 'In-browser, guided, and fully mocked — nothing to install.',
 };
 
 export const FOOTER_LINKS = {
