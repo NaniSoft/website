@@ -80,9 +80,15 @@ export default function TokensPage() {
         padding: '48px 24px 80px',
       }}
     >
-      <style>{MOTION_VARIANTS.map(keyframesToCss).join('\n')}</style>
+      <style>{`
+        ${MOTION_VARIANTS.map(keyframesToCss).join('\n')}
+        /* Wordmark preview: fluid down from its 300px design width (never a
+           fixed 300 — that forced document-level horizontal scroll on phones). */
+        .tokens-wordmark { max-width: 300px; }
+        .tokens-wordmark svg { display: block; width: 100%; height: auto; }
+      `}</style>
 
-      <main style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gap: 64 }}>
+      <main style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gap: 64, gridTemplateColumns: 'minmax(0, 1fr)' }}>
         {/* ── Wordmark ─────────────────────────────────────────────────── */}
         <section aria-label="Wordmark">
           <SectionLabel>W1 wordmark · node + flow</SectionLabel>
@@ -96,7 +102,7 @@ export default function TokensPage() {
             }}
           >
             <div
-              style={{ width: 300 }}
+              className="tokens-wordmark"
               // wordmarkSvg returns the full <svg>; the jade "i" link is the only jade.
               dangerouslySetInnerHTML={{ __html: wordmarkSvg({ bg: surface.light.bg }) }}
             />
@@ -207,7 +213,11 @@ export default function TokensPage() {
               borderRadius: radius.card,
               background: surface.light.elevated,
               border: `1px solid ${surface.light.border}`,
-              display: 'grid',
+              // Flex column, not grid: a grid track floors at the items'
+              // min-content — the pre block's long lines then force the card
+              // (and the document) wider than any phone viewport.
+              display: 'flex',
+              flexDirection: 'column',
               gap: 20,
             }}
           >
