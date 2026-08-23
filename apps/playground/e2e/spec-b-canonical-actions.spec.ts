@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { applyStep, SENSITIVE_PRODUCT_VIEW_AUDIT, type PlaygroundState } from '@nanisoft/architecture';
 import { closeOverlay, openToolChip, parseState, readStore, resetViaUi, stepTo } from './helpers';
 
