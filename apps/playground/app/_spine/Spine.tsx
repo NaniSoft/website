@@ -14,7 +14,7 @@ import {
   type NodeMouseHandler,
   type NodeTypes,
 } from '@xyflow/react';
-import { color, surface } from '@nanisoft/identity';
+import { color } from '@nanisoft/identity';
 import { COMPONENT_BY_ID, PHASES, SENSITIVE_PRODUCT_VIEW_AUDIT, beckonToolId, deriveStatus } from '@nanisoft/architecture';
 import { buildSpineGraph, type SpineEdge, type SpineNode } from './spine-graph';
 import { NodeChip, CHIP_W, CHIP_H, type NodeStatus } from './NodeChip';
@@ -25,6 +25,9 @@ const nodeTypes: NodeTypes = { chip: NodeChip, phase: PhaseBand };
 const edgeTypes: EdgeTypes = { smoothstep: SmoothStepEdge };
 const STEPS = SENSITIVE_PRODUCT_VIEW_AUDIT;
 
+// Edge strokes are mode-invariant identity values: petrolSoft/petrolTint are
+// the muted-mark hues on BOTH surfaces, jade/teal are the locked live/done
+// accents. Only mode-dependent surfaces go through CSS vars (see globals.css).
 const PETROL_SOFT = color.petrolSoft; // solid idle data-flow edges
 const PETROL_TINT = color.petrolTint; // dotted idle platform/observe edges
 const JADE = color.jade;              // active edge
@@ -185,7 +188,7 @@ function SpineInner() {
       zoomOnDoubleClick={false}
       preventScrolling={false}
       proOptions={{ hideAttribution: true }}
-      style={{ background: surface.light.bg }}
+      style={{ background: 'var(--color-bg)' }}
     />
   );
 }

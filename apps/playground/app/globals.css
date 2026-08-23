@@ -1,16 +1,65 @@
+/*
+ * Semantic mode tokens for the nanisoft playground, mapped from
+ * @nanisoft/identity (SPEC §2) with the exact same contract as the landing's
+ * `apps/landing/app/globals.css`: same variable names, same values per mode,
+ * same `html[data-theme='dark']` switch (set pre-paint by the inline script in
+ * app/layout.tsx and kept reconciled by app/_theme/ThemeSync.tsx). A mode set
+ * in either app must look identical in the other.
+ *
+ * CSS cannot import TS values, so each var carries its identity-package name
+ * as a comment — keep them in sync when tokens change. Mode-invariant identity
+ * values (teal done-marks, jade live accent, petrol edge strokes) stay as TS
+ * imports in the components; only mode-dependent surfaces live here.
+ */
+
 :root {
+  /* Light mode surfaces (bone family). */
+  --color-bg: #F4EFE6;        /* color.bone */
+  --color-bg-elev: #FBF7EF;   /* color.boneElev */
+  --color-bg-sunken: #EAE2D3; /* color.boneSunken */
+  --color-border: #EAE2D3;    /* color.boneSunken */
+  --color-text: #102A30;      /* color.ink */
+  --color-text-muted: #4A5E64; /* color.inkMuted */
+
+  /* Interactive base (chrome controls); text on it is bone. */
+  --color-primary: #0C2A33;   /* color.petrol */
+  --color-on-primary: #F4EFE6; /* color.bone */
+
+  /* Text/icons on a jade fill (Run buttons, active phase band). Bone in light
+     mode; in dark mode the deep petrol base reads on jade (~4.9:1). */
+  --color-on-accent: #F4EFE6; /* color.bone */
+
   color-scheme: light;
+}
+
+[data-theme='dark'] {
+  /* Dark mode surfaces (petrol family). */
+  --color-bg: #0C2A33;        /* color.petrol */
+  --color-bg-elev: #15414A;   /* color.petrolMid */
+  --color-bg-sunken: #08222A; /* color.petrolDeep */
+  --color-border: #3C6770;    /* color.petrolSoft */
+  --color-text: #F4EFE6;      /* color.bone */
+  --color-text-muted: #8FB0B6; /* color.petrolTint */
+
+  /* Interactive base inverts to bone on petrol. */
+  --color-primary: #FBF7EF;   /* color.boneElev */
+  --color-on-primary: #0C2A33; /* color.petrol */
+
+  --color-on-accent: #0C2A33; /* color.petrol — dark base reads on jade */
+
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
-  /* color.bone (#F4EFE6) — kept in sync with @nanisoft/identity; never pure white. */
-  background: #F4EFE6;
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-satoshi), 'Satoshi', system-ui, -apple-system, sans-serif;
 }
 
 /* Honor reduced motion globally: every animation degrades to a static end-state.
-   Content is never removed — only motion is suppressed. */
+   Content is never removed — only motion is suppressed. Mode-independent by
+   construction (media query, not a token). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -27,7 +76,7 @@ body {
    flowing along the active edge). Brand easing cubic-bezier(.32,.72,0,1).
    Reduced motion is handled by the global @media block above (animations
    suppressed); the inline jade border/edge carries the active state without
-   motion, so content/state stays visible and still. */
+   motion, so content/state stays visible and still in both modes. */
 
 @keyframes spine-ripple {
   0%, 100% { box-shadow: 0 0 0 0 rgba(20, 167, 122, 0); }

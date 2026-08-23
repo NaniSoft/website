@@ -2,7 +2,7 @@
 
 import { Handle, Position } from '@xyflow/react';
 import type { Component } from '@nanisoft/architecture';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { SOURCE_HANDLE, TARGET_HANDLE, type HandleSide } from './spine-graph';
 
 export const CHIP_W = 180;
@@ -28,7 +28,7 @@ function realNameLine(c: Component): string | null {
 function borderFor(status: NodeStatus): string {
   if (status === 'active') return `1px solid ${color.jade}`;
   if (status === 'done') return `1px solid ${color.teal}`;
-  return `1px solid ${surface.light.border}`;
+  return '1px solid var(--color-border)';
 }
 
 export function NodeChip({
@@ -71,7 +71,7 @@ export function NodeChip({
         width: CHIP_W,
         minHeight: CHIP_H,
         borderRadius: radius.inner,
-        background: surface.light.elevated,
+        background: 'var(--color-bg-elev)',
         border: borderFor(status),
         padding: '8px 12px',
         boxSizing: 'border-box',
@@ -79,13 +79,13 @@ export function NodeChip({
         flexDirection: 'column',
         justifyContent: 'center',
         fontFamily: font.data,
-        color: surface.light.text,
+        color: 'var(--color-text)',
         cursor: clickable ? 'pointer' : 'default',
       }}
     >
       <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>{c.codename}</div>
       {sub && (
-        <div style={{ fontSize: 11, color: surface.light.textMuted, marginTop: 2, lineHeight: 1.2 }}>
+        <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 2, lineHeight: 1.2 }}>
           {sub}
         </div>
       )}

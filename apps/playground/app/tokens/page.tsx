@@ -2,8 +2,14 @@
 
 /**
  * /tokens — the nanisoft "Living Map" identity preview (SPEC §2). Renders the
- * wordmark, palette, shape lock, typography, and the four motion variants,
- * driven entirely by the @nanisoft/identity tokens.
+ * wordmark, palette, shape lock, typography, and the four motion variants.
+ *
+ * The palette swatches and hex readouts below are driven entirely by the raw
+ * @nanisoft/identity values (that is their point); the surrounding page chrome
+ * uses the app's semantic `--color-*` custom properties (app/globals.css,
+ * copied 1:1 from identity) so it follows the shared light/dark mode like the
+ * rest of the playground. The wordmark is re-inked per resolved mode —
+ * wordmarkSvg bakes hexes into SVG attributes, so it needs the value in TS.
  *
  * NO-VISION: positions and balance are confirmed by a human against this
  * render. This page is a spec/preview surface (not a marketing page), so it may
@@ -19,11 +25,11 @@ import {
   motion,
   radius,
   role,
-  surface,
   withReducedMotion,
   wordmarkSvg,
   type MotionVariant,
 } from '@nanisoft/identity';
+import { useResolvedTheme } from '../_theme/theme';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 /** Turn a variant's keyframes into a CSS @keyframes rule. */
@@ -61,6 +67,7 @@ const SWATCHES: Array<{ name: string; hex: string; role: string; accent?: boolea
 
 export default function TokensPage() {
   const [reduced, setReduced] = useState(false);
+  const resolved = useResolvedTheme();
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -70,12 +77,18 @@ export default function TokensPage() {
     return () => mq.removeEventListener('change', update);
   }, []);
 
+  // wordmarkSvg interpolates hexes into SVG attributes (it can't take var()),
+  // so the mark is re-inked per resolved mode — petrol-on-bone in light,
+  // bone-on-petrol in dark. The jade live link is unaffected.
+  const markBg = resolved === 'dark' ? color.petrol : color.bone;
+  const markInk = resolved === 'dark' ? color.bone : color.petrol;
+
   return (
     <div
       style={{
         minHeight: '100dvh',
-        background: surface.light.bg,
-        color: surface.light.text,
+        background: 'var(--color-bg)',
+        color: 'var(--color-text)',
         fontFamily: font.voice,
         padding: '48px 24px 80px',
       }}
@@ -97,18 +110,19 @@ export default function TokensPage() {
               marginTop: 16,
               padding: 32,
               borderRadius: radius.card,
-              background: surface.light.elevated,
-              border: `1px solid ${surface.light.border}`,
+              background: 'var(--color-bg-elev)',
+              border: '1px solid var(--color-border)',
             }}
           >
             <div
               className="tokens-wordmark"
               // wordmarkSvg returns the full <svg>; the jade "i" link is the only jade.
-              dangerouslySetInnerHTML={{ __html: wordmarkSvg({ bg: surface.light.bg }) }}
+              dangerouslySetInnerHTML={{ __html: wordmarkSvg({ bg: markBg, ink: markInk }) }}
             />
-            <p style={{ marginTop: 16, color: surface.light.textMuted, fontSize: 14 }}>
+            <p style={{ marginTop: 16, color: 'var(--color-text-muted)', fontSize: 14 }}>
               Satoshi 700. The “i” dot is a ringed graph node with a trailing live
-              link. Jade is reserved for that single active link; the rest is petrol.
+              link. Jade is reserved for that single active link; the rest follows
+              the mode’s base/ink pair.
             </p>
           </div>
         </section>
@@ -129,8 +143,8 @@ export default function TokensPage() {
                 key={s.name}
                 style={{
                   borderRadius: radius.card,
-                  background: surface.light.elevated,
-                  border: `1px solid ${surface.light.border}`,
+                  background: 'var(--color-bg-elev)',
+                  border: '1px solid var(--color-border)',
                   overflow: 'hidden',
                 }}
               >
@@ -159,17 +173,19 @@ export default function TokensPage() {
                       </span>
                     )}
                   </div>
-                  <div style={{ fontFamily: font.data, fontSize: 13, color: surface.light.textMuted, marginTop: 2 }}>
+                  <div style={{ fontFamily: font.data, fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>
                     {s.hex}
                   </div>
-                  <div style={{ fontSize: 12, color: surface.light.textMuted, marginTop: 4 }}>{s.role}</div>
+                  <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 4 }}>{s.role}</div>
                 </div>
               </div>
             ))}
           </div>
-          <p style={{ marginTop: 16, color: surface.light.textMuted, fontSize: 14, maxWidth: '65ch' }}>
+          <p style={{ marginTop: 16, color: 'var(--color-text-muted)', fontSize: 14, maxWidth: '65ch' }}>
             Excluded: no purple, no neon, no pure black, no pure white. Ink is a
-            near-black petrol; the lightest surface is bone, never #FFFFFF.
+            near-black petrol; the lightest surface is bone, never #FFFFFF. The
+            swatches are the raw identity primitives; the page chrome around them
+            follows this app’s shared light/dark mode.
           </p>
         </section>
 
@@ -185,13 +201,15 @@ export default function TokensPage() {
               alignItems: 'center',
             }}
           >
-            <ShapeSample radius={radius.card} label={`card · ${radius.card}px`} bg={surface.light.elevated} border={surface.light.border} />
-            <ShapeSample radius={radius.inner} label={`inner · ${radius.inner}px`} bg={surface.light.elevated} border={surface.light.border} />
+            {/* Shape is the point here; the fills are the mode's semantic pair so
+                the samples stay visible in both modes. */}
+            <ShapeSample radius={radius.card} label={`card · ${radius.card}px`} bg="var(--color-bg-elev)" border="var(--color-border)" />
+            <ShapeSample radius={radius.inner} label={`inner · ${radius.inner}px`} bg="var(--color-bg-elev)" border="var(--color-border)" />
             <span
               style={{
                 borderRadius: radius.pill,
-                background: color.petrol,
-                color: color.bone,
+                background: 'var(--color-primary)',
+                color: 'var(--color-on-primary)',
                 padding: '10px 20px',
                 fontFamily: font.voice,
                 fontWeight: 700,
@@ -211,8 +229,8 @@ export default function TokensPage() {
               marginTop: 16,
               padding: 32,
               borderRadius: radius.card,
-              background: surface.light.elevated,
-              border: `1px solid ${surface.light.border}`,
+              background: 'var(--color-bg-elev)',
+              border: '1px solid var(--color-border)',
               // Flex column, not grid: a grid track floors at the items'
               // min-content — the pre block's long lines then force the card
               // (and the document) wider than any phone viewport.
@@ -222,18 +240,18 @@ export default function TokensPage() {
             }}
           >
             <div>
-              <div style={{ fontFamily: font.data, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: surface.light.textMuted }}>
+              <div style={{ fontFamily: font.data, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>
                 Satoshi · voice
               </div>
               <h1 style={{ margin: '4px 0 0', fontSize: 40, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
                 The digital twin of an IT estate
               </h1>
-              <p style={{ margin: '8px 0 0', fontSize: 16, lineHeight: 1.6, maxWidth: '60ch', color: surface.light.text }}>
+              <p style={{ margin: '8px 0 0', fontSize: 16, lineHeight: 1.6, maxWidth: '60ch', color: 'var(--color-text)' }}>
                 Body copy in Satoshi. Emphasis is <em style={{ fontStyle: 'italic' }}>italic of the same family</em>, never a swapped-in serif.
               </p>
             </div>
             <div>
-              <div style={{ fontFamily: font.data, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: surface.light.textMuted }}>
+              <div style={{ fontFamily: font.data, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>
                 JetBrains Mono · data
               </div>
               <pre
@@ -242,7 +260,7 @@ export default function TokensPage() {
                   fontFamily: font.data,
                   fontSize: 14,
                   lineHeight: 1.6,
-                  background: surface.light.sunken,
+                  background: 'var(--color-bg-sunken)',
                   borderRadius: radius.inner,
                   padding: 16,
                   overflow: 'auto',
@@ -262,7 +280,7 @@ SELECT u.user, p.name FROM gold ...
           <SectionLabel>
             motion · breathe / traverse / ripple / settle · easing {easing}
           </SectionLabel>
-          <p style={{ marginTop: 12, color: surface.light.textMuted, fontSize: 14, maxWidth: '65ch' }}>
+          <p style={{ marginTop: 12, color: 'var(--color-text-muted)', fontSize: 14, maxWidth: '65ch' }}>
             {reduced
               ? 'prefers-reduced-motion is ON — every variant is shown at its static end-state; no content is removed.'
               : 'prefers-reduced-motion is off — variants animate. Toggle the OS setting to see the static fallback.'}
@@ -281,7 +299,7 @@ SELECT u.user, p.name FROM gold ...
           </div>
         </section>
 
-        <footer style={{ fontFamily: font.data, fontSize: 12, color: surface.light.textMuted }}>
+        <footer style={{ fontFamily: font.data, fontSize: 12, color: 'var(--color-text-muted)' }}>
           nanisoft identity v{IDENTITY_VERSION} · {Object.keys(role).length} roles · {MOTION_VARIANTS.length} motion variants
         </footer>
       </main>
@@ -300,7 +318,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
         fontWeight: 700,
         letterSpacing: '0.16em',
         textTransform: 'uppercase',
-        color: surface.light.textMuted,
+        color: 'var(--color-text-muted)',
       }}
     >
       {children}
@@ -312,7 +330,7 @@ function ShapeSample({ radius: r, label, bg, border }: { radius: number; label: 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
       <div style={{ width: 64, height: 64, borderRadius: r, background: bg, border: `1px solid ${border}` }} />
-      <span style={{ fontFamily: font.data, fontSize: 12, color: surface.light.textMuted }}>{label}</span>
+      <span style={{ fontFamily: font.data, fontSize: 12, color: 'var(--color-text-muted)' }}>{label}</span>
     </div>
   );
 }
@@ -326,16 +344,16 @@ function MotionCell({ variant, reduced }: { variant: MotionVariant; reduced: boo
     : { animation: animationFor(variant) };
 
   // The traverse wavefront is the one place jade is "live/active" — the flowing
-  // wavefront. Every other demo element uses petrol/bone/teal.
+  // wavefront. Every other demo dot uses the mode's text color (a neutral mark).
   const isWavefront = variant.name === 'traverse';
-  const dotColor = isWavefront ? color.jade : color.petrol;
+  const dotColor = isWavefront ? color.jade : 'var(--color-text)';
 
   return (
     <div
       style={{
         borderRadius: radius.card,
-        background: surface.light.elevated,
-        border: `1px solid ${surface.light.border}`,
+        background: 'var(--color-bg-elev)',
+        border: '1px solid var(--color-border)',
         padding: 20,
         display: 'grid',
         gap: 12,
@@ -345,7 +363,7 @@ function MotionCell({ variant, reduced }: { variant: MotionVariant; reduced: boo
         style={{
           height: 56,
           borderRadius: radius.inner,
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           position: 'relative',
           overflow: 'hidden',
           display: 'flex',
@@ -367,10 +385,10 @@ function MotionCell({ variant, reduced }: { variant: MotionVariant; reduced: boo
       </div>
       <div>
         <div style={{ fontWeight: 700, fontSize: 15 }}>{variant.name}</div>
-        <div style={{ fontSize: 12, color: surface.light.textMuted, marginTop: 2, lineHeight: 1.45 }}>
+        <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2, lineHeight: 1.45 }}>
           {variant.motivation}
         </div>
-        <div style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted, marginTop: 6 }}>
+        <div style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)', marginTop: 6 }}>
           {reduced ? 'static end-state' : `${variant.transition.duration}ms`}
         </div>
       </div>

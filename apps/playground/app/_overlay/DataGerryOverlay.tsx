@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { dataGerrySyncStatus } from '@nanisoft/architecture';
 import { usePlayground, STEPS } from '../_store/usePlayground';
 
@@ -25,7 +25,7 @@ export function DataGerryOverlay() {
     fontSize: 10,
     letterSpacing: '0.14em',
     textTransform: 'uppercase',
-    color: surface.light.textMuted,
+    color: 'var(--color-text-muted)',
   };
   const row: CSSProperties = {
     display: 'flex',
@@ -36,7 +36,7 @@ export function DataGerryOverlay() {
     fontSize: 12,
   };
   const stage = (done: boolean, text: string) => (
-    <span style={{ color: done ? color.jade : surface.light.textMuted }}>
+    <span style={{ color: done ? color.jade : 'var(--color-text-muted)' }}>
       {done ? '✓ ' : '○ '}
       {text}
     </span>
@@ -46,39 +46,39 @@ export function DataGerryOverlay() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 14 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: 10, minHeight: 180 }}>
         {/* left: ObjectTypes */}
-        <div style={{ background: surface.light.sunken, borderRadius: radius.inner, padding: 8 }}>
+        <div style={{ background: 'var(--color-bg-sunken)', borderRadius: radius.inner, padding: 8 }}>
           <p style={label}>ObjectTypes</p>
           <div
             style={{
               ...row,
-              background: surface.light.elevated,
+              background: 'var(--color-bg-elev)',
               border: `1px solid ${color.teal}`,
               marginTop: 6,
               fontWeight: 700,
-              color: surface.light.text,
+              color: 'var(--color-text)',
             }}
           >
             Product
           </div>
         </div>
         {/* right: fields */}
-        <div style={{ background: surface.light.sunken, borderRadius: radius.inner, padding: 8 }}>
+        <div style={{ background: 'var(--color-bg-sunken)', borderRadius: radius.inner, padding: 8 }}>
           <p style={label}>Fields · Product</p>
           {fields.map((f) => (
             <div
               key={f.name}
               style={{
                 ...row,
-                color: f.name === 'Sensitive' ? color.jade : surface.light.text,
+                color: f.name === 'Sensitive' ? color.jade : 'var(--color-text)',
                 fontWeight: f.name === 'Sensitive' ? 700 : 400,
               }}
             >
               <span>{f.name}</span>
-              <span style={{ color: surface.light.textMuted }}>{f.type}</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>{f.type}</span>
             </div>
           ))}
           {!hasSensitive && (
-            <div style={{ ...row, opacity: 0.5, fontStyle: 'italic', color: surface.light.textMuted }}>
+            <div style={{ ...row, opacity: 0.5, fontStyle: 'italic', color: 'var(--color-text-muted)' }}>
               <span>＋ Sensitive</span>
               <span>bool</span>
             </div>
@@ -98,9 +98,9 @@ export function DataGerryOverlay() {
           padding: '9px 18px',
           borderRadius: 9999,
           cursor: canAct ? 'pointer' : 'not-allowed',
-          border: `1px solid ${canAct ? color.jade : surface.light.border}`,
+          border: `1px solid ${canAct ? color.jade : 'var(--color-border)'}`,
           background: canAct ? color.jade : 'transparent',
-          color: canAct ? surface.light.bg : surface.light.textMuted,
+          color: canAct ? 'var(--color-on-accent)' : 'var(--color-text-muted)',
         }}
       >
         {hasSensitive ? 'Sensitive: bool — already authored' : 'Add Sensitive: bool'}
@@ -109,7 +109,7 @@ export function DataGerryOverlay() {
       {/* sync-status line: Bridge → Bedrock (ext_product) → Atlas */}
       <div
         style={{
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
           padding: '8px 10px',
           fontFamily: font.data,
@@ -121,9 +121,9 @@ export function DataGerryOverlay() {
         aria-label="datagerry-sync-status"
       >
         {stage(sync.authored, 'Blueprint authored')}
-        <span style={{ color: surface.light.textMuted }}>→</span>
+        <span style={{ color: 'var(--color-text-muted)' }}>→</span>
         {stage(sync.bedrock, 'Bedrock: ext_product created')}
-        <span style={{ color: surface.light.textMuted }}>→</span>
+        <span style={{ color: 'var(--color-text-muted)' }}>→</span>
         {stage(sync.atlas, 'Atlas: SchemaRegistry refreshed')}
       </div>
 

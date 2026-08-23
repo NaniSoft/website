@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { airflowDagStatus, type AirflowDag, type AirflowTask } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 
@@ -33,7 +33,7 @@ const label: CSSProperties = {
   fontSize: 10,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: surface.light.textMuted,
+  color: 'var(--color-text-muted)',
 };
 
 function borderFor(state: AirflowTask['state']): string {
@@ -51,12 +51,12 @@ function TaskBox({ task, compact }: { task: AirflowTask; compact?: boolean }) {
       aria-label={`${task.label} ${task.state}`}
       style={{
         border: `1px solid ${borderFor(task.state)}`,
-        background: running ? 'rgba(20, 167, 122, 0.10)' : surface.light.elevated,
+        background: running ? 'rgba(20, 167, 122, 0.10)' : 'var(--color-bg-elev)',
         borderRadius: radius.inner,
         padding: compact ? '4px 8px' : '6px 10px',
         fontFamily: font.data,
         fontSize: compact ? 10 : 11,
-        color: surface.light.text,
+        color: 'var(--color-text)',
         display: 'flex',
         alignItems: 'center',
         gap: compact ? 6 : 8,
@@ -79,7 +79,7 @@ function MiniDag({ dag, ariaLabel }: { dag: AirflowDag; ariaLabel: string }) {
         {dag.tasks.map((t, i) => (
           <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <TaskBox task={t} compact />
-            {i < dag.tasks.length - 1 && <span style={{ color: surface.light.textMuted }}>→</span>}
+            {i < dag.tasks.length - 1 && <span style={{ color: 'var(--color-text-muted)' }}>→</span>}
           </div>
         ))}
       </div>
@@ -94,7 +94,7 @@ function MiniDag({ dag, ariaLabel }: { dag: AirflowDag; ariaLabel: string }) {
         {extracts.map((t) => (
           <div key={t.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <TaskBox task={t} />
-            <span style={{ color: surface.light.textMuted, fontFamily: font.data, fontSize: 12 }}>↓</span>
+            <span style={{ color: 'var(--color-text-muted)', fontFamily: font.data, fontSize: 12 }}>↓</span>
           </div>
         ))}
       </div>
@@ -128,9 +128,9 @@ export function AirflowOverlay() {
             padding: '9px 18px',
             borderRadius: 9999,
             cursor: dag.canTrigger ? 'pointer' : 'not-allowed',
-            border: `1px solid ${dag.canTrigger ? color.jade : surface.light.border}`,
+            border: `1px solid ${dag.canTrigger ? color.jade : 'var(--color-border)'}`,
             background: dag.canTrigger ? color.jade : 'transparent',
-            color: dag.canTrigger ? surface.light.bg : surface.light.textMuted,
+            color: dag.canTrigger ? 'var(--color-on-accent)' : 'var(--color-text-muted)',
           }}
         >
           {dag.triggered ? 'DAG already run' : 'Run this DAG'}
@@ -142,7 +142,7 @@ export function AirflowOverlay() {
         role="log"
         aria-label="airflow run log"
         style={{
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
           padding: '8px 10px',
           display: 'flex',
@@ -151,7 +151,7 @@ export function AirflowOverlay() {
         }}
       >
         {dag.runLog.length === 0 ? (
-          <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted }}>no DAG runs yet</span>
+          <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>no DAG runs yet</span>
         ) : (
           dag.runLog.map((line) => (
             <div

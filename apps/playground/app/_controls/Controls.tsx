@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font } from '@nanisoft/identity';
 import { usePlayground, STEPS } from '../_store/usePlayground';
 
 export function Controls() {
@@ -24,9 +24,9 @@ export function Controls() {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 8,
-    border: `1px solid ${surface.light.border}`,
-    background: surface.light.elevated,
-    color: surface.light.text,
+    border: '1px solid var(--color-border)',
+    background: 'var(--color-bg-elev)',
+    color: 'var(--color-text)',
     fontFamily: font.voice,
     fontWeight: 500,
     fontSize: 13,
@@ -37,7 +37,7 @@ export function Controls() {
   // Full `border` shorthand (not `borderColor`) so the Run/Pause toggle never
   // mixes shorthand + longhand across rerenders — React errors on that diff
   // ("can lead to styling bugs"), caught by e2e spec A.
-  const primary: React.CSSProperties = { ...btn, background: color.jade, color: surface.light.bg, border: `1px solid ${color.jade}` };
+  const primary: React.CSSProperties = { ...btn, background: color.jade, color: 'var(--color-on-accent)', border: `1px solid ${color.jade}` };
   const disabled: React.CSSProperties = { ...btn, opacity: 0.4, cursor: 'not-allowed' };
 
   function onExport() {
@@ -82,14 +82,14 @@ export function Controls() {
               height: 64,
               fontFamily: font.data,
               fontSize: 10,
-              background: surface.light.sunken,
-              color: surface.light.text,
-              border: `1px solid ${surface.light.border}`,
+              background: 'var(--color-bg-sunken)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
               borderRadius: 8,
               padding: 8,
             }}
           />
-          {ioMsg && <div style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted }}>{ioMsg}</div>}
+          {ioMsg && <div style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>{ioMsg}</div>}
         </>
       )}
     </div>

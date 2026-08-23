@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
+import { ThemeSync } from './_theme/ThemeSync';
 import './globals.css';
 
 // Satoshi is the nanisoft voice (UI/body/headings). It is on Fontshare, not Google
@@ -30,10 +31,36 @@ export const metadata = {
     'In-browser simulator of the nanisoft digital-twin architecture — mocked tool-use over a shared lakehouse state.',
 };
 
+// No-FOUC theme bootstrap — byte-for-byte the landing's (apps/landing
+// app/layout.tsx): same 'nanisoft-theme' key, same system-preference fallback,
+// same <html data-theme> + color-scheme writes. Runs synchronously during HTML
+// parsing so the stored/OS mode is applied before first paint; ThemeSync then
+// keeps it reconciled after hydration.
+const themeBootstrap = `
+  (function () {
+    try {
+      var saved = localStorage.getItem('nanisoft-theme');
+      var mode = saved || 'system';
+      var resolved = mode === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : mode;
+      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.style.colorScheme = resolved;
+    } catch (e) {}
+  })();
+`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${satoshi.variable} ${mono.variable}`}>
-      <body>{children}</body>
+    // suppressHydrationWarning: the bootstrap script mutates <html> before React hydrates.
+    <html lang="en" className={`${satoshi.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
+      </head>
+      <body>
+        <ThemeSync />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { atlasOpaStatus, type AtlasLogLine } from '@nanisoft/architecture';
 import { usePlayground, STEPS } from '../_store/usePlayground';
 
@@ -26,7 +26,7 @@ const label: CSSProperties = {
   fontSize: 10,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: surface.light.textMuted,
+  color: 'var(--color-text-muted)',
 };
 
 function DecisionPill({ allow }: { allow: boolean }) {
@@ -40,7 +40,7 @@ function DecisionPill({ allow }: { allow: boolean }) {
         padding: '3px 10px',
         borderRadius: 9999,
         border: `1px solid ${allow ? color.jade : color.petrolSoft}`,
-        color: allow ? color.jade : surface.light.textMuted,
+        color: allow ? color.jade : 'var(--color-text-muted)',
         background: allow ? 'rgba(20, 167, 122, 0.10)' : 'transparent',
       }}
     >
@@ -58,20 +58,20 @@ function LogLine({ line }: { line: AtlasLogLine }) {
           fontFamily: font.data,
           fontSize: 11,
           fontWeight: 700,
-          color: line.method === 'POST' ? color.teal : surface.light.text,
+          color: line.method === 'POST' ? color.teal : 'var(--color-text)',
           minWidth: 38,
         }}
       >
         {line.method}
       </span>
-      <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.text, flex: 1 }}>
+      <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text)', flex: 1 }}>
         {line.path}
       </span>
-      <span style={{ fontFamily: font.data, fontSize: 11, color: success ? color.teal : surface.light.textMuted }}>
+      <span style={{ fontFamily: font.data, fontSize: 11, color: success ? color.teal : 'var(--color-text-muted)' }}>
         → {line.status}
       </span>
       {line.body && (
-        <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted }}>{line.body}</span>
+        <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>{line.body}</span>
       )}
     </div>
   );
@@ -92,7 +92,7 @@ export function AtlasOpaOverlay() {
         role="group"
         aria-label="OPA decision"
         style={{
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
           padding: 12,
           display: 'flex',
@@ -108,11 +108,11 @@ export function AtlasOpaOverlay() {
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span style={{ ...label, letterSpacing: '0.06em' }}>user</span>
-            <span style={{ fontFamily: font.data, fontSize: 12, color: surface.light.text }}>analyst</span>
+            <span style={{ fontFamily: font.data, fontSize: 12, color: 'var(--color-text)' }}>analyst</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span style={{ ...label, letterSpacing: '0.06em' }}>use-case</span>
-            <span style={{ fontFamily: font.data, fontSize: 12, color: surface.light.text }}>
+            <span style={{ fontFamily: font.data, fontSize: 12, color: 'var(--color-text)' }}>
               Sensitive Product View Audit
             </span>
           </div>
@@ -124,13 +124,13 @@ export function AtlasOpaOverlay() {
             style={{
               margin: 0,
               padding: '8px 10px',
-              background: surface.light.elevated,
+              background: 'var(--color-bg-elev)',
               borderRadius: radius.inner,
-              border: `1px solid ${surface.light.border}`,
+              border: '1px solid var(--color-border)',
               fontFamily: font.data,
               fontSize: 11,
               lineHeight: 1.5,
-              color: surface.light.text,
+              color: 'var(--color-text)',
               whiteSpace: 'pre',
               overflow: 'auto',
             }}
@@ -151,9 +151,9 @@ export function AtlasOpaOverlay() {
             padding: '9px 18px',
             borderRadius: 9999,
             cursor: canAct ? 'pointer' : 'not-allowed',
-            border: `1px solid ${canAct ? color.jade : surface.light.border}`,
+            border: `1px solid ${canAct ? color.jade : 'var(--color-border)'}`,
             background: canAct ? color.jade : 'transparent',
-            color: canAct ? surface.light.bg : surface.light.textMuted,
+            color: canAct ? 'var(--color-on-accent)' : 'var(--color-text-muted)',
           }}
         >
           {auditWritten ? 'Audit entry written' : 'Evaluate authz'}
@@ -169,7 +169,7 @@ export function AtlasOpaOverlay() {
         role="log"
         aria-label="Atlas request log"
         style={{
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
           padding: '10px 12px',
           display: 'flex',
@@ -179,7 +179,7 @@ export function AtlasOpaOverlay() {
       >
         <p style={label}>Atlas · request log</p>
         {status.log.length === 0 ? (
-          <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted }}>no requests yet</span>
+          <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>no requests yet</span>
         ) : (
           status.log.map((line) => <LogLine key={line.path} line={line} />)
         )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, type CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { compassTraversal, type CompassEdge, type CompassNode } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 
@@ -59,8 +59,12 @@ const label: CSSProperties = {
   fontSize: 10,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: surface.light.textMuted,
+  color: 'var(--color-text-muted)',
 };
+
+// SVG presentation ATTRIBUTES cannot resolve var(); mode-aware fills/strokes on
+// SVG elements go through the style prop instead.
+const svgTextMuted: CSSProperties = { fill: 'var(--color-text-muted)' };
 
 function nodeRingClass(node: CompassNode, ready: boolean, selected: boolean): string {
   if (selected) return color.jade;
@@ -96,7 +100,7 @@ export function CompassOverlay() {
           position: 'relative',
           width: '100%',
           aspectRatio: `${VB_W} / ${VB_H}`,
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
         }}
       >
@@ -132,7 +136,7 @@ export function CompassOverlay() {
                   textAnchor="middle"
                   fontFamily="var(--font-mono), 'JetBrains Mono', monospace"
                   fontSize="8"
-                  fill={surface.light.textMuted}
+                  style={svgTextMuted}
                 >
                   {e.kind}
                 </text>
@@ -159,12 +163,12 @@ export function CompassOverlay() {
                 top: `${(p.y / VB_H) * 100}%`,
                 transform: 'translate(-50%, -50%)',
                 border: `1px solid ${ring}`,
-                background: surface.light.elevated,
+                background: 'var(--color-bg-elev)',
                 borderRadius: radius.inner,
                 padding: '4px 8px',
                 fontFamily: font.data,
                 fontSize: 10,
-                color: surface.light.text,
+                color: 'var(--color-text)',
                 cursor: 'pointer',
                 boxShadow: isSel ? `0 0 0 2px ${ring}` : 'none',
                 whiteSpace: 'nowrap',
@@ -177,7 +181,7 @@ export function CompassOverlay() {
       </div>
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontFamily: font.data, fontSize: 10, color: surface.light.textMuted }}>
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontFamily: font.data, fontSize: 10, color: 'var(--color-text-muted)' }}>
         <span style={{ color: color.jade }}>━ anomalous viewed</span>
         <span style={{ color: color.teal }}>━ backed / ok</span>
         <span style={{ color: color.petrolSoft }}>┄ missing memberof</span>
@@ -189,7 +193,7 @@ export function CompassOverlay() {
           <p style={label}>Narrative · the finding</p>
           <ol role="list" style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 3 }}>
             {t.narrative.map((s) => (
-              <li key={s.n} style={{ fontFamily: font.data, fontSize: 11, color: surface.light.text }}>
+              <li key={s.n} style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text)' }}>
                 {s.text}
               </li>
             ))}
@@ -202,13 +206,13 @@ export function CompassOverlay() {
         role="status"
         aria-label="compass node detail"
         style={{
-          background: surface.light.sunken,
+          background: 'var(--color-bg-sunken)',
           borderRadius: radius.inner,
           padding: '8px 10px',
           minHeight: 44,
           fontFamily: font.data,
           fontSize: 11,
-          color: surface.light.text,
+          color: 'var(--color-text)',
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
@@ -220,7 +224,7 @@ export function CompassOverlay() {
             <span>{detail}</span>
           </>
         ) : (
-          <span style={{ color: surface.light.textMuted }}>Select a node to inspect the finding.</span>
+          <span style={{ color: 'var(--color-text-muted)' }}>Select a node to inspect the finding.</span>
         )}
       </div>
 

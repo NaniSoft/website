@@ -1,6 +1,6 @@
 'use client';
 
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 
 export type PhaseStatus = 'idle' | 'active' | 'done';
 
@@ -9,6 +9,7 @@ export type PhaseStatus = 'idle' | 'active' | 'done';
  * a non-interactive React Flow node below the spine. `status` reflects the
  * playbook cursor: active phase = jade, done phases = teal, idle = sunken.
  * The neutral Sources band is always idle (it is not one of the 4 phases).
+ * Surfaces are semantic vars (mode-aware); jade/teal stay identity constants.
  */
 export function PhaseBand({ data }: { data: { name: string; width: number; subtle?: boolean; status: PhaseStatus } }) {
   const { subtle, status } = data;
@@ -16,15 +17,15 @@ export function PhaseBand({ data }: { data: { name: string; width: number; subtl
   const bg =
     !isSources && status === 'active' ? color.jade
     : isSources ? 'transparent'
-    : surface.light.sunken;
+    : 'var(--color-bg-sunken)';
   const fg =
-    !isSources && status === 'active' ? surface.light.bg
+    !isSources && status === 'active' ? 'var(--color-on-accent)'
     : !isSources && status === 'done' ? color.teal
-    : surface.light.textMuted;
+    : 'var(--color-text-muted)';
   const border =
     !isSources && status === 'active' ? `1px solid ${color.jade}`
     : !isSources && status === 'done' ? `1px solid ${color.teal}`
-    : `1px ${isSources ? 'dashed' : 'solid'} ${surface.light.border}`;
+    : `1px ${isSources ? 'dashed' : 'solid'} var(--color-border)`;
   return (
     <div
       style={{

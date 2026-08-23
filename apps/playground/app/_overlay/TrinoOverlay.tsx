@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { trinoResults, type TrinoResultRow } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 
@@ -21,7 +21,7 @@ const label: CSSProperties = {
   fontSize: 10,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: surface.light.textMuted,
+  color: 'var(--color-text-muted)',
 };
 
 const COLUMNS = ['user', 'product', 'product_name', 'viewed', 'backing'] as const;
@@ -33,7 +33,7 @@ function Row({ row }: { row: TrinoResultRow }) {
       aria-label={row.anomalous ? `${row.user} anomalous view of ${row.product}` : `${row.user} view of ${row.product}`}
       style={{
         background: row.anomalous ? 'rgba(20, 167, 122, 0.10)' : 'transparent',
-        color: surface.light.text,
+        color: 'var(--color-text)',
       }}
     >
       {cells.map((c, i) => (
@@ -41,7 +41,7 @@ function Row({ row }: { row: TrinoResultRow }) {
           key={i}
           style={{
             padding: '6px 10px',
-            borderBottom: `1px solid ${row.anomalous ? color.jade : surface.light.border}`,
+            borderBottom: `1px solid ${row.anomalous ? color.jade : 'var(--color-border)'}`,
             fontFamily: font.data,
             fontSize: 12,
             whiteSpace: 'nowrap',
@@ -53,7 +53,7 @@ function Row({ row }: { row: TrinoResultRow }) {
       <td
         style={{
           padding: '6px 10px',
-          borderBottom: `1px solid ${row.anomalous ? color.jade : surface.light.border}`,
+          borderBottom: `1px solid ${row.anomalous ? color.jade : 'var(--color-border)'}`,
           fontFamily: font.data,
           fontSize: 11,
           letterSpacing: '0.08em',
@@ -64,7 +64,7 @@ function Row({ row }: { row: TrinoResultRow }) {
         {row.anomalous ? (
           <span
             style={{
-              color: surface.light.bg,
+              color: 'var(--color-on-accent)',
               background: color.jade,
               borderRadius: 9999,
               padding: '2px 8px',
@@ -105,16 +105,16 @@ export function TrinoOverlay() {
           aria-readonly="true"
           style={{
             margin: 0,
-            background: surface.light.sunken,
+            background: 'var(--color-bg-sunken)',
             borderRadius: radius.inner,
             padding: '10px 12px',
             fontFamily: font.data,
             fontSize: 12,
             lineHeight: 1.5,
-            color: surface.light.text,
+            color: 'var(--color-text)',
             overflow: 'auto',
             whiteSpace: 'pre',
-            border: `1px solid ${surface.light.border}`,
+            border: '1px solid var(--color-border)',
           }}
         >
           {results.sql}
@@ -134,9 +134,9 @@ export function TrinoOverlay() {
           padding: '9px 18px',
           borderRadius: 9999,
           cursor: results.canRun ? 'pointer' : 'not-allowed',
-          border: `1px solid ${results.canRun ? color.jade : surface.light.border}`,
+          border: `1px solid ${results.canRun ? color.jade : 'var(--color-border)'}`,
           background: results.canRun ? color.jade : 'transparent',
-          color: results.canRun ? surface.light.bg : surface.light.textMuted,
+          color: results.canRun ? 'var(--color-on-accent)' : 'var(--color-text-muted)',
         }}
       >
         {results.queryRun ? 'Query already run' : 'Run query'}
@@ -157,9 +157,9 @@ export function TrinoOverlay() {
             role="table"
             aria-label="query results"
             style={{
-              background: surface.light.elevated,
+              background: 'var(--color-bg-elev)',
               borderRadius: radius.inner,
-              border: `1px solid ${surface.light.border}`,
+              border: '1px solid var(--color-border)',
               overflow: 'auto',
             }}
           >
@@ -177,8 +177,8 @@ export function TrinoOverlay() {
                         fontSize: 10,
                         letterSpacing: '0.12em',
                         textTransform: 'uppercase',
-                        color: surface.light.textMuted,
-                        borderBottom: `1px solid ${surface.light.border}`,
+                        color: 'var(--color-text-muted)',
+                        borderBottom: '1px solid var(--color-border)',
                         whiteSpace: 'nowrap',
                       }}
                     >
@@ -194,8 +194,8 @@ export function TrinoOverlay() {
                       fontSize: 10,
                       letterSpacing: '0.12em',
                       textTransform: 'uppercase',
-                      color: surface.light.textMuted,
-                      borderBottom: `1px solid ${surface.light.border}`,
+                      color: 'var(--color-text-muted)',
+                      borderBottom: '1px solid var(--color-border)',
                       whiteSpace: 'nowrap',
                     }}
                   >
@@ -213,12 +213,12 @@ export function TrinoOverlay() {
         ) : (
           <div
             style={{
-              background: surface.light.sunken,
+              background: 'var(--color-bg-sunken)',
               borderRadius: radius.inner,
               padding: '10px 12px',
               fontFamily: font.data,
               fontSize: 11,
-              color: surface.light.textMuted,
+              color: 'var(--color-text-muted)',
             }}
           >
             run the seeded query to see results

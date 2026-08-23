@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type CSSProperties } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { supersetDashboard, type SupersetExposureRow, type SupersetSourceRow } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 
@@ -24,8 +24,9 @@ import { usePlayground } from '../_store/usePlayground';
  * live/anomalous state only (the j.harper row + the sensitive product's exposure
  * bar + the active filter accent), teal for the viewed/source slice, petrolMid
  * for the memberof slice, petrolSoft for neutral marks. Accessible (roles,
- * aria-labels, legend with direct labels) and consistent in light mode (matching
- * the sibling overlays).
+ * aria-labels, legend with direct labels) and consistent across modes (matching
+ * the sibling overlays). SVG fills/strokes use the style prop — presentation
+ * attributes cannot resolve var().
  */
 
 const label: CSSProperties = {
@@ -34,18 +35,23 @@ const label: CSSProperties = {
   fontSize: 10,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: surface.light.textMuted,
+  color: 'var(--color-text-muted)',
 };
 
 const panel: CSSProperties = {
-  background: surface.light.elevated,
-  border: `1px solid ${surface.light.border}`,
+  background: 'var(--color-bg-elev)',
+  border: '1px solid var(--color-border)',
   borderRadius: radius.inner,
   padding: 10,
   display: 'flex',
   flexDirection: 'column',
   gap: 8,
 };
+
+// Donut SVG mode-aware fills/strokes (presentation attributes can't take var()).
+const svgText: CSSProperties = { fill: 'var(--color-text)' };
+const svgTextMuted: CSSProperties = { fill: 'var(--color-text-muted)' };
+const svgTrackStroke: CSSProperties = { stroke: 'var(--color-border)' };
 
 // ── Bar color by state (jade reserved for the anomalous/live state) ──────────
 function barColor(row: SupersetExposureRow): string {
@@ -83,8 +89,8 @@ export function SupersetOverlay() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 14 }}>
       {/* Query-path label — the real routing (mock reads Gold in-browser) */}
-      <div style={{ ...panel, background: surface.light.sunken, gap: 4 }}>
-        <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.text }}>
+      <div style={{ ...panel, background: 'var(--color-bg-sunken)', gap: 4 }}>
+        <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text)' }}>
           query path: Superset → Trino → Gold
         </span>
         <span style={{ ...label, textTransform: 'none', letterSpacing: '0.04em' }}>
@@ -105,9 +111,9 @@ export function SupersetOverlay() {
             padding: '7px 14px',
             borderRadius: 9999,
             cursor: 'pointer',
-            border: `1px solid ${sensitiveOnly ? color.jade : surface.light.border}`,
+            border: `1px solid ${sensitiveOnly ? color.jade : 'var(--color-border)'}`,
             background: sensitiveOnly ? color.jade : 'transparent',
-            color: sensitiveOnly ? surface.light.bg : surface.light.text,
+            color: sensitiveOnly ? 'var(--color-on-accent)' : 'var(--color-text)',
           }}
         >
           Sensitive only
@@ -165,7 +171,7 @@ export function SupersetOverlay() {
                     textAlign: 'left',
                     fontFamily: font.data,
                     fontSize: 11,
-                    color: surface.light.text,
+                    color: 'var(--color-text)',
                   }}
                 >
                   <span style={{ width: 92, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -181,7 +187,7 @@ export function SupersetOverlay() {
                       boxShadow: drilled ? `0 0 0 2px rgba(20,167,122,0.18)` : 'none',
                     }}
                   />
-                  <span style={{ color: row.exposureCount > 0 && row.sensitive ? color.jade : surface.light.textMuted }}>
+                  <span style={{ color: row.exposureCount > 0 && row.sensitive ? color.jade : 'var(--color-text-muted)' }}>
                     {row.exposureCount} exposed · {row.viewCount} view{row.viewCount === 1 ? '' : 's'}
                   </span>
                 </button>
@@ -205,7 +211,7 @@ export function SupersetOverlay() {
                   gap: 6,
                   fontFamily: font.data,
                   fontSize: 10,
-                  color: surface.light.textMuted,
+                  color: 'var(--color-text-muted)',
                   padding: '2px 4px',
                   letterSpacing: '0.06em',
                   textTransform: 'uppercase',
@@ -226,7 +232,7 @@ export function SupersetOverlay() {
                     gap: 6,
                     fontFamily: font.data,
                     fontSize: 11,
-                    color: surface.light.text,
+                    color: 'var(--color-text)',
                     padding: '3px 4px',
                     borderLeft: `2px solid ${color.jade}`,
                     background: 'rgba(20, 167, 122, 0.06)',
@@ -235,7 +241,7 @@ export function SupersetOverlay() {
                 >
                   <span role="cell" style={{ fontWeight: 700 }}>{u.user}</span>
                   <span role="cell">{u.productName}</span>
-                  <span role="cell" style={{ color: surface.light.textMuted }}>{u.ownerGroup}</span>
+                  <span role="cell" style={{ color: 'var(--color-text-muted)' }}>{u.ownerGroup}</span>
                   <span role="cell" style={{ color: color.jade }}>no backing membership</span>
                 </div>
               ))}
@@ -274,7 +280,7 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
                 r={r}
                 fill="none"
                 strokeWidth={14}
-                stroke={surface.light.border}
+                style={svgTrackStroke}
               />
             ) : (
               sources.map((s) => {
@@ -305,7 +311,7 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
             fontFamily="var(--font-mono), 'JetBrains Mono', monospace"
             fontSize={13}
             fontWeight={700}
-            fill={surface.light.text}
+            style={svgText}
           >
             {total}
           </text>
@@ -316,7 +322,7 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
             fontFamily="var(--font-mono), 'JetBrains Mono', monospace"
             fontSize={7}
             letterSpacing="0.1em"
-            fill={surface.light.textMuted}
+            style={svgTextMuted}
           >
             GOLD EDGES
           </text>
@@ -336,8 +342,8 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
                   }}
                   aria-hidden="true"
                 />
-                <span style={{ color: surface.light.text }}>{s.sourceSystem}</span>
-                <span style={{ marginLeft: 'auto', color: surface.light.textMuted }}>
+                <span style={{ color: 'var(--color-text)' }}>{s.sourceSystem}</span>
+                <span style={{ marginLeft: 'auto', color: 'var(--color-text-muted)' }}>
                   {s.count} · {pct}%
                 </span>
               </div>

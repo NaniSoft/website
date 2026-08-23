@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { font, radius, surface } from '@nanisoft/identity';
+import { font } from '@nanisoft/identity';
 import { COMPONENT_BY_ID, MOCK_TOOL_BY_COMPONENT } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 import { TOOL_CONTENT } from './tool-content';
@@ -43,8 +43,8 @@ export function ToolOverlay() {
       style={{
         height: '100%',
         boxSizing: 'border-box',
-        background: surface.light.elevated,
-        color: surface.light.text,
+        background: 'var(--color-bg-elev)',
+        color: 'var(--color-text)',
         fontFamily: font.voice,
         display: 'flex',
         flexDirection: 'column',
@@ -58,13 +58,13 @@ export function ToolOverlay() {
           alignItems: 'center',
           gap: 10,
           padding: '12px 14px',
-          borderBottom: `1px solid ${surface.light.border}`,
+          borderBottom: '1px solid var(--color-border)',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
           <span style={{ fontWeight: 700, fontSize: 15 }}>{component.codename}</span>
           {component.realName && (
-            <span style={{ fontFamily: font.data, fontSize: 11, color: surface.light.textMuted }}>
+            <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>
               {component.realName}
             </span>
           )}
@@ -75,8 +75,8 @@ export function ToolOverlay() {
             fontSize: 10,
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
-            color: surface.light.textMuted,
-            border: `1px solid ${surface.light.border}`,
+            color: 'var(--color-text-muted)',
+            border: '1px solid var(--color-border)',
             borderRadius: 9999,
             padding: '2px 8px',
           }}
@@ -90,9 +90,9 @@ export function ToolOverlay() {
           style={{
             fontFamily: font.data,
             fontSize: 14,
-            border: `1px solid ${surface.light.border}`,
+            border: '1px solid var(--color-border)',
             background: 'transparent',
-            color: surface.light.text,
+            color: 'var(--color-text)',
             borderRadius: 8,
             padding: '2px 9px',
             cursor: 'pointer',

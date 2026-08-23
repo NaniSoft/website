@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { color, font, radius, surface } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { usePlayground } from '../_store/usePlayground';
 
 const TABS = ['Bronze', 'Silver', 'Gold', 'Schema', 'Audit'] as const;
@@ -19,8 +19,8 @@ export function Inspector() {
   const silverRows = state.silver.extProduct.length + state.silver.extViewLog.length;
 
   const cardStyle: React.CSSProperties = {
-    background: surface.light.elevated,
-    border: `1px solid ${surface.light.border}`,
+    background: 'var(--color-bg-elev)',
+    border: '1px solid var(--color-border)',
     borderRadius: radius.card,
     padding: 14,
     display: 'flex',
@@ -34,13 +34,13 @@ export function Inspector() {
     fontSize: 11,
     letterSpacing: '0.14em',
     textTransform: 'uppercase',
-    color: surface.light.textMuted,
+    color: 'var(--color-text-muted)',
   };
   const bodyStyle: React.CSSProperties = {
     fontFamily: font.data,
     fontSize: 11.5,
-    color: surface.light.text,
-    background: surface.light.sunken,
+    color: 'var(--color-text)',
+    background: 'var(--color-bg-sunken)',
     borderRadius: radius.inner,
     padding: 10,
     flex: 1,
@@ -48,7 +48,7 @@ export function Inspector() {
     whiteSpace: 'pre-wrap',
     lineHeight: 1.7,
   };
-  const rowBorder: React.CSSProperties = { borderBottom: `1px dashed ${surface.light.border}`, padding: '3px 0' };
+  const rowBorder: React.CSSProperties = { borderBottom: '1px dashed var(--color-border)', padding: '3px 0' };
   const emptyStyle: React.CSSProperties = { opacity: 0.55, fontStyle: 'italic' };
   const k: React.CSSProperties = { color: color.teal };
   const j: React.CSSProperties = { color: color.jade };
@@ -116,12 +116,12 @@ export function Inspector() {
       <p style={labelStyle}>shared in-browser state · live</p>
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         {counts.map((c) => (
-          <div key={c.label} style={{ fontFamily: font.data, fontSize: 10, color: surface.light.textMuted }}>
+          <div key={c.label} style={{ fontFamily: font.data, fontSize: 10, color: 'var(--color-text-muted)' }}>
             {c.label}
             <br />
             <b style={{
               fontSize: 15,
-              color: c.accent === 'jade' ? color.jade : c.accent === 'teal' ? color.teal : surface.light.text,
+              color: c.accent === 'jade' ? color.jade : c.accent === 'teal' ? color.teal : 'var(--color-text)',
             }}>{c.value}</b>
           </div>
         ))}
@@ -136,9 +136,9 @@ export function Inspector() {
               fontSize: 10,
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
-              background: t === tab ? surface.light.bg : 'transparent',
-              border: `1px solid ${surface.light.border}`,
-              color: t === tab ? surface.light.text : surface.light.textMuted,
+              background: t === tab ? 'var(--color-bg)' : 'transparent',
+              border: '1px solid var(--color-border)',
+              color: t === tab ? 'var(--color-text)' : 'var(--color-text-muted)',
               padding: '5px 10px',
               borderRadius: 8,
               cursor: 'pointer',
