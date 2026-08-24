@@ -38,15 +38,26 @@ zero sales asks replaced by a single "Open the playground" path.
   the implementer's hands per the locked design.
 - Playground small-screen ergonomics beyond overflow elimination (e.g.
   whether Controls/Inspector should collapse on phones).
-- Follow-ups recommended by the final whole-branch review (2026-08-24),
-  none blocking: (a) identity-level bone-on-jade light-mode contrast review
-  (~2.7:1 — needs a token decision in `packages/identity`); (b) export
-  `THEME_STORAGE_KEY` (+ possibly the no-FOUC bootstrap script) from
-  `@nanisoft/identity` to collapse the ~6-site duplication across both apps;
-  (c) CI job running both overflow projects so the scroll law regresses
-  loudly instead of manually; (d) deploy notes that mode persistence is
-  per-origin — subdomain deployments behave consistently but don't
-  live-sync.
+- Follow-ups recommended by the final whole-branch review (2026-08-24) —
+  **all four resolved 2026-08-24** (same-day AFK run): (a) identity token
+  decision landed as `role.onAccent` = petrol — reads on jade at ~4.9:1 in
+  BOTH modes (bone was ~2.7:1 light); enforced by a computed WCAG test in
+  identity; both apps' `--color-on-accent` updated, IDENTITY_VERSION → 0.2.0.
+  (b) `THEME_STORAGE_KEY` + `themeBootstrapScript` now exported from
+  `@nanisoft/identity/src/theme.ts`; the four app-code literals collapsed to
+  the one constant (e2e/vitest specs keep raw literals deliberately — they
+  pin the contract). (c) `e2e` job in deploy.yml runs both overflow matrices
+  on every push/PR and gates both deploy jobs. (d) README rewritten
+  (was a pre-reset Sentinel fossil) with the per-origin theme note: same-key
+  contract per origin; subdomain deployments start consistent, no live-sync.
+  Known dev-only artifact, deliberately not "fixed": React logs "script tag
+  while rendering" when the root layout Fast-Refreshes — the bootstrap only
+  needs to run pre-paint on load; providers reconcile afterwards. Clean
+  loads (the user path) are console-clean in both apps, both modes; full
+  CTA/nav regression passed same day (theme radios, anchors, scroll-driven
+  stages 01→04, all four playground CTAs incl. a real click through to the
+  live playground.nanisoft.com, playground auto-run to step 22 + overlay
+  close + reset, /tokens page).
 
 ## Execution record
 
