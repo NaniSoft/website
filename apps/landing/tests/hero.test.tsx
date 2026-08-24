@@ -202,3 +202,32 @@ describe('Hero shell', () => {
     expect(within(hero as HTMLElement).queryByText(/events\/day/i)).not.toBeInTheDocument();
   });
 });
+
+describe('Hero panel — "Living Map" two-column shell', () => {
+  it('is a dark band: #hero carries the hero class (scoped dark tokens in globals.css)', () => {
+    const { container } = renderHero();
+    const section = container.querySelector('#hero');
+    expect(section).not.toBeNull();
+    expect(section?.classList.contains('hero')).toBe(true);
+  });
+
+  it('leads with a mono eyebrow and follows with subcopy (no CTA copy)', () => {
+    renderHero();
+    expect(screen.getByText(/the living map/i)).toBeInTheDocument();
+    expect(screen.getByText(/ask the twin anything/i)).toBeInTheDocument();
+  });
+
+  it('keeps italic emphasis on the h1 word (jade is reserved for the live edge)', () => {
+    const { container } = renderHero();
+    // The em carries emphasis; the shell CSS keeps it italic-only — never the
+    // jade accent, which is reserved for the live/active wavefront.
+    expect(container.querySelector('#hero h1 em')).not.toBeNull();
+  });
+
+  it('remains pure spectacle — no buttons or links in the new shell', () => {
+    const { container } = renderHero();
+    const section = container.querySelector('#hero');
+    expect(within(section as HTMLElement).queryAllByRole('button')).toHaveLength(0);
+    expect(within(section as HTMLElement).queryAllByRole('link')).toHaveLength(0);
+  });
+});

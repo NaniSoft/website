@@ -68,6 +68,28 @@
   --color-accent: #14A77A;    /* color.jade — live/active only */
 }
 
+/*
+ * The hero is a dark "Living Map" band in BOTH page modes — a full-bleed petrol
+ * panel with the estate→answer traversal on the right. data-theme lives on
+ * <html> (ThemeProvider), so a per-section theme scope isn't available; instead
+ * the semantic tokens are re-declared to the dark surface values right here on
+ * .hero. HeroFlow consumes exactly these tokens, so the whole SVG flips to its
+ * dark-mode appearance (petrolMid chips, bone labels, teal edges, jade pulse)
+ * regardless of the page theme — with no edits to HeroFlow. Hex + identity-name
+ * comments mirror the [data-theme='dark'] block above; --color-secondary (teal)
+ * and --color-accent (jade) are mode-invariant and inherited unchanged.
+ */
+.hero {
+  --color-bg: #0C2A33;        /* color.petrol */
+  --color-bg-elev: #15414A;   /* color.petrolMid */
+  --color-bg-sunken: #08222A; /* color.petrolDeep */
+  --color-border: #3C6770;    /* color.petrolSoft */
+  --color-text: #F4EFE6;      /* color.bone */
+  --color-text-muted: #8FB0B6;/* color.petrolTint */
+  --color-primary: #FBF7EF;   /* color.boneElev */
+  --color-on-primary: #0C2A33;/* color.petrol */
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
