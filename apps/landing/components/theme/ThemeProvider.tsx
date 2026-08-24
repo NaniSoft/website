@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { ConfigProvider } from 'antd';
+import { THEME_STORAGE_KEY } from '@nanisoft/identity';
 import { lightTheme, darkTheme } from './tokens';
 
 type ThemeMode = 'light' | 'dark' | 'system';
@@ -23,7 +24,9 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'nanisoft-theme';
+// The shared cross-app key lives in @nanisoft/identity (THEME_STORAGE_KEY) —
+// the playground's theme store reads the same constant.
+const STORAGE_KEY = THEME_STORAGE_KEY;
 
 // Theme mode lives in localStorage; the OS preference lives in matchMedia. Both
 // are external stores, so the React 19 idiom is useSyncExternalStore — this

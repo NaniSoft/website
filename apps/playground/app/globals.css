@@ -25,9 +25,10 @@
   --color-primary: #0C2A33;   /* color.petrol */
   --color-on-primary: #F4EFE6; /* color.bone */
 
-  /* Text/icons on a jade fill (Run buttons, active phase band). Bone in light
-     mode; in dark mode the deep petrol base reads on jade (~4.9:1). */
-  --color-on-accent: #F4EFE6; /* color.bone */
+  /* Text/icons on a jade fill (Run buttons, active phase band): role.onAccent,
+     mode-invariant — petrol reads on jade at ~4.9:1 in BOTH modes (the old
+     bone pairing was ~2.7:1 in light; identity decision 2026-08-24). */
+  --color-on-accent: #0C2A33; /* color.petrol */
 
   color-scheme: light;
 }
@@ -45,7 +46,7 @@
   --color-primary: #FBF7EF;   /* color.boneElev */
   --color-on-primary: #0C2A33; /* color.petrol */
 
-  --color-on-accent: #0C2A33; /* color.petrol — dark base reads on jade */
+  --color-on-accent: #0C2A33; /* color.petrol — role.onAccent, same in both modes */
 
   color-scheme: dark;
 }

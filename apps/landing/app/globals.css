@@ -27,6 +27,11 @@
   --color-primary: #0C2A33;   /* color.petrol */
   --color-on-primary: #F4EFE6; /* color.bone */
 
+  /* Text/icons on a jade fill: role.onAccent (mode-invariant — petrol reads
+     on jade at ~4.9:1 in both modes). Same var the playground's globals.css
+     defines; consumers use it for any content on an accent fill. */
+  --color-on-accent: #0C2A33; /* color.petrol */
+
   /* Secondary (supporting marks) and the locked live/active accent. */
   --color-secondary: #2A8C97; /* color.teal */
   --color-accent: #14A77A;    /* color.jade — live/active only */
@@ -54,6 +59,9 @@
   /* Interactive base inverts to bone on petrol. */
   --color-primary: #FBF7EF;   /* color.boneElev */
   --color-on-primary: #0C2A33; /* color.petrol */
+
+  /* role.onAccent is mode-invariant — identical in both blocks. */
+  --color-on-accent: #0C2A33; /* color.petrol */
 
   /* Secondary and accent are mode-invariant identity values. */
   --color-secondary: #2A8C97; /* color.teal */

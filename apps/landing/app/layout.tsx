@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { APP_NAME } from '@nanisoft/architecture';
-import { IDENTITY_VERSION } from '@nanisoft/identity';
+import { IDENTITY_VERSION, themeBootstrapScript } from '@nanisoft/identity';
 import './globals.css';
 
 // Satoshi (the voice) is a Fontshare typeface (ITF Free Font License,
@@ -35,19 +35,11 @@ export const metadata = {
   other: { 'nanisoft-identity': IDENTITY_VERSION },
 };
 
-const themeBootstrap = `
-  (function () {
-    try {
-      var saved = localStorage.getItem('nanisoft-theme');
-      var mode = saved || 'system';
-      var resolved = mode === 'system'
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        : mode;
-      document.documentElement.setAttribute('data-theme', resolved);
-      document.documentElement.style.colorScheme = resolved;
-    } catch (e) {}
-  })();
-`;
+// No-FOUC theme bootstrap — the shared contract from @nanisoft/identity (same
+// string the playground's app/layout.tsx renders; one constant, so the two
+// apps cannot drift). Runs synchronously during HTML parsing; ThemeProvider
+// keeps it reconciled after hydration.
+const themeBootstrap = themeBootstrapScript;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

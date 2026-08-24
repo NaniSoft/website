@@ -1,14 +1,16 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { THEME_STORAGE_KEY } from '@nanisoft/identity';
 
 /**
  * Theme-mode store for the playground — a plain-module mirror of the landing's
  * `apps/landing/components/theme/ThemeProvider.tsx` contract (the playground
  * has no antd, so there is no context/provider, just the same external store):
  *
- *  - SAME storage key: `nanisoft-theme` (a mode set in one app is honored by
- *    the other — do not change this string without changing the landing too);
+ *  - SAME storage key: `nanisoft-theme`, imported from @nanisoft/identity
+ *    (a mode set in one app is honored by the other — per-origin, so subdomain
+ *    deployments each start consistent but don't live-sync);
  *  - same values: 'light' | 'dark' | 'system', unset reads as 'system';
  *  - same fallback: the OS preference via matchMedia when mode is 'system';
  *  - same reflection: resolved mode onto `<html data-theme>` + inline
@@ -22,8 +24,8 @@ import { useSyncExternalStore } from 'react';
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ResolvedTheme = 'light' | 'dark';
 
-/** Shared cross-app key — MUST stay identical to the landing's ThemeProvider. */
-export const THEME_STORAGE_KEY = 'nanisoft-theme';
+// THEME_STORAGE_KEY comes from @nanisoft/identity — the same constant the
+// landing's ThemeProvider reads and both layouts' bootstrap scripts render.
 
 // ── Stored mode ('light' | 'dark' | 'system') ────────────────────────────────
 
