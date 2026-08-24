@@ -34,9 +34,34 @@ jobs:
       - name: Build
         run: pnpm -r run build
 
+  e2e:
+    name: Overflow scroll law (both apps)
+    # The scroll law ("the page never scrolls horizontally") regresses loudly:
+    # both themed overflow matrices (9 viewports × light/dark, 54 checks) run on
+    # every push/PR, and the deploy jobs below wait on this job.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright chromium
+        # One browser install serves both apps — same locked @playwright/test,
+        # shared ms-playwright cache. Each config's webServer boots its own dev
+        # server (:3000 landing / :3001 playground) because CI never reuses one.
+        run: pnpm --filter @nanisoft/landing exec playwright install --with-deps chromium
+      - name: Landing — overflow scroll law
+        run: pnpm --filter @nanisoft/landing run test:overflow
+      - name: Playground — overflow scroll law
+        run: pnpm --filter @nanisoft/playground run test:overflow
+
   deploy-landing:
     name: Deploy landing → nanisoft worker
-    needs: verify
+    needs: [verify, e2e]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -59,7 +84,7 @@ jobs:
 
   deploy-playground:
     name: Deploy playground → nanisoft-playground worker
-    needs: verify
+    needs: [verify, e2e]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
