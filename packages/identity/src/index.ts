@@ -10,16 +10,16 @@
  * resolve `.js`→`.ts` inside a workspace package's source.
  */
 
-/** Identity system version. Bumped when tokens change. */
-export const IDENTITY_VERSION = '0.1.0';
-
 // ── Tokens ────────────────────────────────────────────────────────────────────
-export { color, role, surface, radius, EXCLUDED, font, easing, easingTuple } from './tokens';
+export { IDENTITY_VERSION, color, role, surface, radius, EXCLUDED, font, easing, easingTuple } from './tokens';
 export type { Hex } from './tokens';
 
 // ── Motion ─────────────────────────────────────────────────────────────────────
 export { breathe, traverse, ripple, settle, motion, MOTION_VARIANTS, MOTION_NAMES, withReducedMotion } from './motion';
 export type { MotionKeyframe, MotionStyle, MotionVariant } from './motion';
+
+// ── Cross-app theme contract ──────────────────────────────────────────────────
+export { THEME_STORAGE_KEY, themeBootstrapScript } from './theme';
 
 // ── Wordmark + monogram ───────────────────────────────────────────────────────
 export { wordmarkSvg, monogramSvg } from './wordmark';

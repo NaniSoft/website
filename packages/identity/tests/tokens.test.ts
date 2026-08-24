@@ -1,7 +1,8 @@
 /**
  * Token tests — pin the SPEC §2 invariants: palette hexes, the jade-only-accent
  * rule, the excluded values (no purple/neon/pure-black/pure-white), the shape
- * lock (radii 20/12/pill), and the brand easing.
+ * lock (radii 20/12/pill), and the brand easing. Contrast assertions compute
+ * real WCAG ratios so a palette tweak that breaks readability trips here.
  */
 import { describe, expect, it } from 'vitest';
 import { color, easing, easingTuple, EXCLUDED, font, radius, role, surface } from '../src/index';
@@ -35,6 +36,23 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
     if (h < 0) h += 360;
   }
   return { h, s, l };
+}
+
+/** WCAG 2.x relative luminance of a #rrggbb hex. */
+function luminance(hex: string): number {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!m) throw new Error(`bad hex: ${hex}`);
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const v = parseInt(m[1].slice(i, i + 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** WCAG contrast ratio between two hex colors (>= 1). */
+function contrast(a: string, b: string): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
 }
 
 describe('palette — SPEC §2 hexes', () => {
@@ -72,6 +90,23 @@ describe('jade-only-accent guard — jade is live/active only, never decorative'
         expect(value).not.toBe(color.jade);
       }
     }
+  });
+});
+
+describe('onAccent — readable content on a jade fill (identity decision 2026-08-24)', () => {
+  it('pairs jade with the deep petrol base, mode-invariantly', () => {
+    expect(role.onAccent).toBe(color.petrol);
+  });
+
+  it('meets WCAG AA for normal text on jade (>= 4.5:1)', () => {
+    expect(contrast(color.jade, role.onAccent)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('beats the bone pairing that failed light mode (~2.7:1)', () => {
+    // The debt this token resolves: bone-on-jade was the old default. If a
+    // future palette tweak makes bone readable on jade, this still demands
+    // the shipped token stay the stronger pairing until consciously changed.
+    expect(contrast(color.jade, role.onAccent)).toBeGreaterThan(contrast(color.jade, color.bone));
   });
 });
 

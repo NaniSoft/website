@@ -10,6 +10,8 @@
  *  - Base = petrol + bone. Secondary = teal. Accent = jade, and jade is the
  *    ONLY accent — it is reserved for the live/active wavefront (active edge,
  *    active link) and never used decoratively.
+ *  - Content ON a jade fill pairs it with petrol (role.onAccent, ~4.9:1 in
+ *    both modes) — never bone, which fails light mode at ~2.7:1.
  *  - Excluded: no purple, no neon, no pure black (#000000), no pure white
  *    (#FFFFFF). Ink is a near-black petrol; the lightest surface is bone, not
  *    white.
@@ -55,6 +57,15 @@ export const role = {
   base: { dark: color.petrol, light: color.bone },
   secondary: color.teal,
   accent: color.jade,
+  /**
+   * Foreground for content sitting ON an accent (jade) fill — Run buttons,
+   * active chips, status pills. Jade is mid-luminance, so bone fails on it
+   * in light mode (~2.7:1); the deep petrol base reads on jade at ~4.9:1 in
+   * BOTH modes (WCAG AA normal text), so this pairing is mode-invariant by
+   * design. Pinned by a computed WCAG ratio test in tests/tokens.test.ts
+   * (identity decision 2026-08-24).
+   */
+  onAccent: color.petrol,
 } as const;
 
 /**
@@ -127,4 +138,4 @@ export const easingTuple = [0.32, 0.72, 0, 1] as const;
 
 // ── Version ───────────────────────────────────────────────────────────────────
 /** Identity system version. Bumped when tokens change. */
-export const IDENTITY_VERSION = '0.1.0';
+export const IDENTITY_VERSION = '0.2.0';
