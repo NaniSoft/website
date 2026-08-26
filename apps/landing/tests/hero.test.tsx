@@ -81,6 +81,20 @@ describe('HeroDag — the living map', () => {
     expect(document.getElementById('hero-dag-desc')?.textContent).toContain('Bedrock');
   });
 
+  it('ships a <noscript> fallback so the hero panel is not an empty hole without JS', () => {
+    renderHero();
+    const canvas = screen.getByRole('img', { name: /digital-twin pipeline/i });
+    const root = canvas.closest('[data-motion]');
+    // React emits the <noscript> element into the DOM; its children are only
+    // parsed/shown by the browser when scripting is disabled. jsdom (client
+    // render) does not populate noscript children the way the SSR markup does,
+    // so assert the element is wired into the hero panel — the SSR text content
+    // is verified by the Playwright reduced-motion browser check.
+    const noscript = root?.querySelector('noscript');
+    expect(noscript).not.toBeNull();
+    expect(noscript?.tagName.toLowerCase()).toBe('noscript');
+  });
+
   it('renders the DAG on narrow screens (the canvas adapts — no vertical switch)', () => {
     narrowScreen();
     renderHero();

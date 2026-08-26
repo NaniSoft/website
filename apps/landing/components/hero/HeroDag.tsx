@@ -15,11 +15,15 @@
  * renders in its dark-mode appearance with no raw hex here. prefers-reduced-
  * motion draws a single settled frame (no wavefront, no ripples); the loop
  * pauses while document.hidden. Jade stays reserved for the live wavefront /
- * active edges / live nodes — never the static graph.
+ * active edges / live nodes — never the static graph, EXCEPT one static jade
+ * "live" cue painted on the Compass hub in the settled frame so the live/active
+ * state is conveyed without motion (the wavefront is otherwise the only live
+ * signal). A `<noscript>` block fills the panel with a short text fallback when
+ * scripting is disabled, so the right column is never an empty dark hole.
  *
- * The canvas is blank without JS; sighted no-JS visitors still see the hero's
- * HTML copy (eyebrow / h1 / sub), and screen readers get the aria-label + the
- * visually-hidden description below.
+ * The canvas is blank without JS; sighted no-JS visitors get the `<noscript>`
+ * fallback plus the hero's HTML copy (eyebrow / h1 / sub), and screen readers
+ * get the aria-label + the visually-hidden description below.
  */
 import { useEffect, useRef, useState } from 'react';
 
@@ -209,6 +213,12 @@ export function HeroDag() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       T = readTokens();
       build();
+      // Setting canvas.width/height clears the bitmap. In live mode the rAF
+      // loop repaints next frame; in reduced-motion mode there is no rAF, so a
+      // ResizeObserver-triggered resize would leave the settled frame blank.
+      // Repaint synchronously so the static graph (incl. the jade Compass cue)
+      // is always present after a resize.
+      draw();
     }
 
     // Orthogonal polyline with soft (rounded) 90deg corners.
@@ -388,6 +398,30 @@ export function HeroDag() {
         for (const n of nodes) ctx.fillText(n.label, n.x, n.y - n.r - 7);
       }
 
+      // Static "live" cue for reduced motion: the wavefront is the only live
+      // signal in the live branch, and jade is the brand's live/active color.
+      // Under reduced motion there is no wavefront, so without this the settled
+      // frame carries "live" by motion alone with nothing static left behind.
+      // Paint a small jade "live" tag under the Compass hub (the terminal UI
+      // node) so a jade pixel + the word "live" persist without any animation.
+      // No rAF, no motion — one extra paint in the settled frame only.
+      if (reduce && W >= 380) {
+        const compass = nodes.find((n) => n.hub && n.label === 'Compass');
+        if (compass) {
+          ctx.font = `9px ${T.mono}, "JetBrains Mono", ui-monospace, monospace`;
+          ctx.textAlign = 'center';
+          // small jade dot + "live" label, seated just below the node label
+          const lx = compass.x;
+          const ly = compass.y + compass.r + 14;
+          ctx.beginPath();
+          ctx.arc(lx - 18, ly - 3, 2.4, 0, Math.PI * 2);
+          ctx.fillStyle = T.jade;
+          ctx.fill();
+          ctx.fillStyle = rgba(T.jade, 0.92);
+          ctx.fillText('live', lx + 2, ly);
+        }
+      }
+
       // click ripples
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rp = ripples[i];
@@ -467,6 +501,16 @@ export function HeroDag() {
       <span id="hero-dag-desc" className="hero-dag-desc">
         {DESC}
       </span>
+      {/* No-JS fallback: the canvas is blank without JavaScript, so without
+          this the hero's right column is an empty dark hole. <noscript> is
+          rendered by the browser only when scripting is disabled, so it stays
+          out of the DOM (and out of the way) whenever JS is on. Styled in the
+          hero token colors scoped on .hero so it reads as part of the panel. */}
+      <noscript>
+        <p className="hero-dag-noscript">
+          A live pipeline diagram runs here with JavaScript enabled.
+        </p>
+      </noscript>
       <style>{`
         .hero-dag { position: relative; width: 100%; height: 100%; }
         .hero-dag canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -479,6 +523,24 @@ export function HeroDag() {
           clip: rect(0 0 0 0);
           white-space: nowrap;
           border: 0;
+        }
+        /* No-JS fallback fills the panel in hero token colors (scoped on .hero). */
+        .hero-dag-noscript {
+          position: absolute;
+          inset: 0;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+          text-align: center;
+          font-family: var(--font-mono, ui-monospace), monospace;
+          font-size: 0.8125rem;
+          line-height: 1.5;
+          color: var(--color-text-muted);
+          background: var(--color-surface);
+          border: 1px solid var(--color-border, transparent);
+          border-radius: 0.5rem;
         }
       `}</style>
     </div>
