@@ -15,7 +15,7 @@ export function Footer() {
           maxWidth: 1200,
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: '1.5fr repeat(4, 1fr)',
+          gridTemplateColumns: '1.5fr 1fr',
           gap: 48,
         }}
         className="footer-grid"
@@ -28,18 +28,24 @@ export function Footer() {
         </div>
         {Object.entries(FOOTER_LINKS).map(([heading, links]) => (
           <div key={heading}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>{heading}</div>
+            <h2 style={{ fontWeight: 600, fontSize: 16, margin: '0 0 12px' }}>{heading}</h2>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 8 }}>
-              {links.map((label) => (
-                <li key={label}>
-                  <a href="#" style={{ color: 'var(--color-text-muted)' }}>{label}</a>
+              {links.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {link.label}
+                  </a>
                 </li>
               ))}
             </ul>
           </div>
         ))}
       </div>
-      <style>{`@media (max-width: 899px) { .footer-grid { grid-template-columns: repeat(2, 1fr) !important; } }`}</style>
+      <style>{`@media (max-width: 899px) { .footer-grid { grid-template-columns: 1fr !important; } }`}</style>
       <div
         style={{
           maxWidth: 1200,
@@ -55,8 +61,14 @@ export function Footer() {
         }}
       >
         <span>© 2026 {BRAND.name}. All rights reserved.</span>
+        {/* No real Privacy/Terms/Security/Status pages exist yet, so these
+            render as non-interactive labels rather than dead href="#"
+            anchors. Promote to links when the pages land. */}
         <span style={{ display: 'flex', gap: 24 }}>
-          <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Status</a>
+          <span>Privacy</span>
+          <span>Terms</span>
+          <span>Security</span>
+          <span>Status</span>
         </span>
       </div>
     </footer>

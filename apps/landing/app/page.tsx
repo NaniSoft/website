@@ -11,7 +11,7 @@ import { FinalCTA } from '@/components/FinalCTA';
 export default function Page() {
   return (
     <>
-      <a href="#main" style={{ position: 'absolute', left: -9999 }}>Skip to main content</a>
+      <a href="#main">Skip to main content</a>
       <TopNav />
       <main id="main">
         <Hero />

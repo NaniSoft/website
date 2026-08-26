@@ -102,10 +102,11 @@ describe('Page shell (nanisoft)', () => {
   it('points every CTA at the playground — the only ask on the page', async () => {
     renderPage();
     await flushAntd();
-    // Exactly two: the nav pill and the closing section (the flagship-use-case
-    // handoff keeps its own distinct label).
+    // Exactly three: the nav pill, the closing section, and the footer
+    // Product column (the flagship-use-case handoff keeps its own distinct
+    // label). All point at the playground with the same target/rel.
     const ctas = screen.getAllByRole('link', { name: /open the playground/i });
-    expect(ctas).toHaveLength(2);
+    expect(ctas).toHaveLength(3);
     for (const cta of ctas) {
       expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
       expect(cta.getAttribute('target')).toBe('_blank');

@@ -45,4 +45,37 @@ describe('Accessibility smoke', () => {
     // Quick sanity: the W1 wordmarks are labeled with the brand.
     expect(screen.getAllByLabelText(/nanisoft/i).length).toBeGreaterThan(0);
   });
+
+  it('skip link has no inline off-screen style defeating the :not(:focus) CSS', async () => {
+    render(
+      <ThemeProvider>
+        <Page />
+      </ThemeProvider>
+    );
+    await flushAntd();
+    const link = screen.getByText('Skip to main content');
+    // The inline style attribute (position:absolute; left:-9999) was removed
+    // so the globals.css `:not(:focus)` rule can move it off-screen and the
+    // `:focus` rule can bring it back. jsdom doesn't run :focus, so we assert
+    // the inline style is gone rather than the computed position.
+    expect(link.getAttribute('style')).toBeNull();
+  });
+
+  it('footer has no dead href="#" anchors and column headings are headings', async () => {
+    render(
+      <ThemeProvider>
+        <Page />
+      </ThemeProvider>
+    );
+    await flushAntd();
+    const footer = document.querySelector('footer') as HTMLElement;
+    expect(footer.querySelectorAll('a[href="#"]')).toHaveLength(0);
+    // Every footer link is either an in-page anchor or the external playground.
+    for (const a of Array.from(footer.querySelectorAll('a'))) {
+      const href = a.getAttribute('href') || '';
+      expect(href.startsWith('#') || href.startsWith('https://')).toBe(true);
+    }
+    // Column headings enter the page outline as <h2> (no <div> headings).
+    expect(footer.querySelectorAll('h2').length).toBeGreaterThan(0);
+  });
 });

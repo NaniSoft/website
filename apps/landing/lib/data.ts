@@ -133,9 +133,16 @@ export const FINAL_CTA = {
     'In-browser, guided, and fully mocked — nothing to install. Watch a query traverse the twin end to end.',
 };
 
+// Only destinations the site actually substantiates: the three in-page
+// section anchors and the external playground. Labels that promised pages
+// the site never had ("AI Agents", "Docs", "Careers", …) were removed so the
+// footer never points at dead href="#". `external` flags the playground link
+// so the Footer opens it in a new tab with rel="noopener noreferrer".
 export const FOOTER_LINKS = {
-  Product: ['Platform', 'Integrations', 'AI Agents', 'Changelog'],
-  Solutions: ['M&A diligence', 'Incident response', 'Continuous compliance', 'Identity governance'],
-  Resources: ['Docs', 'Customer stories', 'Security & trust', 'Status'],
-  Company: ['About', 'Careers', 'Press', 'Contact'],
+  Product: [
+    { label: 'Platform', href: '#platform' },
+    { label: 'Use cases', href: '#use-cases' },
+    { label: 'Integrations', href: '#integrations' },
+    { label: 'Open the playground', href: 'https://playground.nanisoft.com', external: true },
+  ],
 } as const;

@@ -97,7 +97,20 @@ describe('data module', () => {
     expect(dump.includes('mailto')).toBe(false);
   });
 
-  it('footer has 4 link columns', () => {
-    expect(Object.keys(FOOTER_LINKS)).toHaveLength(4);
+  it('footer has only real destinations (no dead href="#")', () => {
+    // Restructured to a single "Product" column: the three in-page section
+    // anchors plus the external playground link. Labels that promised pages
+    // the site never substantiates were removed.
+    expect(Object.keys(FOOTER_LINKS)).toEqual(['Product']);
+    for (const link of FOOTER_LINKS.Product) {
+      expect(typeof link.href).toBe('string');
+      expect(link.href.length).toBeGreaterThan(1);
+      expect(link.href).not.toBe('#');
+    }
+    // The playground link is flagged external so the Footer opens it in a
+    // new tab with rel="noopener noreferrer".
+    const playground = FOOTER_LINKS.Product.find((l) => l.href.startsWith('http'));
+    expect(playground?.external).toBe(true);
+    expect(playground?.href).toBe('https://playground.nanisoft.com');
   });
 });

@@ -60,7 +60,7 @@ export function TopNav() {
           </a>
         ))}
       </nav>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="top-nav-ask" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <ThemeToggle />
         {/* The only ask on the site: explore the playground (external href →
             new tab, explicitly noopener — same convention as FinalCTA). */}
@@ -74,25 +74,42 @@ export function TopNav() {
         </PillButton>
       </div>
       <style>{`
+        /* Below lg the primary nav links stay visible (the three short
+           in-page anchors fit at 320px once the tagline is hidden). The
+           tagline moves up to the lg breakpoint because the nav now shares
+           the row at 768–1023px and the tagline's ~180px would overflow.
+           The header is allowed to wrap so brand+nav+ask never clip at
+           640–703px, where the ask group's ~287px min-content otherwise
+           overflows the ~577–655px content width. */
         @media (max-width: 1023px) {
-          .top-nav-links { display: none !important; }
-        }
-        /* Tagline hides below md: with it shown, the row's min-content is
-           ~643px, which clipped 640–659px viewports (task 5 [A] sweep). */
-        @media (max-width: 767px) {
           .top-nav-tagline, .top-nav-tagline-rule { display: none !important; }
-        }
-        @media (max-width: 639px) {
-          /* Below 640px even brand + toggle + "Open the playground" pill
-             (~500px min-content) exceed the viewport, so the ask group wraps
-             to its own line instead of clipping the pill (task 5 [A]).
-             !important beats the inline flex/height. */
           .site-header {
             flex-wrap: wrap !important;
             height: auto !important;
             min-height: 64px;
-            row-gap: 4px !important;
+            row-gap: 8px !important;
+            gap: 16px !important;
           }
+          .top-nav-links { gap: 16px !important; margin-left: 4px !important; }
+        }
+        @media (max-width: 639px) {
+          /* Below 640px each cluster gets its own line: the nav links take
+             flex-basis 100% so brand and the ask group wrap beneath them.
+             The ask group's gap tightens and the pill's horizontal padding
+             is reduced so toggle + "Open the playground" fit at 320px
+             without clipping the pill's right edge (task 5 [A] 6px
+             overflow). !important beats the inline flex/height and antd
+             Button's default 15px inline padding. */
+          .site-header {
+            padding: 8px 24px !important;
+          }
+          .top-nav-links {
+            flex-basis: 100% !important;
+            margin-left: 0 !important;
+            gap: 16px !important;
+          }
+          .top-nav-ask { gap: 8px !important; }
+          .top-nav-ask .ant-btn { padding-inline: 10px !important; }
         }
       `}</style>
     </header>
