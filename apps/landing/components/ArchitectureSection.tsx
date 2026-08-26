@@ -69,6 +69,7 @@ function markerFor(s: ElementStatus): string {
 export function ArchitectureSection() {
   const graph = useMemo(() => buildSectionGraph(), []);
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // Reduced motion: settle into the full four-phase end-state as soon as
   // hydration allows (the global reduced-motion CSS makes the swap instant —
@@ -120,6 +121,35 @@ export function ArchitectureSection() {
     };
   }, [reduced]);
 
+  // Horizontal-scroll cue (finding 7): the 900px-min-width SVG pans inside an
+  // overflowX:auto box that is narrower than the diagram on small viewports;
+  // the right-side chips (Compass/Atlas/OPA) are reachable only past a scroll
+  // edge with no visible cue. Show a right-edge gradient + "→" affordance that
+  // hides once the box is scrolled to (within 1px of) its end. rAF-throttled
+  // passive scroll listener — same pattern as the phase driver above.
+  const [cue, setCue] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const recompute = () => {
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+      const overflow = el.scrollWidth - el.clientWidth > 1;
+      setCue(overflow && !atEnd);
+    };
+    let raf = 0;
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; recompute(); });
+    };
+    recompute();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   const activeIdx = reduced ? PHASES.length - 1 : idx;
   const state = useMemo(() => deriveSectionState(activeIdx), [activeIdx]);
   const G = SECTION_GEOMETRY;
@@ -137,16 +167,17 @@ export function ArchitectureSection() {
         from schema to finding.
       </p>
 
-      <div ref={trackRef} style={{ position: 'relative', height: '320vh' }}>
-        <div style={{ position: 'sticky', top: '10vh', background: 'var(--color-bg)', padding: '24px 0' }}>
+      <div ref={trackRef} data-arch-track style={{ position: 'relative', height: reduced ? 'auto' : '320vh' }}>
+        <div style={reduced ? { background: 'var(--color-bg)', padding: '24px 0' } : { position: 'sticky', top: '10vh', background: 'var(--color-bg)', padding: '24px 0' }}>
           <div style={{ border: '1px solid var(--color-border)', borderRadius: radius.card, background: 'var(--color-bg-elev)', overflow: 'hidden' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <svg
-                viewBox={`0 ${VIEW_TOP} ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-                role="img"
-                aria-labelledby="arch-svg-title arch-svg-desc"
-                style={{ display: 'block', width: '100%', minWidth: 900, height: 'auto' }}
-              >
+            <div style={{ position: 'relative' }}>
+              <div ref={scrollRef} style={{ overflowX: 'auto' }}>
+                <svg
+                  viewBox={`0 ${VIEW_TOP} ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+                  role="img"
+                  aria-labelledby="arch-svg-title arch-svg-desc"
+                  style={{ display: 'block', width: '100%', minWidth: 900, height: 'auto' }}
+                >
                 <title id="arch-svg-title">nanisoft architecture pipeline</title>
                 <desc id="arch-svg-desc">
                   Directed pipeline left to right: source systems feed Airbyte; Trailhead
@@ -288,18 +319,51 @@ export function ArchitectureSection() {
                   );
                 })}
               </svg>
+              </div>
+
+              {/* Right-edge scroll cue (finding 7): gradient fade to --color-bg-elev
+                  plus a "→" glyph, pinned to the visible right edge of the pan box.
+                  Hides once scrollLeft + clientWidth >= scrollWidth - 1. Decorative —
+                  the SVG itself is a role="img" with title/desc. */}
+              {cue && (
+                <div
+                  aria-hidden="true"
+                  data-arch-scroll-cue
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: 56,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    paddingRight: 10,
+                    fontSize: 20,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    color: 'var(--color-text-muted)',
+                    background: 'linear-gradient(to right, transparent, var(--color-bg-elev))',
+                  }}
+                >
+                  &rarr;
+                </div>
+              )}
             </div>
 
-            {/* Active-phase caption — narrates what the reader is looking at. */}
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, padding: '4px 20px 18px', flexWrap: 'wrap' }}>
+            {/* Active-phase caption — narrates what the reader is looking at.
+                Stable polite live region (finding 13): the wrapper stays mounted
+                and text updates in place, so scroll-driven narration reaches AT.
+                No per-phase key remount — the arch-caption-in fade plays once. */}
+            <div role="status" aria-live="polite" style={{ display: 'flex', alignItems: 'baseline', gap: 16, padding: '4px 20px 18px', flexWrap: 'wrap' }}>
               <span
-                key={`i${activeIdx}`}
                 className="mono arch-caption"
                 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--color-text)' }}
               >
                 {`0${activeIdx + 1} / 04 · ${PHASES[activeIdx].name.toUpperCase()}`}
               </span>
-              <p key={`c${activeIdx}`} className="arch-caption" style={{ margin: 0, fontSize: 15, maxWidth: 760, color: 'var(--color-text-muted)' }}>
+              <p className="arch-caption" style={{ margin: 0, fontSize: 15, maxWidth: 760, color: 'var(--color-text-muted)' }}>
                 {PHASE_CAPTIONS[PHASES[activeIdx].id]}
               </p>
             </div>

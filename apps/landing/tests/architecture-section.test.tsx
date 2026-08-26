@@ -274,4 +274,52 @@ describe('ArchitectureSection', () => {
       window.matchMedia = original;
     }
   });
+
+  it('collapses the scroll track to auto height and drops sticky under prefers-reduced-motion', async () => {
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+    try {
+      renderSection();
+      await flush();
+      const track = document.querySelector('[data-arch-track]') as HTMLElement;
+      expect(track).not.toBeNull();
+      expect(track.style.height).toBe('auto');
+      // The inner panel must not be position: sticky under reduced motion —
+      // it renders in normal flow so the tall 320vh sticky track is gone.
+      const inner = track.firstElementChild as HTMLElement;
+      expect(inner.style.position).not.toBe('sticky');
+    } finally {
+      window.matchMedia = original;
+    }
+  });
+
+  it('keeps the full 320vh sticky track under default (no reduced-motion) preferences', async () => {
+    renderSection();
+    await flush();
+    const track = document.querySelector('[data-arch-track]') as HTMLElement;
+    expect(track).not.toBeNull();
+    expect(track.style.height).toBe('320vh');
+    const inner = track.firstElementChild as HTMLElement;
+    expect(inner.style.position).toBe('sticky');
+  });
+
+  it('announces phase captions through a stable polite live region (no per-phase remount)', async () => {
+    renderSection();
+    await flush();
+    const live = screen.getByRole('status');
+    expect(live).toHaveAttribute('aria-live', 'polite');
+    // The caption text lives inside the live region; the phase index prefix
+    // is present and updates in place (no key-driven remount of the wrapper).
+    expect(live.textContent).toContain('01 / 04');
+    expect(live.textContent).toContain('Schema');
+  });
 });
