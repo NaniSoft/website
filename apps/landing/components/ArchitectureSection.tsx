@@ -277,27 +277,13 @@ export function ArchitectureSection() {
                       />
                       <text
                         x={n.cx}
-                        y={n.cy - (n.component.realName ? 6 : 0)}
+                        y={n.cy}
                         textAnchor="middle"
                         dominantBaseline="central"
-                        style={{ fontFamily: font.voice, fontSize: 12.5, fontWeight: 600, fill: 'var(--color-text)' }}
+                        style={{ fontFamily: font.voice, fontSize: 13, fontWeight: 600, fill: 'var(--color-text)' }}
                       >
                         {n.component.codename}
                       </text>
-                      {n.component.realName && (
-                        <text
-                          x={n.cx}
-                          y={n.cy + 12}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          {...(n.component.realName.length * 4.8 > G.chipW - 12
-                            ? { textLength: G.chipW - 12, lengthAdjust: 'spacingAndGlyphs' as const }
-                            : {})}
-                          style={{ fontFamily: font.data, fontSize: 8, fill: 'var(--color-text-muted)' }}
-                        >
-                          {n.component.realName}
-                        </text>
-                      )}
                     </g>
                   );
                 })}

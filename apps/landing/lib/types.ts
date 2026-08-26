@@ -24,6 +24,13 @@ export type StackRole =
 export interface StackProduct {
   name: string;
   role: StackRole;
+  /**
+   * The real OSS product this entry runs. For entries nanisoft codenames
+   * (Trailhead, Forge, …), this is the wrapped product from
+   * `@nanisoft/architecture`; for entries already named by their real product
+   * (Airbyte, OPA, …), `realName` equals `name`. Omitted renders as just `name`.
+   */
+  realName?: string;
 }
 
 /** A component nanisoft builds itself. */

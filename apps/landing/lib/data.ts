@@ -94,26 +94,29 @@ export const USE_CASES_MORE = {
 // ---------------------------------------------------------------------------
 
 export const STACK_PRODUCTS: readonly StackProduct[] = [
-  { name: 'Trailhead', role: 'Orchestration' },
-  { name: 'Forge', role: 'Transform' },
-  { name: 'Bedrock', role: 'Lakehouse' },
-  { name: 'Overlook', role: 'Query' },
-  { name: 'Blueprint', role: 'Schema' },
-  { name: 'Watchtower', role: 'Observability' },
-  { name: 'Anchor', role: 'Infrastructure as code' },
-  { name: 'Conveyor', role: 'GitOps' },
-  { name: 'Airbyte', role: 'Ingestion' },
-  { name: 'Zingg', role: 'Entity resolution' },
-  { name: 'Great Expectations', role: 'Quality gates' },
-  { name: 'Superset', role: 'Dashboards' },
-  { name: 'OPA', role: 'Authorization' },
-  { name: 'OpenBao', role: 'Secrets' },
-  { name: 'CloudNativePG', role: 'Databases' },
-  { name: 'Valkey', role: 'Cache' },
+  // Codenamed entries — the real wrapped OSS product is in `realName`
+  // (sourced verbatim from @nanisoft/architecture's component model).
+  { name: 'Trailhead', role: 'Orchestration', realName: 'Airflow' },
+  { name: 'Forge', role: 'Transform', realName: 'Spark + dbt' },
+  { name: 'Bedrock', role: 'Lakehouse', realName: 'Nessie (Iceberg catalog, Postgres, S3)' },
+  { name: 'Overlook', role: 'Query', realName: 'Trino' },
+  { name: 'Blueprint', role: 'Schema', realName: 'DataGerry' },
+  { name: 'Watchtower', role: 'Observability', realName: 'Prometheus + Grafana + Loki' },
+  { name: 'Anchor', role: 'Infrastructure as code', realName: 'OpenTofu / Terraform' },
+  { name: 'Conveyor', role: 'GitOps', realName: 'ArgoCD' },
+  // Real OSS, already named by their product name.
+  { name: 'Airbyte', role: 'Ingestion', realName: 'Airbyte' },
+  { name: 'Zingg', role: 'Entity resolution', realName: 'Zingg' },
+  { name: 'Great Expectations', role: 'Quality gates', realName: 'Great Expectations' },
+  { name: 'Superset', role: 'Dashboards', realName: 'Apache Superset' },
+  { name: 'OPA', role: 'Authorization', realName: 'Open Policy Agent' },
+  { name: 'OpenBao', role: 'Secrets', realName: 'OpenBao' },
+  { name: 'CloudNativePG', role: 'Databases', realName: 'CloudNativePG' },
+  { name: 'Valkey', role: 'Cache', realName: 'Valkey' },
 ];
 
 export const INTEGRATIONS_NOTE =
-  'Every off-the-shelf product runs unmodified — integrated through its APIs, configured, never forked.';
+  'Every off-the-shelf product runs unmodified — integrated through its APIs, configured, never forked. Codenamed entries are the real product shown beneath the codename, not a fork.';
 
 export const BUILT_IN_HOUSE: readonly CustomComponent[] = [
   { name: 'Atlas', blurb: 'The core engine: traversal API, policy enforcement, audit log.' },

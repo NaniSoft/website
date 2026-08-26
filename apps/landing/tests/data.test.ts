@@ -67,6 +67,20 @@ describe('data module', () => {
     for (const p of STACK_PRODUCTS) expect(p.role.length).toBeGreaterThan(0);
   });
 
+  it('labels every codename entry with the real wrapped product', () => {
+    // The eight nanisoft codenames must carry the real OSS product they wrap
+    // (sourced from @nanisoft/architecture); real-OSS entries may repeat name.
+    const codenames = ['Trailhead', 'Forge', 'Bedrock', 'Overlook', 'Blueprint', 'Watchtower', 'Anchor', 'Conveyor'];
+    for (const cn of codenames) {
+      const p = STACK_PRODUCTS.find((s) => s.name === cn);
+      expect(p, `missing ${cn}`).toBeDefined();
+      expect(p?.realName, `${cn} missing realName`).toBeTruthy();
+      expect(p?.realName).not.toBe(cn);
+    }
+    // Every entry has a realName (codename → real product; real-OSS → itself).
+    for (const p of STACK_PRODUCTS) expect(typeof p.realName).toBe('string');
+  });
+
   it('builds exactly four components in-house', () => {
     expect(BUILT_IN_HOUSE.map((c) => c.name)).toEqual([
       'Atlas', 'Compass', 'DataGerry Bridge', 'Scout',
