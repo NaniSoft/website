@@ -53,7 +53,7 @@ export const PLATFORM_FEATURES = [
 
 export const USE_CASES: readonly UseCase[] = [
   {
-    title: 'Access traversal — Sensitive Product View Audit',
+    title: 'Access traversal',
     status: 'available',
     illustration: 'graph',
     bullets: [
@@ -86,7 +86,7 @@ export const USE_CASES: readonly UseCase[] = [
 
 export const USE_CASES_MORE = {
   line: 'More use-cases are coming — small utilities, composed largely from open-source parts.',
-  cta: { label: 'See the flagship run today in the playground.', href: 'https://playground.nanisoft.com' },
+  cta: { label: 'Open the playground', href: 'https://playground.nanisoft.com' },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ export const BUILT_IN_HOUSE: readonly CustomComponent[] = [
 // ---------------------------------------------------------------------------
 
 export const FINAL_CTA = {
-  h2: 'See the system think.',
+  h2: 'See the twin think.',
   primary: { label: 'Open the playground', href: 'https://playground.nanisoft.com' },
   footnote:
     'In-browser, guided, and fully mocked — nothing to install. Watch a query traverse the twin end to end.',

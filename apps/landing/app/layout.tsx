@@ -31,7 +31,7 @@ const mono = JetBrains_Mono({
 export const metadata = {
   title: 'nanisoft — digital twin of the IT estate',
   description:
-    'nanisoft builds a living digital twin of your organization’s IT estate: a queryable graph of how its systems connect and actually work.',
+    'nanisoft builds a digital twin of your organization’s IT estate: a queryable graph of how its systems connect and actually work.',
   other: { 'nanisoft-identity': IDENTITY_VERSION },
 };
 

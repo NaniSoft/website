@@ -224,7 +224,7 @@ describe('ArchitectureSection', () => {
   it('bridges to the playground domain with a plain-label pill link', async () => {
     renderSection();
     await flush();
-    const cta = screen.getByRole('link', { name: 'Try it in the playground' });
+    const cta = screen.getByRole('link', { name: 'Open the playground' });
     expect(cta).toHaveAttribute('href', 'https://playground.nanisoft.com');
     expect(cta).toHaveAttribute('target', '_blank');
     expect(cta).toHaveAttribute('rel', expect.stringContaining('noopener'));

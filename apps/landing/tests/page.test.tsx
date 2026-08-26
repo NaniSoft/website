@@ -75,13 +75,15 @@ describe('Page shell (nanisoft)', () => {
   it('names the flagship unlock and keeps the section free of dead links', async () => {
     renderPage();
     await flushAntd();
-    expect(screen.getByText(/Sensitive Product View Audit/)).toBeInTheDocument();
-    expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
     const section = document.getElementById('use-cases');
+    expect(section).not.toBeNull();
+    // Flagship use-case title is now plain, matching the other two cards.
+    expect(within(section).getByText('Access traversal')).toBeInTheDocument();
+    expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
     expect(section?.querySelectorAll('a[href="#"]')).toHaveLength(0);
     const finalSection = document.getElementById('final-cta');
     expect(finalSection?.querySelectorAll('a[href="#"]')).toHaveLength(0);
-    const more = screen.getByRole('link', { name: /see the flagship run today in the playground/i });
+    const more = within(section).getByRole('link', { name: 'Open the playground' });
     expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
   });
 
@@ -102,17 +104,18 @@ describe('Page shell (nanisoft)', () => {
   it('points every CTA at the playground — the only ask on the page', async () => {
     renderPage();
     await flushAntd();
-    // Exactly three: the nav pill, the closing section, and the footer
-    // Product column (the flagship-use-case handoff keeps its own distinct
-    // label). All point at the playground with the same target/rel.
+    // Exactly five "Open the playground" links, all the same action: the nav
+    // pill, the architecture bridge, the use-cases handoff, the closing
+    // section, and the footer Product column. All point at the playground with
+    // the same target/rel.
     const ctas = screen.getAllByRole('link', { name: /open the playground/i });
-    expect(ctas).toHaveLength(3);
+    expect(ctas).toHaveLength(5);
     for (const cta of ctas) {
       expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
       expect(cta.getAttribute('target')).toBe('_blank');
       expect(cta.getAttribute('rel')).toContain('noopener');
     }
-    expect(screen.getByText(/see the system think/i)).toBeInTheDocument();
+    expect(screen.getByText(/see the twin think/i)).toBeInTheDocument();
     expect(screen.getByText(/in-browser, guided, and fully mocked/i)).toBeInTheDocument();
     // The old asks are gone: no demo copy, no mailto link anywhere. (The
     // banned phrase is composed at runtime so this file stays clean under the

@@ -161,7 +161,7 @@ describe('Hero panel — "Living Map" two-column shell', () => {
 
   it('leads with a mono eyebrow and follows with subcopy (no CTA copy)', () => {
     renderHero();
-    expect(screen.getByText(/the living map/i)).toBeInTheDocument();
+    expect(screen.getByText(/the living twin/i)).toBeInTheDocument();
     expect(screen.getByText(/ask the twin anything/i)).toBeInTheDocument();
   });
 

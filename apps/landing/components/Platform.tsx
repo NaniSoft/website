@@ -10,7 +10,7 @@ export function Platform() {
         Built like a lakehouse — because it is one.
       </h2>
       <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 640, marginBottom: 48 }}>
-        Every fact lands raw, gets conformed, and is promoted layer by layer until it becomes part of the twin.
+        Every fact lands raw, gets conformed, and is promoted layer by layer — raw in Bronze, clean in Silver, published as Gold — until it becomes part of the twin.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 64 }} className="grid-4">
         {PLATFORM_FLOW.map((s) => (

@@ -32,7 +32,7 @@ export function Hero() {
           <span className="hero-wordmark" aria-hidden>
             <Wordmark height={64} band="bg" mode="dark" />
           </span>
-          <p className="hero-eyebrow mono">nanisoft · the living map</p>
+          <p className="hero-eyebrow mono">nanisoft · the living twin</p>
           <h1 id="hero-positioning" className="hero-h1">
             Digital <em>twin</em> of the IT estate.
           </h1>

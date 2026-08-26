@@ -31,13 +31,12 @@ const PLAYGROUND_URL = 'https://playground.nanisoft.com';
 /** Landing-tone narration per phase (component-local copy; lib/data.ts untouched). */
 const PHASE_CAPTIONS: Record<PhaseId, ReactNode> = {
   schema:
-    'Schema first. Blueprint authors the types; the Bridge syncs them to Bedrock DDL and refreshes Atlas’s SchemaRegistry cache — so “sensitive” is defined before any data flows.',
+    'Schema first. Blueprint authors the types; the Bridge syncs them to Bedrock table definitions and refreshes Atlas’s schema cache — so “sensitive” is defined before any data flows.',
   ingestion:
     'Trailhead orchestrates the pull: connectors extract from Active Directory, Workday HR, and the SQL Server fleet and land raw rows in Bronze.',
   transform: (
     <>
-      Forge conforms the raw rows into Silver tables and the Gold graph —{' '}
-      <span className="mono">graph_nodes</span> and <span className="mono">graph_edges</span> —
+      Forge conforms the raw rows into Silver tables and the Gold graph — the node and edge tables —
       scoring confidence along the way.
     </>
   ),
@@ -159,7 +158,7 @@ export function ArchitectureSection() {
   return (
     <section id="architecture" className="arch-section" aria-labelledby="architecture-heading" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
       <h2 id="architecture-heading" style={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
-        How we build it
+        How we build it.
       </h2>
       <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 680, margin: '0 0 8px' }}>
         One directed pipeline, composed from proven open-source parts around the four things we
@@ -374,7 +373,7 @@ export function ArchitectureSection() {
       {/* Bridge CTA — always visible, never gated behind scroll depth. */}
       <div style={{ textAlign: 'center', padding: '40px 0 8px' }}>
         <PillButton type="primary" size="large" href={PLAYGROUND_URL} target="_blank" rel="noopener noreferrer">
-          Try it in the playground
+          Open the playground
         </PillButton>
         <p style={{ marginTop: 14, marginBottom: 0, fontSize: 14, color: 'var(--color-text-muted)' }}>
           The same architecture runs interactively — seeded with a worked audit you can step through.

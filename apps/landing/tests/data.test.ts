@@ -53,7 +53,7 @@ describe('data module', () => {
 
   it('leads what-it-unlocks with the access-traversal flagship', () => {
     expect(USE_CASES).toHaveLength(3);
-    expect(USE_CASES[0].title).toContain('Sensitive Product View Audit');
+    expect(USE_CASES[0].title).toBe('Access traversal');
     expect(USE_CASES[0].status).toBe('available');
     expect(USE_CASES.slice(1).every((u) => u.status === 'planned')).toBe(true);
   });
@@ -92,7 +92,7 @@ describe('data module', () => {
   });
 
   it('offers exactly one ask: open the playground', () => {
-    expect(FINAL_CTA.h2).toBe('See the system think.');
+    expect(FINAL_CTA.h2).toBe('See the twin think.');
     expect(FINAL_CTA.primary).toEqual({
       label: 'Open the playground',
       href: 'https://playground.nanisoft.com',
