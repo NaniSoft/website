@@ -538,7 +538,7 @@ export function HeroDag() {
           font-size: 0.8125rem;
           line-height: 1.5;
           color: var(--color-text-muted);
-          background: var(--color-surface);
+          background: var(--color-bg-elev);
           border: 1px solid var(--color-border, transparent);
           border-radius: 0.5rem;
         }
