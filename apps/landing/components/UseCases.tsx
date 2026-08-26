@@ -19,7 +19,7 @@ const STATUS_TAG: Record<'available' | 'planned', { label: string; style: CSSPro
     label: 'Flagship · available today',
     style: {
       background: 'color-mix(in srgb, var(--color-secondary) 14%, transparent)',
-      color: 'var(--color-secondary)',
+      color: 'var(--color-text)',
       borderColor: 'transparent',
       borderRadius: 'var(--radius-pill)',
     },

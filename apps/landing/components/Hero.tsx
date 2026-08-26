@@ -90,7 +90,7 @@ export function Hero() {
           font-size: 11px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: var(--color-secondary);
+          color: var(--color-text-muted);
         }
         .hero-h1 {
           margin: 14px 0 0;

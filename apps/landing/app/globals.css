@@ -36,6 +36,13 @@
   --color-secondary: #2A8C97; /* color.teal */
   --color-accent: #14A77A;    /* color.jade — live/active only */
 
+  /* role: darker jade for active strokes on light */
+  --color-accent-strong: #0E8A62;
+
+  /* role: per-mode focus indicator — passes 3:1 on page bg + elev surfaces.
+     Light value is a darkened teal (brand jade/teal read <3:1 on bone). */
+  --color-focus: #1F6E78;
+
   /* Functional statuses (not brand hues). */
   --color-success: #10A48B;
   --color-warning: #D08C1A;
@@ -66,6 +73,12 @@
   /* Secondary and accent are mode-invariant identity values. */
   --color-secondary: #2A8C97; /* color.teal */
   --color-accent: #14A77A;    /* color.jade — live/active only */
+
+  /* role: lighter teal for dark surfaces */
+  --color-secondary-on-dark: #4DB0BB;
+
+  /* role: per-mode focus indicator — passes 3:1 on petrol + petrolMid. */
+  --color-focus: #4DB0BB;
 }
 
 /*
@@ -88,6 +101,12 @@
   --color-text-muted: #8FB0B6;/* color.petrolTint */
   --color-primary: #FBF7EF;   /* color.boneElev */
   --color-on-primary: #0C2A33;/* color.petrol */
+
+  /* role: lighter teal for dark surfaces (hero is dark in both page modes) */
+  --color-secondary-on-dark: #4DB0BB;
+
+  /* role: per-mode focus indicator on the dark hero panel. */
+  --color-focus: #4DB0BB;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -116,7 +135,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-secondary);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: var(--radius-inner);
 }

@@ -48,8 +48,18 @@ const PHASE_CAPTIONS: Record<PhaseId, ReactNode> = {
 const ACCENT = 'var(--color-accent)';
 const SECONDARY = 'var(--color-secondary)';
 
+// Strokes must pass 3:1 against --color-bg-elev in BOTH modes. The brand
+// hues fail on one surface each (jade on light bg-elev 2.87:1, teal on dark
+// bg-elev 2.81:1), so the stroke colors flip per theme via role tokens set
+// on the section root (see the <style> block below): light uses the darker
+// --color-accent-strong + brand teal; dark uses brand jade + the lighter
+// --color-secondary-on-dark. Band/chip fills stay on the brand hues — they
+// are low-opacity tints, not contrast-critical UI strokes.
+const STROKE_ACTIVE = 'var(--arch-stroke-active)';
+const STROKE_DONE = 'var(--arch-stroke-done)';
+
 function strokeFor(s: ElementStatus): string {
-  return s === 'active' ? ACCENT : s === 'done' ? SECONDARY : 'var(--color-border)';
+  return s === 'active' ? STROKE_ACTIVE : s === 'done' ? STROKE_DONE : 'var(--color-border)';
 }
 
 function markerFor(s: ElementStatus): string {
@@ -117,7 +127,7 @@ export function ArchitectureSection() {
   const HH = G.chipH / 2;
 
   return (
-    <section id="architecture" aria-labelledby="architecture-heading" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
+    <section id="architecture" className="arch-section" aria-labelledby="architecture-heading" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
       <h2 id="architecture-heading" style={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
         How we build it
       </h2>
@@ -191,7 +201,7 @@ export function ArchitectureSection() {
                               : st === 'done'
                                 ? `color-mix(in srgb, ${SECONDARY} 8%, transparent)`
                                 : 'color-mix(in srgb, var(--color-bg-sunken) 55%, transparent)',
-                          stroke: isSources ? 'transparent' : st === 'active' ? ACCENT : st === 'done' ? SECONDARY : 'var(--color-border)',
+                          stroke: isSources ? 'transparent' : st === 'active' ? STROKE_ACTIVE : st === 'done' ? STROKE_DONE : 'var(--color-border)',
                           strokeWidth: st === 'active' ? 1.6 : 1,
                           strokeDasharray: isSources ? '4 4' : undefined,
                           transition: `fill .35s ${easing}, stroke .35s ${easing}`,
@@ -328,6 +338,17 @@ export function ArchitectureSection() {
         .arch-caption { animation: arch-caption-in 450ms ${easing} both; }
         @media (prefers-reduced-motion: reduce) {
           .arch-edge-flow, .arch-caption { animation: none !important; }
+        }
+        /* Per-theme stroke roles: light needs the darker jade (accent-strong)
+           for active + brand teal for done; dark uses brand jade + the lighter
+           secondary-on-dark. Specificity (0,1,1) beats the light (0,1,0) rule. */
+        .arch-section {
+          --arch-stroke-active: var(--color-accent-strong);
+          --arch-stroke-done: var(--color-secondary);
+        }
+        [data-theme='dark'] .arch-section {
+          --arch-stroke-active: var(--color-accent);
+          --arch-stroke-done: var(--color-secondary-on-dark);
         }
       `}</style>
     </section>
