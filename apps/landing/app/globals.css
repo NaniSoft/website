@@ -52,6 +52,30 @@
   --radius-card: 20px;
   --radius-inner: 12px;
   --radius-pill: 9999px;
+
+  /* Type scale (mode-invariant — sizes don't change per theme). Anchored at
+     16px with a ~1.2 ratio; the named stops map the landing's ad-hoc px values
+     onto tokens so components never inline a raw font-size. 15px card bodies
+     standardize up to --text-base (the deliberate 15→16 fix). */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-md: 18px;
+  --text-lg: 20px;
+  --text-xl: 22px;
+  --text-2xl: 40px;
+  --text-display: 48px;
+
+  /* Heading metrics. --lh-heading for section h2s (standardizes the four h2s
+     that otherwise inherit body 1.6); --lh-tight for the hero h1. */
+  --lh-heading: 1.15;
+  --lh-tight: 1.06;
+
+  /* Letter-spacing tokens. --tracking-upper for uppercase mono labels
+     (standardizes .22/.14 variance to .16); --tracking-display for the
+     negative tracking on display h2s/h1. */
+  --tracking-upper: 0.16em;
+  --tracking-display: -0.015em;
 }
 
 [data-theme='dark'] {
@@ -118,7 +142,14 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* text-wrap: balance on headings keeps title lines even; pretty on lead copy
+   avoids the orphaned final word. Card bodies, bullets, and footnotes keep the
+   browser default (don't pretty-wrap everything). */
+h1, h2, h3 { text-wrap: balance; }
+.lead { text-wrap: pretty; }
 
 /* The twin's data face: tables, query, logs, node labels. */
 .mono { font-family: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace; }

@@ -157,10 +157,10 @@ export function ArchitectureSection() {
 
   return (
     <section id="architecture" className="arch-section" aria-labelledby="architecture-heading" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <h2 id="architecture-heading" style={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
+      <h2 id="architecture-heading" style={{ fontSize: 'var(--text-2xl)', lineHeight: 'var(--lh-heading)', fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
         How we build it.
       </h2>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 680, margin: '0 0 8px' }}>
+      <p className="lead" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', maxWidth: 680, margin: '0 0 8px' }}>
         One directed pipeline, composed from proven open-source parts around the four things we
         build ourselves: Atlas, Compass, the DataGerry Bridge, and Scout. Scroll to follow data
         from schema to finding.
@@ -246,7 +246,7 @@ export function ArchitectureSection() {
                           fontFamily: font.data,
                           fontSize: 11,
                           fontWeight: 700,
-                          letterSpacing: '0.16em',
+                          letterSpacing: 'var(--tracking-upper)',
                           textTransform: 'uppercase',
                           fill: isSources ? 'var(--color-text-muted)' : 'var(--color-text)',
                           transition: `fill .35s ${easing}`,
@@ -358,11 +358,11 @@ export function ArchitectureSection() {
             <div role="status" aria-live="polite" style={{ display: 'flex', alignItems: 'baseline', gap: 16, padding: '4px 20px 18px', flexWrap: 'wrap' }}>
               <span
                 className="mono arch-caption"
-                style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--color-text)' }}
+                style={{ fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: 'var(--tracking-upper)', color: 'var(--color-text)' }}
               >
                 {`0${activeIdx + 1} / 04 · ${PHASES[activeIdx].name.toUpperCase()}`}
               </span>
-              <p className="arch-caption" style={{ margin: 0, fontSize: 15, maxWidth: 760, color: 'var(--color-text-muted)' }}>
+              <p className="arch-caption" style={{ margin: 0, fontSize: 'var(--text-base)', maxWidth: 760, color: 'var(--color-text-muted)' }}>
                 {PHASE_CAPTIONS[PHASES[activeIdx].id]}
               </p>
             </div>

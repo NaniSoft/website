@@ -28,7 +28,7 @@ export function Footer() {
         </div>
         {Object.entries(FOOTER_LINKS).map(([heading, links]) => (
           <div key={heading}>
-            <h2 style={{ fontWeight: 600, fontSize: 16, margin: '0 0 12px' }}>{heading}</h2>
+            <h2 style={{ fontWeight: 600, fontSize: 'var(--text-base)', margin: '0 0 12px' }}>{heading}</h2>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 8 }}>
               {links.map((link) => (
                 <li key={link.label}>
@@ -55,7 +55,7 @@ export function Footer() {
           display: 'flex',
           justifyContent: 'space-between',
           color: 'var(--color-text-muted)',
-          fontSize: 14,
+          fontSize: 'var(--text-sm)',
           flexWrap: 'wrap',
           gap: 12,
         }}

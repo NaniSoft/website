@@ -14,10 +14,10 @@ const ICONS: Record<string, ReactElement> = {
 export function Problem() {
   return (
     <section id="problem" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
+      <h2 style={{ fontSize: 'var(--text-2xl)', lineHeight: 'var(--lh-heading)', fontWeight: 700, margin: '0 0 16px', maxWidth: 720 }}>
         nanisoft builds a digital twin of your IT estate.
       </h2>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 640, marginBottom: 48 }}>
+      <p className="lead" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', maxWidth: 640, marginBottom: 48 }}>
         Systems, people, and permissions modeled in one place, so you can see how your estate is connected — and how it behaves.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="grid-3">
@@ -26,7 +26,7 @@ export function Problem() {
             <div aria-hidden style={{ width: 40, height: 40, borderRadius: 'var(--radius-inner)', background: 'var(--color-bg-sunken)', display: 'grid', placeItems: 'center' }}>
               {ICONS[c.icon]}
             </div>
-            <h3 style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>{c.title}</h3>
+            <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 600, margin: '16px 0 8px' }}>{c.title}</h3>
             <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>{c.body}</p>
           </Card>
         ))}

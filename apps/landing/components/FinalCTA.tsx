@@ -1,6 +1,5 @@
 'use client';
 
-import { Typography } from 'antd';
 import { FINAL_CTA } from '@/lib/data';
 import { PillButton } from './PillButton';
 
@@ -8,9 +7,9 @@ export function FinalCTA() {
   return (
     <section id="final-cta" style={{ padding: '96px 24px', textAlign: 'center' }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <Typography.Title level={2} style={{ fontSize: 48, fontWeight: 700, margin: '0 0 24px' }}>
+        <h2 style={{ fontSize: 'var(--text-display)', lineHeight: 'var(--lh-heading)', letterSpacing: 'var(--tracking-display)', fontWeight: 700, margin: '0 0 24px' }}>
           {FINAL_CTA.h2}
-        </Typography.Title>
+        </h2>
         <div>
           {/* External href → new tab, explicitly noopener (same convention as the UseCases link). */}
           <PillButton

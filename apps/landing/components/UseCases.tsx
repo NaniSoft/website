@@ -38,8 +38,8 @@ const STATUS_TAG: Record<'available' | 'planned', { label: string; style: CSSPro
 export function UseCases() {
   return (
     <section id="use-cases" style={{ padding: '96px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 40, fontWeight: 700, margin: '0 0 12px' }}>What it unlocks.</h2>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 18, maxWidth: 640, marginBottom: 48 }}>
+      <h2 style={{ fontSize: 'var(--text-2xl)', lineHeight: 'var(--lh-heading)', fontWeight: 700, margin: '0 0 12px' }}>What it unlocks.</h2>
+      <p className="lead" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', maxWidth: 640, marginBottom: 48 }}>
         One twin, many questions. Today, the flagship is access.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="grid-3">
@@ -55,7 +55,7 @@ export function UseCases() {
           >
             <div style={{ padding: 24 }}>
               <Tag style={STATUS_TAG[u.status].style}>{STATUS_TAG[u.status].label}</Tag>
-              <h3 style={{ fontSize: 22, fontWeight: 600, margin: '12px 0' }}>{u.title}</h3>
+              <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: 600, margin: '12px 0' }}>{u.title}</h3>
               <ul style={{ paddingLeft: 18, color: 'var(--color-text-muted)', margin: 0 }}>
                 {u.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
               </ul>

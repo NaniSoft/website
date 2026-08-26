@@ -88,16 +88,16 @@ export function Hero() {
         .hero-eyebrow {
           margin: 18px 0 0;
           font-size: 11px;
-          letter-spacing: 0.22em;
+          letter-spacing: var(--tracking-upper);
           text-transform: uppercase;
           color: var(--color-text-muted);
         }
         .hero-h1 {
           margin: 14px 0 0;
           font-size: clamp(34px, 5vw, 56px);
-          line-height: 1.06;
+          line-height: var(--lh-tight);
           font-weight: 700;
-          letter-spacing: -0.015em;
+          letter-spacing: var(--tracking-display);
           max-width: 14ch;
         }
         /* Emphasis is italic of the same family (SPEC §2) — never jade, which
