@@ -294,7 +294,7 @@ describe('ArchitectureSection', () => {
     expect(cta).toHaveAttribute('rel', expect.stringContaining('noopener'));
   });
 
-  it('starts scroll-driven at the Schema phase before any scrolling', async () => {
+  it('starts at the Schema phase on initial render', async () => {
     renderSection();
     await flush();
     expect(document.querySelector('[data-band="band-schema"]')).toHaveAttribute(
@@ -366,14 +366,41 @@ describe('ArchitectureSection', () => {
     }
   });
 
-  it('keeps the full 320vh sticky track under default (no reduced-motion) preferences', async () => {
+  it('renders the diagram in normal flow (no tall sticky track) under default prefs', async () => {
     renderSection();
     await flush();
     const track = document.querySelector('[data-arch-track]') as HTMLElement;
     expect(track).not.toBeNull();
-    expect(track.style.height).toBe('320vh');
+    expect(track.style.height).toBe('auto');
     const inner = track.firstElementChild as HTMLElement;
-    expect(inner.style.position).toBe('sticky');
+    expect(inner.style.position).not.toBe('sticky');
+  });
+
+  it('renders an accessible Replay control under default prefs', async () => {
+    renderSection();
+    await flush();
+    expect(screen.getByRole('button', { name: /replay/i })).toBeInTheDocument();
+  });
+
+  it('hides the Replay control under prefers-reduced-motion', async () => {
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+    try {
+      renderSection();
+      await flush();
+      expect(screen.queryByRole('button', { name: /replay/i })).toBeNull();
+    } finally {
+      window.matchMedia = original;
+    }
   });
 
   it('announces phase captions through a stable polite live region (no per-phase remount)', async () => {
