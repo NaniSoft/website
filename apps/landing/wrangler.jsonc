@@ -12,7 +12,7 @@
     {
       "binding": "CONTACT_DB",
       "database_name": "nanisoft-contact",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+      "database_id": "d9d341c5-1e7b-4449-8797-76516746a825"
     }
   ],
   "vars": {
