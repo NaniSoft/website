@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildSectionGraph,
   deriveSectionState,
+  deriveSectionStateSweep,
   SECTION_GEOMETRY,
 } from '@/lib/spine-graph';
 import { ArchitectureSection } from '@/components/ArchitectureSection';
@@ -200,6 +201,69 @@ describe('section state reducer (jade = active, teal = done)', () => {
   });
 });
 
+// ── Pure layer: continuous-sweep reducer ───────────────────────────────────────
+
+describe('section state sweep reducer (continuous column wavefront)', () => {
+  it('starts at Schema active with sources done and nothing downstream lit', () => {
+    const s = deriveSectionStateSweep(0);
+    expect(s.bands['band-schema']).toBe('active');
+    expect(s.bands['band-investigation']).toBe('idle');
+    expect(s.bands['band-sources']).toBe('idle');
+    expect(s.nodes['blueprint']).toBe('active');
+    expect(s.nodes['bridge']).toBe('active');
+    expect(s.nodes['atlas']).toBe('idle');
+    // Sources are the data origin — done from the start of the sweep.
+    expect(s.nodes['active-directory']).toBe('done');
+  });
+
+  it('ends with the wavefront at Compass: investigation band active, earlier done', () => {
+    const s = deriveSectionStateSweep(1);
+    expect(s.bands['band-investigation']).toBe('active');
+    expect(s.bands['band-schema']).toBe('done');
+    expect(s.bands['band-ingestion']).toBe('done');
+    expect(s.bands['band-transform']).toBe('done');
+    expect(s.bands['band-sources']).toBe('idle');
+    expect(s.nodes['compass']).toBe('active');
+    expect(s.nodes['atlas']).toBe('done');
+    expect(s.nodes['blueprint']).toBe('done');
+    expect(s.nodes['active-directory']).toBe('done');
+    // Cross-cutting platform/observer stay neutral throughout.
+    expect(s.nodes['watchtower']).toBe('idle');
+    expect(s.nodes['anchor']).toBe('idle');
+    // The outgoing Compass edge is live; earlier edges are done.
+    expect(s.edges['compass__atlas']).toBe('active');
+    expect(s.edges['blueprint__bridge']).toBe('done');
+  });
+
+  it('lights exactly one phase band for every progress in [0, 1]', () => {
+    for (const p of [0, 0.1, 0.25, 0.5, 0.75, 0.99, 1]) {
+      const s = deriveSectionStateSweep(p);
+      const active = Object.entries(s.bands).filter(([, v]) => v === 'active');
+      expect(active).toHaveLength(1);
+    }
+  });
+
+  it('moves each phase band idle -> active -> done in spine order as progress advances', () => {
+    const states = [0, 0.2, 0.5, 0.8, 1].map(
+      (p) => deriveSectionStateSweep(p).bands['band-ingestion'],
+    );
+    expect(new Set(states)).toEqual(new Set(['idle', 'active', 'done']));
+  });
+
+  it('clamps progress outside [0, 1] to the ends', () => {
+    expect(deriveSectionStateSweep(-1)).toEqual(deriveSectionStateSweep(0));
+    expect(deriveSectionStateSweep(2)).toEqual(deriveSectionStateSweep(1));
+  });
+
+  it('keeps cross-cutting platform/observer edges neutral throughout', () => {
+    for (const p of [0, 0.5, 1]) {
+      const s = deriveSectionStateSweep(p);
+      expect(s.edges['watchtower__atlas']).toBe('idle');
+      expect(s.edges['anchor__atlas']).toBe('idle');
+    }
+  });
+});
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 describe('ArchitectureSection', () => {
@@ -230,7 +294,7 @@ describe('ArchitectureSection', () => {
     expect(cta).toHaveAttribute('rel', expect.stringContaining('noopener'));
   });
 
-  it('starts scroll-driven at the Schema phase before any scrolling', async () => {
+  it('starts at the Schema phase on initial render', async () => {
     renderSection();
     await flush();
     expect(document.querySelector('[data-band="band-schema"]')).toHaveAttribute(
@@ -302,14 +366,41 @@ describe('ArchitectureSection', () => {
     }
   });
 
-  it('keeps the full 320vh sticky track under default (no reduced-motion) preferences', async () => {
+  it('renders the diagram in normal flow (no tall sticky track) under default prefs', async () => {
     renderSection();
     await flush();
     const track = document.querySelector('[data-arch-track]') as HTMLElement;
     expect(track).not.toBeNull();
-    expect(track.style.height).toBe('320vh');
+    expect(track.style.height).toBe('auto');
     const inner = track.firstElementChild as HTMLElement;
-    expect(inner.style.position).toBe('sticky');
+    expect(inner.style.position).not.toBe('sticky');
+  });
+
+  it('renders an accessible Replay control under default prefs', async () => {
+    renderSection();
+    await flush();
+    expect(screen.getByRole('button', { name: /replay/i })).toBeInTheDocument();
+  });
+
+  it('hides the Replay control under prefers-reduced-motion', async () => {
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+    try {
+      renderSection();
+      await flush();
+      expect(screen.queryByRole('button', { name: /replay/i })).toBeNull();
+    } finally {
+      window.matchMedia = original;
+    }
   });
 
   it('announces phase captions through a stable polite live region (no per-phase remount)', async () => {

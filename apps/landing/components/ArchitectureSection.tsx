@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PHASES, type PhaseId } from '@nanisoft/architecture';
 import { easing, font, radius } from '@nanisoft/identity';
 import { PillButton } from './PillButton';
 import {
   buildSectionGraph,
   deriveSectionState,
+  deriveSectionStateSweep,
   SECTION_GEOMETRY,
   VIEW_HEIGHT,
   VIEW_TOP,
@@ -47,6 +48,12 @@ const PHASE_CAPTIONS: Record<PhaseId, ReactNode> = {
 const ACCENT = 'var(--color-accent)';
 const SECONDARY = 'var(--color-secondary)';
 
+/** Autoplay sweep duration (ms). Per-element .35s CSS transitions handle local crossfade. */
+const SWEEP_DURATION_MS = 6000;
+
+/** easeInOutQuad — a gentle in/out for the overall pace; brand `easing` drives the CSS transitions. */
+const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+
 // Strokes must pass 3:1 against --color-bg-elev in BOTH modes. The brand
 // hues fail on one surface each (jade on light bg-elev 2.87:1, teal on dark
 // bg-elev 2.81:1), so the stroke colors flip per theme via role tokens set
@@ -67,7 +74,6 @@ function markerFor(s: ElementStatus): string {
 
 export function ArchitectureSection() {
   const graph = useMemo(() => buildSectionGraph(), []);
-  const trackRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // Reduced motion: settle into the full four-phase end-state as soon as
@@ -83,42 +89,54 @@ export function ArchitectureSection() {
     return () => mq.removeEventListener('change', apply);
   }, []);
 
-  // Scroll driver: progress of the tall wrapper through the viewport maps to
-  // the active phase. rAF-throttled passive listeners; native scrolling is
-  // never hijacked. Server HTML renders phase 0 — no hydration mismatch.
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    if (reduced) return;
-    let raf = 0;
-    const compute = () => {
-      const el = trackRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      if (total <= 0) return;
-      const p = Math.min(1, Math.max(0, -rect.top / total));
-      setIdx(Math.min(PHASES.length - 1, Math.floor(p * PHASES.length)));
-    };
-    const onScroll = () => {
-      if (!raf) {
-        raf = requestAnimationFrame(() => {
-          raf = 0;
-          compute();
-        });
+  // Autoplay sweep: a continuous 0..1 progress advanced by rAF. Plays once on first
+  // viewport entry (IntersectionObserver) and on Replay clicks. rAF-throttled; native
+  // scrolling is never hijacked (the tall sticky track is gone). Server HTML renders
+  // progress 0 — no hydration mismatch. Reduced motion never attaches this (the
+  // reduced effect above returns early and the section renders deriveSectionState(3)).
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef(0);
+  const playedRef = useRef(false);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  const play = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    setProgress(0);
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / SWEEP_DURATION_MS);
+      setProgress(easeInOut(t));
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        rafRef.current = 0;
       }
     };
-    // Compute once on entry so anchor links / scroll restoration land on the
-    // right phase without waiting for a scroll tick.
-    const initial = requestAnimationFrame(compute);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      cancelAnimationFrame(initial);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [reduced]);
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  // First viewport entry → play once, then disconnect (no re-trigger on re-entry).
+  useEffect(() => {
+    if (reduced) return;
+    if (typeof IntersectionObserver === 'undefined') return; // jsdom / SSR guard
+    const el = cardRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting) && !playedRef.current) {
+          playedRef.current = true;
+          play();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduced, play]);
+
+  // Cancel any in-flight rAF on unmount.
+  useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, []);
 
   // Horizontal-scroll cue (finding 7): the 900px-min-width SVG pans inside an
   // overflowX:auto box that is narrower than the diagram on small viewports;
@@ -149,8 +167,17 @@ export function ArchitectureSection() {
     };
   }, []);
 
-  const activeIdx = reduced ? PHASES.length - 1 : idx;
-  const state = useMemo(() => deriveSectionState(activeIdx), [activeIdx]);
+  const state = useMemo(
+    () => (reduced ? deriveSectionState(PHASES.length - 1) : deriveSectionStateSweep(progress)),
+    [reduced, progress],
+  );
+  // Caption phase = the phase band currently active (follows the wavefront). Defaults
+  // to Schema at progress 0; under reduced motion this resolves to Investigation.
+  const PHASE_BAND_IDS = useMemo(() => PHASES.map((p) => `band-${p.id}`), []);
+  const capIdx = useMemo(() => {
+    const i = PHASE_BAND_IDS.findIndex((id) => state.bands[id] === 'active');
+    return i === -1 ? 0 : i;
+  }, [PHASE_BAND_IDS, state]);
   const G = SECTION_GEOMETRY;
   const HW = G.chipW / 2;
   const HH = G.chipH / 2;
@@ -162,13 +189,13 @@ export function ArchitectureSection() {
       </h2>
       <p className="lead" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', maxWidth: 680, margin: '0 0 8px' }}>
         One directed pipeline, composed from proven open-source parts around the four things we
-        build ourselves: Atlas, Compass, the DataGerry Bridge, and Scout. Scroll to follow data
-        from schema to finding.
+        build ourselves: Atlas, Compass, the DataGerry Bridge, and Scout. Follow data from schema
+        to finding.
       </p>
 
-      <div ref={trackRef} data-arch-track style={{ position: 'relative', height: reduced ? 'auto' : '320vh' }}>
-        <div style={reduced ? { background: 'var(--color-bg)', padding: '24px 0' } : { position: 'sticky', top: '10vh', background: 'var(--color-bg)', padding: '24px 0' }}>
-          <div style={{ border: '1px solid var(--color-border)', borderRadius: radius.card, background: 'var(--color-bg-elev)', overflow: 'hidden' }}>
+      <div data-arch-track style={{ position: 'relative', height: 'auto' }}>
+        <div style={{ background: 'var(--color-bg)', padding: '24px 0' }}>
+          <div ref={cardRef} style={{ border: '1px solid var(--color-border)', borderRadius: radius.card, background: 'var(--color-bg-elev)', overflow: 'hidden' }}>
             <div style={{ position: 'relative' }}>
               <div ref={scrollRef} style={{ overflowX: 'auto' }}>
                 <svg
@@ -360,15 +387,23 @@ export function ArchitectureSection() {
                 className="mono arch-caption"
                 style={{ fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: 'var(--tracking-upper)', color: 'var(--color-text)' }}
               >
-                {`0${activeIdx + 1} / 04 · ${PHASES[activeIdx].name.toUpperCase()}`}
+                {`0${capIdx + 1} / 04 · ${PHASES[capIdx].name.toUpperCase()}`}
               </span>
               <p className="arch-caption" style={{ margin: 0, fontSize: 'var(--text-base)', maxWidth: 760, color: 'var(--color-text-muted)' }}>
-                {PHASE_CAPTIONS[PHASES[activeIdx].id]}
+                {PHASE_CAPTIONS[PHASES[capIdx].id]}
               </p>
             </div>
-          </div>
+          </div>{/* /card */}
+          {/* Replay control — outside the live region so its label isn't announced. */}
+          {!reduced && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 0' }}>
+              <PillButton type="default" size="small" onClick={play} aria-label="Replay walkthrough">
+                Replay
+              </PillButton>
+            </div>
+          )}
         </div>
-      </div>
+      </div>{/* /track */}
 
       {/* Bridge CTA — always visible, never gated behind scroll depth. */}
       <div style={{ textAlign: 'center', padding: '40px 0 8px' }}>
