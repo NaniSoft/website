@@ -1,0 +1,37 @@
+export const metadata = {
+  title: 'Producing the access twin',
+  date: '2026-08-27',
+  description: 'How source data becomes the access twin — Bronze to Gold, one resolved node at a time.',
+  author: 'nanisoft',
+  tags: ['architecture', 'access'],
+}
+
+The access twin is not assembled — it is produced. Source data lands untouched,
+is conformed until identities are stable, and resolves into a graph that answers
+access questions by traversal. This is how a question like "who can reach this
+system?" stops being three exports stitched together and becomes one walk of the
+graph.
+
+## Land, untouched
+
+Raw source data lands in Bronze. Nothing is interpreted at the door —
+directories, HR systems, databases, and applications arrive as they are. The
+twin's trustworthiness starts here: every later claim is traceable to a record
+that was never silently rewritten on entry.
+
+## Conform to one node
+
+Records are cleaned, joined, and resolved until identities are stable. One
+person becomes one node — not a directory entry, a HR row, and a database
+account held together by guesswork. Memberships, grants, and activity become
+edges on those resolved nodes.
+
+## Resolve into the graph
+
+Conformed facts resolve into the graph: nodes and edges. This graph is the
+twin. Access traversal is the first question it answers — trace every path
+between a person and a sensitive product, surface views with no membership
+backing them, and read each finding as edges, a row, or a chart.
+
+The full platform story — orchestration, versioned layers, quality gates — is
+in the [docs](https://docs.nanisoft.com).
