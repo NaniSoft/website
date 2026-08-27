@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildSectionGraph,
   deriveSectionState,
+  deriveSectionStateSweep,
   SECTION_GEOMETRY,
 } from '@/lib/spine-graph';
 import { ArchitectureSection } from '@/components/ArchitectureSection';
@@ -197,6 +198,69 @@ describe('section state reducer (jade = active, teal = done)', () => {
   it('clamps out-of-range indices to the ends', () => {
     expect(deriveSectionState(9)).toEqual(deriveSectionState(3));
     expect(deriveSectionState(-2)).toEqual(deriveSectionState(0));
+  });
+});
+
+// ── Pure layer: continuous-sweep reducer ───────────────────────────────────────
+
+describe('section state sweep reducer (continuous column wavefront)', () => {
+  it('starts at Schema active with sources done and nothing downstream lit', () => {
+    const s = deriveSectionStateSweep(0);
+    expect(s.bands['band-schema']).toBe('active');
+    expect(s.bands['band-investigation']).toBe('idle');
+    expect(s.bands['band-sources']).toBe('idle');
+    expect(s.nodes['blueprint']).toBe('active');
+    expect(s.nodes['bridge']).toBe('active');
+    expect(s.nodes['atlas']).toBe('idle');
+    // Sources are the data origin — done from the start of the sweep.
+    expect(s.nodes['active-directory']).toBe('done');
+  });
+
+  it('ends with the wavefront at Compass: investigation band active, earlier done', () => {
+    const s = deriveSectionStateSweep(1);
+    expect(s.bands['band-investigation']).toBe('active');
+    expect(s.bands['band-schema']).toBe('done');
+    expect(s.bands['band-ingestion']).toBe('done');
+    expect(s.bands['band-transform']).toBe('done');
+    expect(s.bands['band-sources']).toBe('idle');
+    expect(s.nodes['compass']).toBe('active');
+    expect(s.nodes['atlas']).toBe('done');
+    expect(s.nodes['blueprint']).toBe('done');
+    expect(s.nodes['active-directory']).toBe('done');
+    // Cross-cutting platform/observer stay neutral throughout.
+    expect(s.nodes['watchtower']).toBe('idle');
+    expect(s.nodes['anchor']).toBe('idle');
+    // The outgoing Compass edge is live; earlier edges are done.
+    expect(s.edges['compass__atlas']).toBe('active');
+    expect(s.edges['blueprint__bridge']).toBe('done');
+  });
+
+  it('lights exactly one phase band for every progress in [0, 1]', () => {
+    for (const p of [0, 0.1, 0.25, 0.5, 0.75, 0.99, 1]) {
+      const s = deriveSectionStateSweep(p);
+      const active = Object.entries(s.bands).filter(([, v]) => v === 'active');
+      expect(active).toHaveLength(1);
+    }
+  });
+
+  it('moves each phase band idle -> active -> done in spine order as progress advances', () => {
+    const states = [0, 0.2, 0.5, 0.8, 1].map(
+      (p) => deriveSectionStateSweep(p).bands['band-ingestion'],
+    );
+    expect(new Set(states)).toEqual(new Set(['idle', 'active', 'done']));
+  });
+
+  it('clamps progress outside [0, 1] to the ends', () => {
+    expect(deriveSectionStateSweep(-1)).toEqual(deriveSectionStateSweep(0));
+    expect(deriveSectionStateSweep(2)).toEqual(deriveSectionStateSweep(1));
+  });
+
+  it('keeps cross-cutting platform/observer edges neutral throughout', () => {
+    for (const p of [0, 0.5, 1]) {
+      const s = deriveSectionStateSweep(p);
+      expect(s.edges['watchtower__atlas']).toBe('idle');
+      expect(s.edges['anchor__atlas']).toBe('idle');
+    }
   });
 });
 

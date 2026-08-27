@@ -497,3 +497,94 @@ export function deriveSectionState(activeIdx: number): SectionState {
   }
   return { bands, nodes, edges };
 }
+
+// ── Continuous-sweep state reducer ─────────────────────────────────────────────
+/**
+ * Cached phase-group columns: the leftmost/rightmost spine column of each phase
+ * band. Sources is the subtle (phaseId === null) band; the four real phases follow
+ * in spine order. The wavefront sweeps from the first real phase's column to the
+ * last spine column.
+ */
+const SWEEP_GROUPS = derivePhaseGroups();
+const SWEEP_PHASE_BANDS = SWEEP_GROUPS.filter((g) => g.phaseId !== null);
+const SWEEP_MIN_COL = SWEEP_PHASE_BANDS[0].fromCol;
+const SWEEP_MAX_COL = SWEEP_PHASE_BANDS[SWEEP_PHASE_BANDS.length - 1].toCol;
+
+/**
+ * Each band stays `active` from its own `fromCol` until the next phase band begins
+ * (so the band highlight is continuous for fractional wavefront positions, with no
+ * gaps between adjacent phase columns). The final band stays active through
+ * `SWEEP_MAX_COL`. Sources is subtle and never active.
+ */
+const SWEEP_BAND_BOUNDS = SWEEP_PHASE_BANDS.map((g, i) => ({
+  id: `band-${g.phaseId}`,
+  fromCol: g.fromCol,
+  activeUntil:
+    i + 1 < SWEEP_PHASE_BANDS.length
+      ? SWEEP_PHASE_BANDS[i + 1].fromCol
+      : SWEEP_MAX_COL + 1,
+}));
+
+/**
+ * Per-node spine column (0..7) for staged nodes, `null` for cross-cutting
+ * platform/observer nodes. Same id set as POSITIONS but keyed by column, not phase
+ * group — so the jade wavefront can sweep chip-by-chip rather than phase-by-phase.
+ * STAGE_COMPONENTS[stage] is the same id set per column as orderedStageIds (ROW_ORDER
+ * only reorders within a column).
+ */
+function nodeColumns(): Map<string, number | null> {
+  const cols = new Map<string, number | null>();
+  PIPELINE_SPINE.forEach((stage, col) => {
+    for (const id of STAGE_COMPONENTS[stage]) cols.set(id, col);
+  });
+  for (const id of OBSERVER_COMPONENTS) cols.set(id, null);
+  for (const id of PLATFORM_IDS) cols.set(id, null);
+  return cols;
+}
+const COLUMNS = nodeColumns();
+
+/** Status of column `c` when the wavefront is at `w`: idle ahead, active at, done behind. */
+function colStatus(c: number, w: number): ElementStatus {
+  if (w < c) return 'idle';
+  if (c <= w && w < c + 1) return 'active';
+  return 'done';
+}
+
+/**
+ * State for a continuous left-to-right wavefront at `progress` (0..1, clamped):
+ * jade = the chip the front is currently passing, teal = everything behind it,
+ * neutral = everything ahead. Source chips read `done` from the start (they are the
+ * data origin). The front sweeps from the Schema band's first column to the
+ * Investigation band's last. Cross-cutting platform/observer nodes stay neutral; an
+ * edge lights when the front reaches its downstream endpoint (max endpoint column).
+ *
+ * End state (progress = 1): wavefront at the last spine column — band-investigation
+ * active, Compass active, every earlier staged node done. This intentionally differs
+ * from deriveSectionState(3), which lights the whole final phase; the reduced-motion
+ * path keeps deriveSectionState(3) for the richer whole-phase static view.
+ */
+export function deriveSectionStateSweep(progress: number): SectionState {
+  const p = Math.max(0, Math.min(1, progress));
+  const w = SWEEP_MIN_COL + p * (SWEEP_MAX_COL - SWEEP_MIN_COL);
+  const bands: Record<string, ElementStatus> = {};
+  for (const b of SWEEP_BAND_BOUNDS) {
+    bands[b.id] = w < b.fromCol ? 'idle' : w < b.activeUntil ? 'active' : 'done';
+  }
+  bands['band-sources'] = 'idle';
+  const nodes: Record<string, ElementStatus> = {};
+  for (const [id, c] of COLUMNS) {
+    if (c === null) nodes[id] = 'idle';
+    else nodes[id] = c < SWEEP_MIN_COL ? 'done' : colStatus(c, w);
+  }
+  const edges: Record<string, ElementStatus> = {};
+  for (const e of EDGES) {
+    const f = COLUMNS.get(e.from);
+    const t = COLUMNS.get(e.to);
+    if (f === undefined || t === undefined || f === null || t === null) {
+      edges[`${e.from}__${e.to}`] = 'idle';
+    } else {
+      edges[`${e.from}__${e.to}`] = colStatus(Math.max(f, t), w);
+    }
+  }
+  return { bands, nodes, edges };
+}
