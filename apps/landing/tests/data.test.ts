@@ -11,6 +11,8 @@ import {
   INTEGRATIONS_NOTE,
   FINAL_CTA,
   FOOTER_LINKS,
+  NAV,
+  ABOUT,
 } from '@/lib/data';
 
 describe('data module', () => {
@@ -126,5 +128,48 @@ describe('data module', () => {
     const playground = FOOTER_LINKS.Product.find((l) => l.href.startsWith('http'));
     expect(playground?.external).toBe(true);
     expect(playground?.href).toBe('https://playground.nanisoft.com');
+  });
+
+  it('exposes a nav config with Product and Docs dropdowns plus three links', () => {
+    expect(NAV.groups).toHaveLength(2);
+    const [product, docs] = NAV.groups;
+    expect(product.label).toBe('Product');
+    expect(product.items.map((i) => i.label)).toEqual(['Platform', 'Use cases', 'Integrations']);
+    for (const i of product.items) expect(i.href.startsWith('#')).toBe(true);
+    expect(docs.label).toBe('Docs');
+    expect(docs.items.map((i) => i.label)).toEqual(['Documentation', 'White papers']);
+    expect(docs.items[0].href).toBe('https://docs.nanisoft.com');
+    expect(docs.items[0].external).toBe(true);
+    expect(docs.items[1].href).toBe('https://docs.nanisoft.com/white-papers');
+    expect(docs.items[1].external).toBe(true);
+    expect(NAV.links.map((l) => l.label)).toEqual(['Blog', 'About us', 'Contact us']);
+    expect(NAV.links[0]).toMatchObject({ href: 'https://blog.nanisoft.com', external: true });
+    expect(NAV.links[1]).toMatchObject({ href: '/about-us' });
+    expect(NAV.links[2]).toMatchObject({ href: '/about-us#contact' });
+  });
+
+  it('keeps every nav href a real destination (no bare href="#")', () => {
+    const all = [...NAV.groups.flatMap((g) => g.items), ...NAV.links];
+    for (const i of all) expect(i.href).not.toBe('#');
+    // In-page anchors are allowed (they resolve to kept homepage sections).
+    for (const i of all) expect(i.href.length).toBeGreaterThan(1);
+  });
+
+  it('exposes about-us content with story, capabilities, and open-source sections', () => {
+    expect(ABOUT.hero.title.length).toBeGreaterThan(0);
+    expect(ABOUT.story.body.length).toBeGreaterThan(0);
+    expect(ABOUT.capabilities.items.length).toBeGreaterThanOrEqual(3);
+    for (const c of ABOUT.capabilities.items) {
+      expect(c.title.length).toBeGreaterThan(0);
+      expect(c.body.length).toBeGreaterThan(0);
+    }
+    expect(ABOUT.openSource.body.length).toBeGreaterThan(0);
+    expect(ABOUT.openSource.links.length).toBeGreaterThan(0);
+  });
+
+  it('carries no banned ask phrases in NAV or ABOUT copy', () => {
+    const dump = JSON.stringify([NAV, ABOUT]).toLowerCase();
+    expect(dump.includes('demo')).toBe(false);
+    expect(dump.includes('mailto')).toBe(false);
   });
 });

@@ -149,3 +149,75 @@ export const FOOTER_LINKS = {
     { label: 'Open the playground', href: 'https://playground.nanisoft.com', external: true },
   ],
 } as const;
+
+// ---------------------------------------------------------------------------
+// Primary navigation — data-driven so TopNav stays a thin render.
+// Product groups the in-page anchors; Docs groups the (forthcoming) external
+// docs/white-papers destinations. `external` flags new-tab + noopener in the
+// renderer. The playground pill is intentionally NOT in the nav — it stays as
+// the site's single ask in FinalCTA / UseCases / architecture bridge / footer.
+// ---------------------------------------------------------------------------
+
+export const NAV: import('./types').NavConfig = {
+  groups: [
+    {
+      label: 'Product',
+      items: [
+        { label: 'Platform', href: '#platform' },
+        { label: 'Use cases', href: '#use-cases' },
+        { label: 'Integrations', href: '#integrations' },
+      ],
+    },
+    {
+      label: 'Docs',
+      items: [
+        { label: 'Documentation', href: 'https://docs.nanisoft.com', external: true },
+        { label: 'White papers', href: 'https://docs.nanisoft.com/white-papers', external: true },
+      ],
+    },
+  ],
+  links: [
+    { label: 'Blog', href: 'https://blog.nanisoft.com', external: true },
+    { label: 'About us', href: '/about-us' },
+    { label: 'Contact us', href: '/about-us#contact' },
+  ],
+} as const;
+
+// ---------------------------------------------------------------------------
+// About-us page content (edit freely — copy is not load-bearing for tests
+// beyond presence + the banned-phrase gate above).
+// ---------------------------------------------------------------------------
+
+export const ABOUT = {
+  hero: {
+    eyebrow: 'About',
+    title: 'The living map, made by people who run estates.',
+    lead:
+      'nanisoft turns an organization’s IT estate into a queryable graph — directories, databases, and applications as nodes; access and activity as edges. This is the team behind it.',
+  },
+  story: {
+    heading: 'Our story',
+    body: [
+      'We built estates before we mapped them. Every team we worked with could answer a question about one system, and almost none could answer a question that crossed three.',
+      'So we stopped assembling exports and started producing a twin: a graph off a real data platform, with quality gates and versioned layers, that stays trustworthy as the estate changes.',
+      'Access traversal is the first use-case. Blast radius and stale-access cleanup follow, off the same graph.',
+    ],
+  },
+  capabilities: {
+    heading: 'What we do',
+    items: [
+      { title: 'Produce the twin', body: 'Ingest, conform, and resolve source data into a versioned graph — Bronze to Gold — with quality gates at every boundary.' },
+      { title: 'Serve traversals', body: 'Atlas answers questions by traversal, checks each one against policy, and writes an audit trail. Compass exposes the twin as an explorable graph.' },
+      { title: 'Compose open source', body: 'Sixteen off-the-shelf products run unmodified behind codenames; four components are built in-house. No forks, no snowflake deployments.' },
+    ],
+  },
+  openSource: {
+    heading: 'Open source',
+    body:
+      'The platform composes proven open-source projects and contributes back where it can. The playground is a fully-mocked, in-browser tour of the twin.',
+    links: [
+      { label: 'Open the playground', href: 'https://playground.nanisoft.com', external: true },
+      { label: 'Read the docs', href: 'https://docs.nanisoft.com', external: true },
+    ],
+  },
+} as const;

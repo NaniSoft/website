@@ -45,3 +45,17 @@ export interface UseCase {
   bullets: [string, string, string];
   status: 'available' | 'planned';
 }
+
+export interface NavItem {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+export interface NavGroup {
+  label: string;
+  items: readonly NavItem[];
+}
+export interface NavConfig {
+  groups: readonly NavGroup[];
+  links: readonly NavItem[];
+}
