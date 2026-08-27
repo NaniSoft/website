@@ -52,8 +52,8 @@ model* problem, not a scroll-hijack problem.
 
 ### Autoplay
 
-- A continuous `progress` state, `0..1`, default `0` on mount (default `1` under
-  reduced motion).
+- A continuous `progress` state, `0..1`, default `0` on mount. (Under reduced motion
+  `progress` is unused — the section renders `deriveSectionState(3)` statically.)
 - An `IntersectionObserver` observes the diagram card; on first intersect
   (`threshold` ~0.25), it calls `play()` once, then disconnects (a `playedRef`
   guards against re-trigger on re-entry).
@@ -61,8 +61,9 @@ model* problem, not a scroll-hijack problem.
   **`DURATION_MS = 6000`** on the brand `easing` curve, then stops at `1`. A
   `playingRef` prevents overlapping loops. `play()` is also the Replay handler:
   reset `progress` to `0`, then animate to `1`.
-- Reduced motion (`prefers-reduced-motion: reduce`): `progress = 1` (final
-  end-state), no observer, no rAF, no Replay button. Unchanged spirit from today.
+- Reduced motion (`prefers-reduced-motion: reduce`): render `deriveSectionState(3)`
+  statically (the existing phase-level final state — whole Investigation phase
+  active), no observer, no rAF, no Replay button. Unchanged from today.
 
 ### The wavefront
 
@@ -104,13 +105,29 @@ column. Because those flips are staggered along the spine (a handful at a time, 
 rather than decoupled from input. `arch-edge-flow` marching-ants on the currently
 active edges stays.
 
-### End-state invariant
+### End-state
 
-`deriveSectionStateSweep(1)` must produce the **same** state as the existing
-`deriveSectionState(3)` (Investigation active, Schema/Ingestion/Transform done,
-sources done, atlas/compass active, platform/observer idle, investigation edges
-active). This keeps the reduced-motion final state identical to today and is
-enforced by an explicit deep-equal unit test.
+The 8 spine columns are `sources`(0), `schema`(1), `ingestion`(2), `bedrock`(3),
+`transform`(4), `serving`(5), `core`(6), `ui`(7). The phase bands collapse to
+Sources[0], Schema[1], Ingestion[2], Transform[3–4], Investigation[5–7]. So the
+wavefront sweeps `w = 1 + progress · 6` (Schema's first column → Investigation's
+last column).
+
+`deriveSectionStateSweep(1)` ends with the wavefront at the last spine column
+(`w = 7`): **band-investigation active**, band-schema/ingestion/transform `done`,
+band-sources `idle`; **Compass active** (col 7); every earlier staged node `done`;
+sources `done`; platform/observer `idle`; the investigation edges into Compass
+`active`. A pure column-sweep ends with only the terminal UI chip live — the
+intended "data arrived at its destination" end-state — **not** the whole final
+phase.
+
+**Reduced motion** keeps the existing phase-level `deriveSectionState(3)` (the
+whole Investigation phase active) exactly as today — no regression for
+reduced-motion users. The two end-states intentionally differ: the sweep
+emphasizes the live terminal chip; the reduced-motion static state emphasizes the
+whole live phase. `deriveSectionState` stays in use (reduced-motion path), so it is
+not dead code. An explicit unit test asserts `sweep(1)`'s expected values above (not
+a deep-equal to `deriveSectionState(3)`, which lights the whole final phase).
 
 ### Caption & accessibility
 
@@ -138,7 +155,7 @@ enforced by an explicit deep-equal unit test.
 |------|--------|
 | `apps/landing/lib/spine-graph.ts` | Add `deriveSectionStateSweep` + `minCol`/`maxCol`/column-status helpers. Existing `deriveSectionState` & `buildSectionGraph` untouched. |
 | `apps/landing/components/ArchitectureSection.tsx` | Remove scroll driver + 320vh/sticky track; add autoplay (IntersectionObserver + rAF + `progress` state) + Replay button; wire `deriveSectionStateSweep`; copy tweak; reduced-motion path. |
-| `apps/landing/tests/architecture-section.test.tsx` | Rename "starts scroll-driven at Schema" → "starts at Schema on initial render" (assertion unchanged); replace "320vh sticky track under default" with "normal flow, no sticky track, Replay control present"; add `deriveSectionStateSweep` reducer tests (incl. `sweep(1)` deep-equals `deriveSectionState(3)`, one-phase-band-active, monotonic idle→active→done); add Replay present/absent tests. Pure-derivation tests (graph layout, edge routing) untouched. |
+| `apps/landing/tests/architecture-section.test.tsx` | Rename "starts scroll-driven at Schema" → "starts at Schema on initial render" (assertion unchanged); replace "320vh sticky track under default" with "normal flow, no sticky track, Replay control present"; add `deriveSectionStateSweep` reducer tests (sweep(0) Schema active; sweep(1) end-state = Compass active, band-investigation active, earlier done; one-phase-band-active for progress in (0,1]; monotonic idle→active→done); add Replay present/absent tests. Pure-derivation tests (graph layout, edge routing) and the existing `deriveSectionState` reducer tests untouched. |
 | `apps/landing/app/globals.css` | None. Section styles are inline / in the component `<style>` block. |
 
 ## Global constraints honored
@@ -177,5 +194,7 @@ enforced by an explicit deep-equal unit test.
 - Per-element `.35s` transition + continuous front: only the wavefront column's
   elements flip at any instant (a handful), so few simultaneous transitions — no
   transition-storm jank.
-- The sweep end-state must equal `deriveSectionState(3)` — enforced by an explicit
-  deep-equal test; the reduced-motion final state is thereby provably unchanged.
+- The sweep end-state (`sweep(1)`: Compass active, band-investigation active, earlier
+  done) is asserted by an explicit unit test. It intentionally differs from
+  `deriveSectionState(3)` (whole final phase active), which the reduced-motion path
+  keeps using unchanged.
