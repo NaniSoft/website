@@ -9,7 +9,7 @@
     "start": "next start -p 3002",
     "lint": "eslint .",
     "cloudflare-build": "next build --webpack",
-    "deploy": "wrangler pages deploy out --project-name nanisoft-docs"
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@nanisoft/identity": "workspace:*",

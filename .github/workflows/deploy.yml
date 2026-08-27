@@ -106,7 +106,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   deploy-docs:
-    name: Deploy docs → docs.nanisoft.com (Pages)
+    name: Deploy docs → docs.nanisoft.com (Workers)
     needs: [verify, e2e]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -120,31 +120,24 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Build static export
-        # Produces apps/docs/out — the static site Cloudflare Pages serves.
+        # Produces apps/docs/out — the static assets the Worker serves.
         # `cloudflare-build` is `next build --webpack` (Nextra 4.6.1 static
         # export); verify already runs this same build on PRs via
         # `pnpm -r run build`, so PRs gate the docs site before merge.
         run: pnpm --filter @nanisoft/docs run cloudflare-build
-      - name: Create Pages project (idempotent)
-        # `wrangler pages deploy` errors if the project doesn't exist, so create
-        # it first. `|| true` keeps this green on re-runs (wrangler exits non-zero
-        # once the project exists); the deploy step below is the real gate. The
-        # CLOUDFLARE_API_TOKEN secret must have scope covering Pages:Edit.
-        run: pnpm --filter @nanisoft/docs exec wrangler pages project create nanisoft-docs --production-branch main || true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Deploy to Cloudflare Pages
-        # Deploys apps/docs/out to the nanisoft-docs Pages project. After the
+      - name: Deploy to Cloudflare Workers
+        # Deploys apps/docs/out as a static-assets Worker (`nanisoft-docs`) via
+        # `wrangler deploy`, which creates the Worker on first run. After the
         # first deploy, add the docs.nanisoft.com custom domain + DNS record in
-        # the Cloudflare Pages dashboard (one-time, manual).
+        # the Cloudflare dashboard (one-time, manual). The CLOUDFLARE_API_TOKEN
+        # secret must have scope covering Workers Scripts:Edit.
         run: pnpm --filter @nanisoft/docs run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   deploy-blog:
-    name: Deploy blog → blog.nanisoft.com (Pages)
+    name: Deploy blog → blog.nanisoft.com (Workers)
     needs: [verify, e2e]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -158,24 +151,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Build static export
-        # Produces apps/blog/out — the static site Cloudflare Pages serves.
+        # Produces apps/blog/out — the static assets the Worker serves.
         # `cloudflare-build` is `next build --webpack` (Nextra 4.6.1 static
         # export); verify already runs this same build on PRs via
         # `pnpm -r run build`, so PRs gate the blog site before merge.
         run: pnpm --filter @nanisoft/blog run cloudflare-build
-      - name: Create Pages project (idempotent)
-        # `wrangler pages deploy` errors if the project doesn't exist, so create
-        # it first. `|| true` keeps this green on re-runs (wrangler exits non-zero
-        # once the project exists); the deploy step below is the real gate. The
-        # CLOUDFLARE_API_TOKEN secret must have scope covering Pages:Edit.
-        run: pnpm --filter @nanisoft/blog exec wrangler pages project create nanisoft-blog --production-branch main || true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Deploy to Cloudflare Pages
-        # Deploys apps/blog/out to the nanisoft-blog Pages project. After the
+      - name: Deploy to Cloudflare Workers
+        # Deploys apps/blog/out as a static-assets Worker (`nanisoft-blog`) via
+        # `wrangler deploy`, which creates the Worker on first run. After the
         # first deploy, add the blog.nanisoft.com custom domain + DNS record in
-        # the Cloudflare Pages dashboard (one-time, manual).
+        # the Cloudflare dashboard (one-time, manual). The CLOUDFLARE_API_TOKEN
+        # secret must have scope covering Workers Scripts:Edit.
         run: pnpm --filter @nanisoft/blog run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
