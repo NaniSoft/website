@@ -13,13 +13,22 @@ function anchorStyle(): React.CSSProperties {
   return { color: 'var(--color-text-muted)', fontWeight: 500 };
 }
 
-// antd Menu items render <a> when given href. External items open in a new
-// tab with noopener; in-page anchors scroll (handled by the browser). Keep
-// keys stable for keyboard nav.
+// antd Menu items render <a> when given href. External items (external: true)
+// open in a new tab with rel="noopener noreferrer"; in-page anchors (e.g.
+// #platform) scroll — handled by the browser. Keep keys stable for keyboard nav.
 function toMenuItems(items: readonly NavItem[]): MenuProps['items'] {
   return items.map((i) => ({
     key: i.href,
-    label: <a href={i.href} style={anchorStyle()}>{i.label}</a>,
+    label: (
+      <a
+        href={i.href}
+        style={anchorStyle()}
+        target={i.external ? '_blank' : undefined}
+        rel={i.external ? 'noopener noreferrer' : undefined}
+      >
+        {i.label}
+      </a>
+    ),
   }));
 }
 

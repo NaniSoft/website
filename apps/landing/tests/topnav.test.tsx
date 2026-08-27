@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { TopNav } from '@/components/TopNav';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
@@ -55,5 +55,22 @@ describe('TopNav', () => {
     await flushAntd();
     const nav = container.querySelector('.top-nav-links') as HTMLElement;
     expect(nav.querySelectorAll('a[href="#"]')).toHaveLength(0);
+  });
+
+  it('opens the Docs dropdown and renders external Documentation link in a new tab', async () => {
+    renderNav();
+    await flushAntd();
+    // antd Dropdown menus are portaled/lazy — not in the DOM at rest. Click the
+    // "Docs" trigger to mount the menu, then wait for the Documentation link.
+    const docsTrigger = screen.getByText('Docs');
+    await act(async () => {
+      fireEvent.click(docsTrigger);
+    });
+    const docLink = await waitFor(() =>
+      screen.getByRole('link', { name: 'Documentation' }),
+    );
+    expect(docLink.getAttribute('href')).toBe('https://docs.nanisoft.com');
+    expect(docLink.getAttribute('target')).toBe('_blank');
+    expect(docLink.getAttribute('rel')).toContain('noopener');
   });
 });
