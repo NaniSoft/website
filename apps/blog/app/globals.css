@@ -1,0 +1,93 @@
+/*
+ * nanisoft brand overlay on nextra-theme-blog.
+ *
+ * Values mapped from @nanisoft/identity (SPEC §2 "Living Map"):
+ *   base = petrol + bone · secondary = teal · accent = jade (live/active only)
+ *   No purple, no neon, no pure black, no pure white.
+ *
+ * IMPORTANT — the blog theme's REAL variable API (verified in Task 1 Step 10.4
+ *   against nextra-theme-blog@4.6.1/dist/style.css) is IDENTICAL to the docs
+ *   theme's surface — the same --nextra-* variable names:
+ *   --nextra-primary-hue / -saturation / -lightness  (HSL components → primary scale)
+ *   --nextra-bg                                      (comma-separated RGB triplet)
+ *   --nextra-content-width / -navbar-height / -banner-height (layout)
+ * Text, borders, fonts are wired through Tailwind v4 --x-* variables. So the
+ * brand is recolored by overriding the REAL --nextra-* HSL/RGB variables plus
+ * the relevant --x-color-gray-* / --x-color-neutral-* / --x-font-* tokens. The
+ * hex/HSL values below are the brand source of truth; the variable names that
+ * receive them are the theme's real names (mirrored verbatim from
+ * apps/docs/app/globals.css).
+ */
+
+:root {
+  /* Primary = petrol #0C2A33 ≈ hsl(194, 62%, 12%).
+     Drives the primary-50..800 scale used for links, focus rings, active marks. */
+  --nextra-primary-hue: 194deg;
+  --nextra-primary-saturation: 62%;
+  --nextra-primary-lightness: 12%;
+
+  /* Page background (light) = bone #F4EFE6 → RGB triplet for rgb(var(--nextra-bg)). */
+  --nextra-bg: 244, 239, 230;
+
+  /* Layout tokens — keep the theme defaults. */
+  --nextra-content-width: 90rem;
+  --nextra-navbar-height: 64px;
+}
+
+.dark {
+  /* In dark mode the page background becomes petrolDeep #08222A and the primary
+     shifts to teal #2A8C97 ≈ hsl(186, 57%, 38%) so links/active marks stay
+     visible on the dark petrol surface. Teal is the brand secondary. */
+  --nextra-primary-hue: 186deg;
+  --nextra-primary-saturation: 57%;
+  --nextra-primary-lightness: 38%;
+
+  --nextra-bg: 8, 34, 42;
+}
+
+/*
+ * Text + border recolor via the theme's Tailwind v4 gray/neutral scale.
+ * Body text uses gray-600/700, headings gray-900; borders use gray-200.
+ * boneSunken #EAE2D3 ≈ gray-200; ink #102A30 ≈ gray-900. Only the two
+ * brand-bearing stops are overridden so shadows/hover states still read neutral.
+ */
+:root {
+  --x-color-gray-200: #EAE2D3; /* boneSunken — hairline borders (light) */
+  --x-color-gray-900: #102A30; /* ink — headings/strong text (light) */
+}
+.dark {
+  --x-color-neutral-800: #0C2A33; /* petrol — dark borders + dark hover surface */
+  --x-color-gray-100: #F4EFE6;    /* bone — dark-mode text */
+  --x-color-gray-200: #EAE2D3;    /* boneSunken — dark-mode muted text */
+}
+
+/*
+ * Satoshi is the voice (UI/body/headings); JetBrains Mono is the data face.
+ * The localFont loader in layout.tsx defines --font-satoshi on <html>.
+ */
+:root {
+  --font-satoshi: 'Satoshi', system-ui, -apple-system, sans-serif;
+  --x-font-sans: var(--font-satoshi), 'Satoshi', system-ui, -apple-system, sans-serif;
+  --x-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --x-default-font-family: var(--x-font-sans);
+}
+
+body {
+  font-family: var(--x-font-sans);
+}
+
+/*
+ * Jade #14A77A is reserved for live/active states only — never a decorative
+ * fill or border. The theme's navbar marks the current page with
+ * aria-current="page" but only bumps font-weight (no color). Wire jade in here
+ * so the active cross-site link reads as "live".
+ */
+nav a[aria-current='page'],
+nav a[aria-current='true'] {
+  color: #14A77A;
+}
+
+/* Focus ring = darkened teal #1F6E78 (passes 3:1 on bone). */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline-color: #1F6E78;
+}
