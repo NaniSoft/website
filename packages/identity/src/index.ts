@@ -24,3 +24,7 @@ export { THEME_STORAGE_KEY, themeBootstrapScript } from './theme';
 // ── Wordmark + monogram ───────────────────────────────────────────────────────
 export { wordmarkSvg, monogramSvg } from './wordmark';
 export type { WordmarkOptions } from './wordmark';
+
+// ── Cross-site navigation ─────────────────────────────────────────────────────
+export { crossNavLinks } from './crossNav';
+export type { NavLink } from './crossNav';
