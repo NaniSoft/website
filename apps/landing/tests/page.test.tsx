@@ -104,12 +104,12 @@ describe('Page shell (nanisoft)', () => {
   it('points every CTA at the playground — the only ask on the page', async () => {
     renderPage();
     await flushAntd();
-    // Exactly five "Open the playground" links, all the same action: the nav
-    // pill, the architecture bridge, the use-cases handoff, the closing
-    // section, and the footer Product column. All point at the playground with
-    // the same target/rel.
+    // Exactly four "Open the playground" links, all the same action: the
+    // architecture bridge, the use-cases handoff, the closing section, and the
+    // footer Product column. The nav no longer carries the pill. All point at
+    // the playground with the same target/rel.
     const ctas = screen.getAllByRole('link', { name: /open the playground/i });
-    expect(ctas).toHaveLength(5);
+    expect(ctas).toHaveLength(4);
     for (const cta of ctas) {
       expect(cta.getAttribute('href')).toBe('https://playground.nanisoft.com');
       expect(cta.getAttribute('target')).toBe('_blank');
