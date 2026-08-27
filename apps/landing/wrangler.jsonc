@@ -7,5 +7,16 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "CONTACT_DB",
+      "database_name": "nanisoft-contact",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "vars": {
+    "CONTACT_NOTIFY_FROM": "contact@nanisoft.com",
+    "CONTACT_NOTIFY_TO": "hello@nanisoft.com"
   }
 }

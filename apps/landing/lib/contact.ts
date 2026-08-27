@@ -8,7 +8,7 @@ export const contactSchema = z.object({
   name: z.string().min(1, 'Required').max(120),
   email: z.string().email('Enter a valid email').max(320),
   message: z.string().min(1, 'Required').max(5000),
-  company: z.string().max(0).optional().default(''),
+  company: z.string().max(200).optional().default(''),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
