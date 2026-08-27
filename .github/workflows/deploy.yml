@@ -104,3 +104,35 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  deploy-docs:
+    name: Deploy docs → docs.nanisoft.com (Pages)
+    needs: [verify, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build static export
+        # Produces apps/docs/out — the static site Cloudflare Pages serves.
+        # `cloudflare-build` is `next build --webpack` (Nextra 4.6.1 static
+        # export); verify already runs this same build on PRs via
+        # `pnpm -r run build`, so PRs gate the docs site before merge.
+        run: pnpm --filter @nanisoft/docs run cloudflare-build
+      - name: Deploy to Cloudflare Pages
+        # `wrangler pages deploy out --project-name nanisoft-docs` creates the
+        # `nanisoft-docs` Pages project on first run. After the first deploy,
+        # add the docs.nanisoft.com custom domain + DNS record in the
+        # Cloudflare Pages dashboard (one-time, manual — same as the playground
+        # worker domain). Note: the CLOUDFLARE_API_TOKEN secret must have scope
+        # covering Cloudflare Pages, not just Workers.
+        run: pnpm --filter @nanisoft/docs run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
