@@ -135,7 +135,9 @@ describe('data module', () => {
     const [product, docs] = NAV.groups;
     expect(product.label).toBe('Product');
     expect(product.items.map((i) => i.label)).toEqual(['Platform', 'Use cases', 'Integrations']);
-    for (const i of product.items) expect(i.href.startsWith('#')).toBe(true);
+    // In-page anchors are written `/#X` so they resolve to homepage sections
+    // from any page (e.g. /about-us reuses TopNav/Footer), not just from `/`.
+    for (const i of product.items) expect(i.href.startsWith('/#')).toBe(true);
     expect(docs.label).toBe('Docs');
     expect(docs.items.map((i) => i.label)).toEqual(['Documentation', 'White papers']);
     expect(docs.items[0].href).toBe('https://docs.nanisoft.com');

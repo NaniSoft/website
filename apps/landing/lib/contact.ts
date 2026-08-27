@@ -25,7 +25,14 @@ export async function submitContact(payload: ContactInput): Promise<ContactResul
   let error = 'Something went wrong. Please try again.';
   try {
     const data = (await res.json()) as { error?: string };
-    if (data?.error) error = data.error;
+    // Map the route's terse validation codes to friendlier user copy (mirrors
+    // the ContactSection safeParse message). Unknown/missing errors keep the
+    // generic default. The route's response shape is unchanged.
+    if (data?.error === 'Invalid' || data?.error === 'Bad request') {
+      error = 'Please check your input and try again.';
+    } else if (data?.error) {
+      error = data.error;
+    }
   } catch {
     /* keep default */
   }

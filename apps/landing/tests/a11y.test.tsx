@@ -70,10 +70,11 @@ describe('Accessibility smoke', () => {
     await flushAntd();
     const footer = document.querySelector('footer') as HTMLElement;
     expect(footer.querySelectorAll('a[href="#"]')).toHaveLength(0);
-    // Every footer link is either an in-page anchor or the external playground.
+    // Every footer link is either a homepage section anchor (written `/#X`
+    // so it resolves from any page, not just `/`) or the external playground.
     for (const a of Array.from(footer.querySelectorAll('a'))) {
       const href = a.getAttribute('href') || '';
-      expect(href.startsWith('#') || href.startsWith('https://')).toBe(true);
+      expect(href.startsWith('/#') || href.startsWith('https://')).toBe(true);
     }
     // Column headings enter the page outline as <h2> (no <div> headings).
     expect(footer.querySelectorAll('h2').length).toBeGreaterThan(0);

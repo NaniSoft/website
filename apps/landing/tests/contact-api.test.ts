@@ -78,4 +78,30 @@ describe('POST /api/contact', () => {
     const res = await POST(request);
     expect(res.status).toBe(400);
   });
+
+  it('still returns 200 when the Resend fetch rejects (best-effort, D1 already stored)', async () => {
+    // Network/DNS rejection must NOT surface a 500 or leak the error. D1 insert
+    // runs before Resend, so the submission is safely persisted; the email is
+    // best-effort. The user sees success and is not tempted to retry (which
+    // would insert a duplicate row).
+    fetchMock.mockRejectedValue(new Error('network down'));
+    const res = await post({ name: 'Priya Raman', email: 'priya@example.com', message: 'Hello', company: '' });
+    expect(res.status).toBe(200);
+    // No error string leaks into the response body (read via clone before json()).
+    const bodyText = await res.clone().text();
+    expect(bodyText).not.toContain('network down');
+    expect(await res.json()).toEqual({ ok: true });
+    // D1 insert happened before the Resend call.
+    expect(insertMock).toHaveBeenCalledWith('Priya Raman', 'priya@example.com', 'Hello', expect.any(String));
+  });
+
+  it('still returns 200 when Resend responds non-2xx (bad key / unverified domain)', async () => {
+    // A non-2xx Resend response is logged but never surfaced to the user; the
+    // D1 insert already succeeded, so the submission is stored.
+    fetchMock.mockResolvedValue(new Response('{"error":"bad"}', { status: 422 }));
+    const res = await post({ name: 'Priya Raman', email: 'priya@example.com', message: 'Hello', company: '' });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(insertMock).toHaveBeenCalledWith('Priya Raman', 'priya@example.com', 'Hello', expect.any(String));
+  });
 });
