@@ -1,0 +1,30 @@
+{
+  "name": "@nanisoft/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --webpack -p 3002",
+    "build": "next build --webpack",
+    "start": "next start -p 3002",
+    "lint": "eslint .",
+    "cloudflare-build": "next build --webpack",
+    "deploy": "wrangler pages deploy out --project-name nanisoft-docs"
+  },
+  "dependencies": {
+    "@nanisoft/identity": "workspace:*",
+    "next": "16.1.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "nextra": "4.6.1",
+    "nextra-theme-docs": "4.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.5",
+    "typescript": "6.0.3",
+    "wrangler": "^4.125.0"
+  }
+}
