@@ -17,7 +17,22 @@ export default function BlogNavbar({ links }: { links: readonly NavLink[] }) {
   return (
     <nav
       aria-label="Cross-site"
-      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
+      style={{
+        display: 'flex',
+        gap: 16,
+        alignItems: 'center',
+        // Align the navbar's content box with the <article> column. The article
+        // is <article class="x:container x:px-4 x:prose ...">: its centering comes
+        // from the theme's `article { margin-inline: auto }` element selector, its
+        // width cap from `x:prose { max-width: 65ch }`, and its horizontal padding
+        // from `x:px-4` (`calc(var(--x-spacing) * 4)` = 1rem). x:container itself
+        // only sets width:100% + breakpoint max-widths (up to 96rem) and does NOT
+        // center or pad, so matching it literally would leave the nav at the
+        // viewport edge. We mirror the article's actual effective box instead.
+        maxWidth: '65ch',
+        marginInline: 'auto',
+        paddingInline: 'calc(var(--x-spacing) * 4)',
+      }}
     >
       <Link
         href="https://nanisoft.com"
