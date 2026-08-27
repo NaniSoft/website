@@ -10,17 +10,21 @@ function ContactForm() {
 
   const onFinish = async (values: ContactInput) => {
     setSubmitting(true);
-    // Run the form values through the shared schema before posting: this is
-    // the client-side pre-submit guard. It also normalizes the honeypot
-    // (antd returns undefined for the untouched field; the schema's
-    // .optional().default('') yields '' so the server sees company: '').
-    const parsed = contactSchema.parse(values);
-    const result = await submitContact(parsed);
-    setSubmitting(false);
-    if (result.ok) {
-      message.success('Thanks — we’ll be in touch shortly.');
-    } else {
-      message.error(result.error);
+    try {
+      // safeParse (not parse) so a client/server rule divergence never throws
+      // and leaves the button stuck loading. It still normalizes the honeypot
+      // (antd returns undefined for the untouched field; the schema's
+      // .optional().default('') yields '' so the server sees company: '').
+      const parsed = contactSchema.safeParse(values);
+      if (!parsed.success) {
+        message.error('Please check your input and try again.');
+        return;
+      }
+      const result = await submitContact(parsed.data);
+      if (result.ok) message.success('Thanks — we’ll be in touch shortly.');
+      else message.error(result.error);
+    } finally {
+      setSubmitting(false);
     }
   };
 

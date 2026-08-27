@@ -55,6 +55,8 @@ describe('ContactSection', () => {
     const body = JSON.parse(init?.body as string);
     expect(body).toMatchObject({ name: 'Priya Raman', email: 'priya@example.com', message: 'Can the twin model multi-cloud access?' });
     expect(body.company).toBe('');
+    // Success toast renders end-to-end through the App.useApp() message path.
+    await waitFor(() => expect(screen.getByText(/be in touch shortly/i)).toBeInTheDocument());
   });
 
   it('blocks submit when required fields are empty', async () => {
