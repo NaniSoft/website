@@ -78,12 +78,12 @@ describe('Page shell (nanisoft)', () => {
     const section = document.getElementById('use-cases');
     expect(section).not.toBeNull();
     // Flagship use-case title is now plain, matching the other two cards.
-    expect(within(section).getByText('Access traversal')).toBeInTheDocument();
+    expect(within(section!).getByText('Access traversal')).toBeInTheDocument();
     expect(screen.getByText('Flagship · available today')).toBeInTheDocument();
     expect(section?.querySelectorAll('a[href="#"]')).toHaveLength(0);
     const finalSection = document.getElementById('final-cta');
     expect(finalSection?.querySelectorAll('a[href="#"]')).toHaveLength(0);
-    const more = within(section).getByRole('link', { name: 'Open the playground' });
+    const more = within(section!).getByRole('link', { name: 'Open the playground' });
     expect(more.getAttribute('href')).toBe('https://playground.nanisoft.com');
   });
 

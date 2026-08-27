@@ -7,7 +7,7 @@ const insertMock = vi.fn();
 const fetchMock = vi.fn();
 const env = {
   CONTACT_DB: {
-    prepare: (_sql: string) => ({
+    prepare: () => ({
       bind: (...args: unknown[]) => ({ run: async () => { insertMock(...args); return {}; } }),
     }),
   },

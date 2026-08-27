@@ -113,7 +113,7 @@ export function TopNav() {
         }
         @media (max-width: 639px) {
           .site-header { padding: 8px 24px !important; }
-          .top-nav-links { flex-basis: 100% !important; margin-left: 0 !important; gap: 16px !important; }
+          .top-nav-links { flex-basis: 100% !important; margin-left: 0 !important; gap: 12px !important; }
           .top-nav-ask { gap: 8px !important; }
         }
       `}</style>

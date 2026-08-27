@@ -1,4 +1,4 @@
-import type { CustomComponent, StackProduct, UseCase } from './types';
+import type { CustomComponent, NavItem, StackProduct, UseCase } from './types';
 
 export const BRAND = {
   name: 'nanisoft',
@@ -141,7 +141,7 @@ export const FINAL_CTA = {
 // the site never had ("AI Agents", "Docs", "Careers", …) were removed so the
 // footer never points at dead href="#". `external` flags the playground link
 // so the Footer opens it in a new tab with rel="noopener noreferrer".
-export const FOOTER_LINKS = {
+export const FOOTER_LINKS: Record<string, readonly NavItem[]> = {
   Product: [
     { label: 'Platform', href: '#platform' },
     { label: 'Use cases', href: '#use-cases' },
