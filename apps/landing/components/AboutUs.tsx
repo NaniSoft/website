@@ -2,6 +2,7 @@ import { ABOUT } from '@/lib/data';
 import { StorySection } from './about/StorySection';
 import { CapabilitiesSection } from './about/CapabilitiesSection';
 import { OpenSourceSection } from './about/OpenSourceSection';
+import { ContactSection } from './about/ContactSection';
 
 export function AboutUs() {
   return (
@@ -20,8 +21,7 @@ export function AboutUs() {
       <StorySection />
       <CapabilitiesSection />
       <OpenSourceSection />
-      {/* #contact target — ContactSection mounts here in the next task. */}
-      <section id="contact" />
+      <ContactSection />
     </article>
   );
 }

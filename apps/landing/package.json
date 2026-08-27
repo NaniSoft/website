@@ -15,30 +15,32 @@
     "test:overflow": "playwright test --config playwright.overflow.config.ts"
   },
   "dependencies": {
+    "@ant-design/icons": "6.3.2",
+    "@nanisoft/architecture": "workspace:*",
+    "@nanisoft/identity": "workspace:*",
+    "antd": "6.6.1",
+    "motion": "13.1.0",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "antd": "6.6.1",
-    "@ant-design/icons": "6.3.2",
-    "motion": "13.1.0",
-    "@nanisoft/architecture": "workspace:*",
-    "@nanisoft/identity": "workspace:*"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.20.2",
     "@playwright/test": "^1.62.1",
-    "wrangler": "^4.125.0",
-    "typescript": "6.0.3",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "^14.6.6",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.1",
-    "vitest": "4.1.11",
-    "@testing-library/react": "16.3.2",
-    "@testing-library/jest-dom": "7.0.1",
-    "@vitejs/plugin-react": "6.0.5",
+    "jsdom": "30.0.1",
+    "typescript": "6.0.3",
     "vite": "8.2.1",
-    "jsdom": "30.0.1"
+    "vitest": "4.1.11",
+    "wrangler": "^4.125.0"
   }
 }
