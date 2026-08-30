@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "The one source of truth for the nanisoft digital-twin architecture model — consumed by both the landing (architecture section) and the playground. See .scratch/nanosoft-digital-twin/SPEC.md §1.",
+  "description": "The one source of truth for the nanisoft digital-twin architecture model — consumed by both the landing (architecture section) and the playground.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {

@@ -3,8 +3,6 @@
  * @nanisoft/architecture model. No React, no React Flow — just geometry + the
  * model. Spine.tsx maps these neutral objects into React Flow; ticket 10 can
  * unit-test this module, and an SVG fallback could reuse it unchanged.
- *
- * See `.scratch/nanosoft-digital-twin/SPEC.md` §1 (model) and §4.3 (spine).
  */
 import {
   COMPONENTS,

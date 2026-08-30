@@ -10,8 +10,7 @@ import { defineConfig } from '@playwright/test';
  *
  * The webServer runs the DEV server on :3001 — required, because the specs'
  * state-assertion channel is the dev-only `window.__playground` store hook
- * (stripped in production builds). See the design doc:
- * `docs/superpowers/specs/2026-08-23-flagship-verification-design.md`.
+ * (stripped in production builds).
  *
  * Specs are no-vision: they assert via accessibility roles/text, DOM/SVG
  * attributes, and live store state — never screenshots.

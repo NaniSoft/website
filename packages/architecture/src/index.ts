@@ -1,10 +1,10 @@
 /**
  * @nanisoft/architecture — the one source of truth for the digital-twin
  * architecture model, consumed by both the landing (architecture section) and
- * the playground (simulator). See `.scratch/nanosoft-digital-twin/SPEC.md`.
+ * the playground (simulator).
  *
- * Ticket 07 populates the model: the component/phase/edge graph (de-branded from
- * `resources/`, codenames kept), the seeded dataset carrying the planted
+ * Ticket 07 populates the model: the component/phase/edge graph (de-branded,
+ * codenames kept), the seeded dataset carrying the planted
  * anomaly, and the six mock-tool specs. Both apps import this package via
  * `workspace:*`; it is plain TypeScript with no React/Next.js boundaries.
  */

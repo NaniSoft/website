@@ -12,6 +12,9 @@ tsconfig.tsbuildinfo
 # Local worktrees
 .worktrees/
 
+# Scratch working notes (plans, specs, prototypes) — never tracked
+.scratch/
+
 # Tooling symlinks and parent-tool state (not part of this project)
 .agents/
 .claude/

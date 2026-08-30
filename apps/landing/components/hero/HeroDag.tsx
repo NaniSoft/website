@@ -2,8 +2,7 @@
 
 /**
  * The hero's "living map" — a breathing canvas DAG of the nanisoft digital-twin
- * pipeline, ported from the identity style tile
- * (.scratch/03-identity-style-tile.html). About 12 labeled nodes across 7
+ * pipeline. About 12 labeled nodes across 7
  * stages (sources -> schema/ingest -> lakehouse -> transform -> query ->
  * core+authz -> UI) plus a Watchtower observer, orthogonal routed edges with
  * arrowheads, a left->right jade wavefront that traverses the pipeline on a

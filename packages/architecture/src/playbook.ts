@@ -1,7 +1,6 @@
 /**
- * The flagship playbook — Sensitive Product View Audit — mirrored from
- * `resources/TrueAccess_Schema_to_Visualization_Sequence.mermaid` (22 beats →
- * 22 steps). See SPEC §4.7.
+ * The flagship playbook — Sensitive Product View Audit — a 22-beat
+ * visualization sequence mapped to 22 steps.
  *
  * Each step's `apply` fn mutates a *clone* of the state (the reducer clones
  * before calling it) and reuses the package's existing conform/detect/find

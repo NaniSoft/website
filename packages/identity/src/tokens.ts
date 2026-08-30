@@ -1,6 +1,6 @@
 /**
  * Identity tokens — the nanisoft "Living Map" palette, shape lock, typography,
- * and motion easing. See `.scratch/nanosoft-digital-twin/SPEC.md` §2.
+ * and motion easing.
  *
  * This module is the single source of truth for the brand values. Both apps
  * consume it verbatim (no app redefines a hex). The package stays

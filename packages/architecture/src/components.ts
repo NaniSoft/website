@@ -1,17 +1,14 @@
 /**
  * The component / phase / edge model — the architecture graph.
  *
- * Seeded from `resources/TrueAccess_MVP_Architecture.mermaid` and de-branded:
+ * Seeded from the original TrueAccess mermaid (in git history) and de-branded:
  * "TrueAccess" is retired everywhere; component codenames are kept. The real
  * off-the-shelf product each codename wraps is recorded in `realName`.
  *
- * Classification note: the mermaid's `classDef` (and SPEC §3.5: "own only Atlas +
- * Compass + the Bridge + Scout") makes the four *custom* components Atlas,
- * Compass, Bridge, and Scout. DataGerry is off-the-shelf (AGPLv3); its codename
- * is `blueprint`. SPEC §1's "Custom (4)" wording is read as the schema-definition
- * *surface* (DataGerry + the custom Bridge), not DataGerry itself being built.
- *
- * See `.scratch/nanosoft-digital-twin/SPEC.md` §1.
+ * Classification note: the four *custom* components are Atlas, Compass, Bridge,
+ * and Scout. DataGerry is off-the-shelf (AGPLv3); its codename is `blueprint`.
+ * "Custom (4)" is read as the schema-definition *surface* (DataGerry + the
+ * custom Bridge), not DataGerry itself being built.
  */
 
 import type { Component, Edge, Phase } from './types';

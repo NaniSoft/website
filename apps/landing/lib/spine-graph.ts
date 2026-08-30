@@ -22,9 +22,6 @@
  * segment-vs-chip guard) so horizontals run in clear corridors between chip
  * rows and long hauls take a bottom channel. If the model's spine changes,
  * re-check `tests/architecture-section.test.tsx` first.
- *
- * See `.scratch/nanosoft-digital-twin/SPEC.md` §1 (model), §3.3 (this section),
- * §4.3 (the playground spine it mirrors).
  */
 import {
   COMPONENT_BY_ID,

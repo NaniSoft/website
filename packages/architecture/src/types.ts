@@ -4,8 +4,6 @@
  * Everything here is framework-agnostic plain TypeScript — no React, no Next.js,
  * no server/client boundaries — so the package can be consumed identically by
  * the landing (architecture section) and the playground (simulator state).
- *
- * See `.scratch/nanosoft-digital-twin/SPEC.md` §1.
  */
 
 /** Kinds of node in the architecture graph. */

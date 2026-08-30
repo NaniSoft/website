@@ -3,7 +3,7 @@
  *
  * Framework-agnostic: no React, no Zustand, no React Flow. The Zustand store in
  * apps/playground wraps this; the reducer + status derivation are unit-tested
- * here. See `.scratch/nanosoft-digital-twin/SPEC.md` §4.4 (engine) / §4.5 (state).
+ * here.
  *
  * Reset semantics = blank-slate replay (design decision 1): the lakehouse starts
  * empty; the playbook builds Bronze → Silver → Gold from step 1.
