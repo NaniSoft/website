@@ -103,9 +103,17 @@ export function ArchitectureSection() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setProgress(0);
     const start = performance.now();
+    // Step at ~20fps instead of every rAF tick: the sweep re-renders a
+    // ~40-element SVG per update, and 20fps is indistinguishable for a 6s
+    // easeInOut sweep (~360 renders → ~120). rAF still paces the loop.
+    const STEP_MS = 50;
+    let last = 0;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / SWEEP_DURATION_MS);
-      setProgress(easeInOut(t));
+      if (now - last >= STEP_MS || t >= 1) {
+        last = now;
+        setProgress(easeInOut(t));
+      }
       if (t < 1) {
         rafRef.current = requestAnimationFrame(tick);
       } else {

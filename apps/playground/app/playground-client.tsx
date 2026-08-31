@@ -26,6 +26,11 @@ export default function PlaygroundClient() {
   const cursor = usePlayground((s) => s.state.cursor);
   const openTool = usePlayground((s) => s.openTool);
 
+  // Leaving the playground route (e.g. /tokens) pauses auto-run — the user
+  // must not return to a tour that ran without them. Module singleton: a
+  // store-level cleanup would fire per-consumer; this unmount is the route one.
+  useEffect(() => () => { usePlayground.getState().pause(); }, []);
+
   // Climax auto-open (SPEC §4.8 cross-cutting 3): Compass auto-opens at the
   // finding step — the ONE mid-run auto-open. Every other tool only beckons.
   // Fires in both auto-run and single-step (both advance `cursor` to the

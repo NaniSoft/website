@@ -35,9 +35,28 @@ export function DataGerryOverlay() {
     fontFamily: font.data,
     fontSize: 12,
   };
+  // Stage state: a teal dot mark (3.1–3.7:1, passes non-text) + weight on the
+  // label — jade text sat at 2.4–2.9:1 here (WCAG 1.4.3 fail).
   const stage = (done: boolean, text: string) => (
-    <span style={{ color: done ? color.jade : 'var(--color-text-muted)' }}>
-      {done ? '✓ ' : '○ '}
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        color: done ? 'var(--color-text)' : 'var(--color-text-muted)',
+        fontWeight: done ? 700 : 400,
+      }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          width: 7,
+          height: 7,
+          borderRadius: 9999,
+          flexShrink: 0,
+          background: done ? color.teal : 'var(--color-border)',
+        }}
+      />
       {text}
     </span>
   );

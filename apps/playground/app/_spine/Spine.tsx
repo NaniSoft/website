@@ -177,11 +177,18 @@ function SpineInner() {
       nodesConnectable={false}
       nodesFocusable={false}
       elementsSelectable={false}
-      panOnDrag={false}
+      // Reachability law: the graph is ~1040px wide, so below ~700px of
+      // container width it clips. Scroll-zoom stays OFF (a guided tour must not
+      // zoom while the reader scrolls past), but deliberate gestures — drag to
+      // pan, pinch to zoom — are ON, and minZoom 0.2 (React Flow's default 0.5
+      // clamped harder than a phone needs) lets the whole spine be brought into
+      // view at 390px. Chips keep their own clicks; drags start on the pane.
+      panOnDrag
       panOnScroll={false}
       zoomOnScroll={false}
-      zoomOnPinch={false}
+      zoomOnPinch
       zoomOnDoubleClick={false}
+      minZoom={0.2}
       preventScrolling={false}
       proOptions={{ hideAttribution: true }}
       style={{ background: 'var(--color-bg)' }}

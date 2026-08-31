@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, type CSSProperties } from 'react';
-import { color, font, radius } from '@nanisoft/identity';
+import { font, radius } from '@nanisoft/identity';
 import { compassTraversal, type CompassEdge, type CompassNode } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 
@@ -47,10 +47,10 @@ function layout(nodes: CompassNode[]): Record<string, { x: number; y: number }> 
 }
 
 function edgeColor(status: CompassEdge['status']): string {
-  if (status === 'anomalous') return color.jade;
-  if (status === 'ok' || status === 'backed') return color.teal;
-  if (status === 'gap') return color.petrolSoft;
-  return color.petrolSoft; // pending
+  if (status === 'anomalous') return 'var(--viz-anomalous)';
+  if (status === 'ok' || status === 'backed') return 'var(--viz-secondary)';
+  if (status === 'gap') return 'var(--viz-memberof)';
+  return 'var(--color-text-muted)'; // pending — visible, but clearly not yet
 }
 
 const label: CSSProperties = {
@@ -67,11 +67,10 @@ const label: CSSProperties = {
 const svgTextMuted: CSSProperties = { fill: 'var(--color-text-muted)' };
 
 function nodeRingClass(node: CompassNode, ready: boolean, selected: boolean): string {
-  if (selected) return color.jade;
-  if (ready && node.kind === 'product' && node.sensitive) return color.jade;
-  if (node.kind === 'user') return color.petrolSoft;
-  if (node.kind === 'group') return color.teal;
-  return color.petrolSoft;
+  if (selected) return 'var(--color-accent)';
+  if (ready && node.kind === 'product' && node.sensitive) return 'var(--viz-anomalous)';
+  if (node.kind === 'group') return 'var(--viz-secondary)';
+  return 'var(--color-text-muted)';
 }
 
 export function CompassOverlay() {
@@ -125,10 +124,10 @@ export function CompassOverlay() {
                   y1={a.y}
                   x2={b.x}
                   y2={b.y}
-                  stroke={stroke}
+                  style={{ stroke }}
                   strokeWidth={e.missing ? 1.5 : 2}
                   strokeDasharray={e.missing ? '4 4' : undefined}
-                  opacity={e.status === 'pending' ? 0.45 : 0.9}
+                  opacity={e.status === 'pending' ? 0.7 : 0.95}
                 />
                 <text
                   x={mx}
@@ -170,7 +169,9 @@ export function CompassOverlay() {
                 fontSize: 10,
                 color: 'var(--color-text)',
                 cursor: 'pointer',
-                boxShadow: isSel ? `0 0 0 2px ${ring}` : 'none',
+                // selection ring as an outline (tonal depth, no shadow)
+                outline: isSel ? '2px solid var(--color-accent)' : 'none',
+                outlineOffset: 1,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -180,11 +181,21 @@ export function CompassOverlay() {
         })}
       </div>
 
-      {/* Legend */}
+      {/* Legend — swatch marks carry the color (≥3:1 non-text); labels are
+          muted ink. The old colored 10px TEXT sat at 1.78–2.87:1. */}
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontFamily: font.data, fontSize: 10, color: 'var(--color-text-muted)' }}>
-        <span style={{ color: color.jade }}>━ anomalous viewed</span>
-        <span style={{ color: color.teal }}>━ backed / ok</span>
-        <span style={{ color: color.petrolSoft }}>┄ missing memberof</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span aria-hidden="true" style={{ width: 14, height: 0, borderTop: '2px solid var(--viz-anomalous)' }} />
+          anomalous viewed
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span aria-hidden="true" style={{ width: 14, height: 0, borderTop: '2px solid var(--viz-secondary)' }} />
+          backed / ok
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span aria-hidden="true" style={{ width: 14, height: 0, borderTop: '2px dashed var(--viz-memberof)' }} />
+          missing memberof
+        </span>
       </div>
 
       {/* Narrative (climax) */}

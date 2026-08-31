@@ -16,15 +16,25 @@ import { usePlayground } from '../_store/usePlayground';
  * the running state stays readable from the jade border + fill.
  */
 
-/** Scoped running-pulse for the live DAG task (decorative only; the jade border
- *  + fill carry the state — suppressed under prefers-reduced-motion by the
- *  global guard in globals.css). Mirrors the spine-ripple keyframe. */
+/** Scoped running-pulse for the live DAG task. A ::after ring that scales and
+ *  fades — transform + opacity only (composited), replacing the old animated
+ *  box-shadow that repainted every frame. Suppressed under
+ *  prefers-reduced-motion by the global guard in globals.css. */
 const PULSE = `
-@keyframes airflow-running-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 167, 122, 0); }
-  50%      { box-shadow: 0 0 0 4px rgba(20, 167, 122, 0.16); }
+.airflow-task-running { position: relative; }
+.airflow-task-running::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 2px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  pointer-events: none;
+  animation: airflow-running-pulse 1.1s cubic-bezier(.32, .72, 0, 1) infinite;
 }
-.airflow-task-running { animation: airflow-running-pulse 1.1s cubic-bezier(.32, .72, 0, 1) infinite; }
+@keyframes airflow-running-pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
 `;
 
 const label: CSSProperties = {
@@ -39,7 +49,7 @@ const label: CSSProperties = {
 function borderFor(state: AirflowTask['state']): string {
   if (state === 'running') return color.jade;
   if (state === 'success') return color.teal;
-  return color.petrolSoft;
+  return 'var(--color-text-muted)';
 }
 
 function TaskBox({ task, compact }: { task: AirflowTask; compact?: boolean }) {
@@ -51,12 +61,16 @@ function TaskBox({ task, compact }: { task: AirflowTask; compact?: boolean }) {
       aria-label={`${task.label} ${task.state}`}
       style={{
         border: `1px solid ${borderFor(task.state)}`,
-        background: running ? 'rgba(20, 167, 122, 0.10)' : 'var(--color-bg-elev)',
+        // The running task is the live node: jade FILL + petrol text
+        // (role.onAccent, ~4.9:1) — the sanctioned accent pairing, replacing
+        // the old 1px jade border (2.87:1) + raw rgba wash.
+        background: running ? color.jade : 'var(--color-bg-elev)',
+        color: running ? 'var(--color-on-accent)' : 'var(--color-text)',
         borderRadius: radius.inner,
         padding: compact ? '4px 8px' : '6px 10px',
         fontFamily: font.data,
         fontSize: compact ? 10 : 11,
-        color: 'var(--color-text)',
+        fontWeight: running ? 700 : 400,
         display: 'flex',
         alignItems: 'center',
         gap: compact ? 6 : 8,
@@ -119,7 +133,6 @@ export function AirflowOverlay() {
         <button
           onClick={step}
           disabled={!dag.canTrigger}
-          aria-label="Run ingestion DAG"
           style={{
             alignSelf: 'flex-start',
             fontFamily: font.voice,
@@ -159,7 +172,10 @@ export function AirflowOverlay() {
               style={{
                 fontFamily: font.data,
                 fontSize: 11,
-                color: line.status === 'success' ? color.teal : color.jade,
+                // Log lines are prose: success is muted, anything else is bold
+                // ink — teal/jade text sat at 2.4–3.7:1 (WCAG 1.4.3 fail).
+                color: 'var(--color-text-muted)',
+                fontWeight: line.status === 'success' ? 400 : 700,
               }}
             >
               {line.text}

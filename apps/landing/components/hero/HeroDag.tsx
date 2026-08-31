@@ -389,10 +389,13 @@ export function HeroDag() {
         }
       }
 
-      // labels (skip on narrow canvases to avoid clutter)
+      // labels (skip on narrow canvases to avoid clutter). Full muted ink —
+      // the old 0.62 alpha sat at 3.39:1 on petrol (WCAG 1.4.3 fail); the
+      // token at full strength reads 6.49:1. 11px = the Label stop on the
+      // design ramp (JetBrains Mono 11–12px), up from 10px.
       if (W >= 380) {
-        ctx.font = `10px ${T.mono}, "JetBrains Mono", ui-monospace, monospace`;
-        ctx.fillStyle = rgba(T.muted, 0.62);
+        ctx.font = `11px ${T.mono}, "JetBrains Mono", ui-monospace, monospace`;
+        ctx.fillStyle = T.muted;
         ctx.textAlign = 'center';
         for (const n of nodes) ctx.fillText(n.label, n.x, n.y - n.r - 7);
       }
@@ -407,16 +410,17 @@ export function HeroDag() {
       if (reduce && W >= 380) {
         const compass = nodes.find((n) => n.hub && n.label === 'Compass');
         if (compass) {
-          ctx.font = `9px ${T.mono}, "JetBrains Mono", ui-monospace, monospace`;
+          ctx.font = `11px ${T.mono}, "JetBrains Mono", ui-monospace, monospace`;
           ctx.textAlign = 'center';
-          // small jade dot + "live" label, seated just below the node label
+          // small jade dot + "live" label, seated just below the node label.
+          // Full-alpha jade = 4.90:1 on petrol (the 0.92 alpha was 4.38:1).
           const lx = compass.x;
           const ly = compass.y + compass.r + 14;
           ctx.beginPath();
           ctx.arc(lx - 18, ly - 3, 2.4, 0, Math.PI * 2);
           ctx.fillStyle = T.jade;
           ctx.fill();
-          ctx.fillStyle = rgba(T.jade, 0.92);
+          ctx.fillStyle = T.jade;
           ctx.fillText('live', lx + 2, ly);
         }
       }
@@ -458,29 +462,42 @@ export function HeroDag() {
     canvas.addEventListener('pointerleave', onLeave);
     canvas.addEventListener('click', onClick);
 
-    // pause while hidden
+    // pause while hidden OR scrolled offscreen — the loop must not redraw 13
+    // nodes + 26 edges at 60fps while the reader is below the fold (the nav's
+    // backdrop-filter re-samples the animating canvas every frame it partially
+    // shows). The settled frame stays on screen either way.
     let paused = typeof document !== 'undefined' && document.hidden;
+    let onScreen = true;
     let raf = 0;
-    const onVisibility = () => {
-      if (document.hidden && !paused) {
-        paused = true;
+    const syncLoop = () => {
+      if (paused || !onScreen || reduce) {
         if (raf) cancelAnimationFrame(raf);
         raf = 0;
-      } else if (!document.hidden && paused) {
-        paused = false;
+      } else if (!raf) {
         raf = requestAnimationFrame(frame);
       }
     };
+    const onVisibility = () => {
+      paused = document.hidden;
+      syncLoop();
+    };
     document.addEventListener('visibilitychange', onVisibility);
+
+    const io = new IntersectionObserver((entries) => {
+      onScreen = entries[0]?.isIntersecting ?? true;
+      syncLoop();
+    }, { threshold: 0 });
+    io.observe(wrap);
 
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
     resize();
     draw(); // first frame immediately (no blank flash)
-    if (!paused && !reduce) raf = requestAnimationFrame(frame);
+    syncLoop();
 
     return () => {
       ro.disconnect();
+      io.disconnect();
       if (raf) cancelAnimationFrame(raf);
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerleave', onLeave);
@@ -534,12 +551,12 @@ export function HeroDag() {
           padding: 1.5rem;
           text-align: center;
           font-family: var(--font-mono, ui-monospace), monospace;
-          font-size: 0.8125rem;
+          font-size: var(--text-xs, 12px); /* documented ramp: --text-xs */
           line-height: 1.5;
           color: var(--color-text-muted);
           background: var(--color-bg-elev);
           border: 1px solid var(--color-border, transparent);
-          border-radius: 0.5rem;
+          border-radius: var(--radius-inner, 12px); /* shape lock: inner */
         }
       `}</style>
     </div>

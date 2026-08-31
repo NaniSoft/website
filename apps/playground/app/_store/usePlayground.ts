@@ -28,6 +28,26 @@ function clearTimer() {
   }
 }
 
+// Auto-run must not tour without its audience: while the tab is hidden the
+// interval is suspended (throttled-but-alive intervals still step the twin) and
+// resumed — from the SAME cursor — when the tab returns. `running` stays true
+// across the suspension, so the Controls' pause/play state never flips.
+let hidden = false;
+if (typeof window !== 'undefined') {
+  window.document.addEventListener('visibilitychange', () => {
+    const store = usePlayground;
+    hidden = window.document.hidden;
+    if (hidden) {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    } else if (store.getState().running && !timer) {
+      timer = setInterval(() => store.getState().step(), STEP_PACE_MS);
+    }
+  });
+}
+
 interface PlaygroundStore {
   state: PlaygroundState;
   running: boolean;
@@ -87,6 +107,8 @@ export const usePlayground = create<PlaygroundStore>((set, get) => ({
     if (running) return;
     if (state.cursor >= STEPS.length) return;
     set({ running: true });
+    // Hidden tab: the visibilitychange handler starts the interval on return.
+    if (hidden) return;
     timer = setInterval(() => get().step(), STEP_PACE_MS);
   },
 

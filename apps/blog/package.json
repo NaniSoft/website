@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --webpack -p 3003",
-    "build": "next build --webpack",
+    "build": "next build --webpack && node scripts/assert-themed-css.mjs",
     "start": "next start -p 3003",
     "lint": "eslint .",
     "test": "vitest run",
-    "cloudflare-build": "next build --webpack",
+    "cloudflare-build": "next build --webpack && node scripts/assert-themed-css.mjs",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
@@ -18,7 +18,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "nextra": "4.6.1",
-    "nextra-theme-blog": "4.6.1"
+    "nextra-theme-blog": "4.6.1",
+    "next-themes": "0.4.6"
   },
   "devDependencies": {
     "@types/node": "26.2.0",

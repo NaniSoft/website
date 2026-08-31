@@ -23,6 +23,13 @@ const shared = {
   borderRadius: radius.inner,
   // Map-token override: cards (and large controls) use the card radius.
   borderRadiusLG: radius.card,
+  // The Flat Estate Rule: the system carries ZERO box-shadows — depth is
+  // tonal (elevated surface on page bg) plus 1px hairlines. Without these
+  // overrides antd's own defaults leak through (nav dropdowns, contact
+  // toasts) as pure-black rgba shadows, doubly off-palette.
+  boxShadow: 'none',
+  boxShadowSecondary: 'none',
+  boxShadowTertiary: 'none',
 };
 
 export const lightTokens = {

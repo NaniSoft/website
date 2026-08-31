@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --webpack -p 3002",
-    "build": "next build --webpack",
+    "build": "next build --webpack && node scripts/assert-themed-css.mjs",
     "start": "next start -p 3002",
     "lint": "eslint .",
-    "cloudflare-build": "next build --webpack",
+    "cloudflare-build": "next build --webpack && node scripts/assert-themed-css.mjs",
     "deploy": "wrangler deploy"
   },
   "dependencies": {

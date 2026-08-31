@@ -1,10 +1,17 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { JetBrains_Mono } from 'next/font/google'
 import { Layout } from 'nextra-theme-docs'
 import { getPageMap } from 'nextra/page-map'
 import { crossNavLinks } from '@nanisoft/identity'
 import DocsNavbar from './docs-navbar'
+// The docs theme's stylesheet — WITHOUT this import the entire Nextra theme
+// CSS is missing from the build and the site ships as unstyled HTML (the app
+// CSS bundle then contains only the Satoshi @font-face rules). Mirrors
+// apps/blog/app/layout.tsx, which imports 'nextra-theme-blog/style.css'.
+// Must precede ./globals.css so the brand overlay wins same-specificity ties.
+import 'nextra-theme-docs/style.css'
 import './globals.css'
 
 // Satoshi is the voice face (UI/body/headings). Mirrors the landing's font set:
@@ -20,6 +27,15 @@ const satoshi = localFont({
   ],
   variable: '--font-satoshi',
   display: 'swap',
+})
+
+// JetBrains Mono is the twin's data face (code blocks in the docs) — same
+// loader the landing uses. Until 2026-08-30 the docs named the face in CSS
+// but never loaded it, so code fell back to the system mono.
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
 })
 
 // Only keys that exist in nextra-theme-docs@4.6.1 `LayoutPropsSchema`
@@ -48,7 +64,11 @@ export default async function RootLayout({
   children: ReactNode
 }) {
   return (
-    <html lang="en" className={satoshi.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${satoshi.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <Layout {...config} pageMap={await getPageMap()}>
           {children}

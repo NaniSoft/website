@@ -1,61 +1,91 @@
+'use client'
+
 import Link from 'next/link'
-import type { NavLink } from '@nanisoft/identity'
+import { usePathname } from 'next/navigation'
+import { ThemeSwitch } from 'nextra-theme-blog'
+import { wordmarkSvg, color, type NavLink } from '@nanisoft/identity'
 
 /**
- * Cross-site + category bar for the blog. Mirrors apps/docs/app/docs-navbar.tsx:
- * the wordmark is the literal 'nanisoft' and links same-tab to the marketing
- * site; the shared crossNavLinks list is the same data the landing/docs render.
- * Category links (Engineering / Announcements) are internal routes on this site.
+ * Cross-site + category bar for the blog.
  *
- * Rendered as a sibling BEFORE nextra-theme-blog's <Layout> (not inside it) so
- * the navbar sits outside the theme's <article class="x:prose"> wrapper — prose
- * typography would otherwise style the nav links. The .dark class is applied to
- * <html> by next-themes (attribute: 'class'), so dark-mode styling still
- * cascades to the navbar even though it's outside <Layout>.
+ * nextra-theme-blog@4.6.1's <Layout> renders NO navbar of its own (its props
+ * are children/nextThemes/banner — verified in dist/components/layout.d.mts);
+ * <Navbar>, <ThemeSwitch> and <Footer> are building blocks the app composes.
+ * This bar follows the landing's nav grammar: wordmark left, links right,
+ * theme toggle at the far right. Styling lives in globals.css (.site-nav-*).
+ *
+ * Rendered as a sibling BEFORE <Layout> so the bar sits outside the theme's
+ * <article> prose wrapper. The mode variant of the wordmark is chosen by CSS
+ * (.dark class on <html> from next-themes) — this is a client component only
+ * for usePathname; there is deliberately no second theme provider up here.
+ *
+ * The wordmark is the W1 mark from @nanisoft/identity, rendered in both modes
+ * server-side: `bg` masks the font's native "i" dot so it must equal the
+ * surface the bar sits on (bone in light, petrol in dark); `ink` inverts to
+ * stay visible. Jade stays the single accent in the mark either way.
  */
+const wordmarkLight = wordmarkSvg({ bg: color.bone, ink: color.petrol, height: 26 })
+const wordmarkDark = wordmarkSvg({ bg: color.petrol, ink: color.bone, height: 26 })
+
+/** The blog's own entry in the shared cross-site list — a self-link is noise. */
+const SELF_ORIGIN = 'https://blog.nanisoft.com'
+
 export default function BlogNavbar({ links }: { links: readonly NavLink[] }) {
+  const pathname = usePathname()
   return (
-    <nav
-      aria-label="Cross-site"
-      style={{
-        display: 'flex',
-        gap: 16,
-        alignItems: 'center',
-        // Align the navbar's content box with the <article> column. The article
-        // is <article class="x:container x:px-4 x:prose ...">: its centering comes
-        // from the theme's `article { margin-inline: auto }` element selector, its
-        // width cap from `x:prose { max-width: 65ch }`, and its horizontal padding
-        // from `x:px-4` (`calc(var(--x-spacing) * 4)` = 1rem). x:container itself
-        // only sets width:100% + breakpoint max-widths (up to 96rem) and does NOT
-        // center or pad, so matching it literally would leave the nav at the
-        // viewport edge. We mirror the article's actual effective box instead.
-        maxWidth: '65ch',
-        marginInline: 'auto',
-        paddingInline: 'calc(var(--x-spacing) * 4)',
-      }}
-    >
-      <Link
-        href="https://nanisoft.com"
-        style={{ fontWeight: 700, color: 'inherit', textDecoration: 'none' }}
-      >
-        nanisoft
-      </Link>
-      <Link href="/engineering" style={{ color: 'inherit', textDecoration: 'none' }}>
-        Engineering
-      </Link>
-      <Link href="/announcements" style={{ color: 'inherit', textDecoration: 'none' }}>
-        Announcements
-      </Link>
-      {links.map((l) => (
-        <a
-          key={l.href}
-          href={l.href}
-          target={l.external ? '_blank' : undefined}
-          rel={l.external ? 'noopener noreferrer' : undefined}
+    <header className="site-nav">
+      <nav aria-label="Cross-site" className="site-nav-inner">
+        <Link
+          href="https://nanisoft.com"
+          className="site-nav-brand"
+          aria-label="nanisoft — marketing site"
         >
-          {l.label}
-        </a>
-      ))}
-    </nav>
+          {/* No inline `display` here — the .wordmark-* class rules in
+              globals.css own it, so only the mode's variant shows. */}
+          <span
+            className="wordmark wordmark-light"
+            style={{ height: 26 }}
+            dangerouslySetInnerHTML={{ __html: wordmarkLight }}
+          />
+          <span
+            className="wordmark wordmark-dark"
+            aria-hidden="true"
+            style={{ height: 26 }}
+            dangerouslySetInnerHTML={{ __html: wordmarkDark }}
+          />
+        </Link>
+        <span className="site-nav-rule" aria-hidden="true" />
+        <Link
+          href="/engineering"
+          className="site-nav-link"
+          aria-current={pathname?.startsWith('/engineering') ? 'page' : undefined}
+        >
+          Engineering
+        </Link>
+        <Link
+          href="/announcements"
+          className="site-nav-link"
+          aria-current={pathname?.startsWith('/announcements') ? 'page' : undefined}
+        >
+          Announcements
+        </Link>
+        {links
+          .filter((l) => l.href !== SELF_ORIGIN)
+          .map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="site-nav-link"
+              target={l.external ? '_blank' : undefined}
+              rel={l.external ? 'noopener noreferrer' : undefined}
+            >
+              {l.label}
+            </a>
+          ))}
+        <span className="site-nav-toggle">
+          <ThemeSwitch />
+        </span>
+      </nav>
+    </header>
   )
 }

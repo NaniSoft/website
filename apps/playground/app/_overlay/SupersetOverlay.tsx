@@ -53,18 +53,25 @@ const svgText: CSSProperties = { fill: 'var(--color-text)' };
 const svgTextMuted: CSSProperties = { fill: 'var(--color-text-muted)' };
 const svgTrackStroke: CSSProperties = { stroke: 'var(--color-border)' };
 
-// ── Bar color by state (jade reserved for the anomalous/live state) ──────────
-function barColor(row: SupersetExposureRow): string {
-  if (row.exposureCount > 0 && row.sensitive) return color.jade; // anomalous exposure (live)
-  if (row.exposureCount > 0) return color.teal; // exposure on a non-sensitive product
-  return color.petrolSoft; // no exposure (neutral)
-}
-
-// ── Donut slice colors (validated: teal vs petrolMid, ΔE 24.4 normal) ──────────
-const SLICE_COLOR: Record<SupersetSourceRow['edgeKind'], string> = {
-  viewed: color.teal, // SQL Server Fleet — the access logs
-  memberof: color.petrolMid, // Active Directory — the group memberships
+// ── Bar/slice colors: mode-aware CSS vars (see globals.css --viz-*) ──────────
+// The old literals (jade/teal/petrolMid) failed WCAG 1.4.11 on their panels —
+// petrolMid-on-petrolMid was literally invisible in dark mode — and SVG
+// attributes can't take var(), so these reach the SVGs via style props.
+const barColor = (row: SupersetExposureRow): React.CSSProperties => {
+  if (row.exposureCount > 0 && row.sensitive) return { background: 'var(--viz-anomalous)' }; // anomalous exposure
+  if (row.exposureCount > 0) return { background: 'var(--viz-secondary)' }; // exposure, non-sensitive
+  return { background: 'var(--viz-neutral)' }; // no exposure
 };
+
+const SLICE_STYLE: Record<SupersetSourceRow['edgeKind'], React.CSSProperties> = {
+  viewed: { stroke: 'var(--viz-secondary)' }, // SQL Server Fleet — the access logs
+  memberof: { stroke: 'var(--viz-memberof)' }, // Active Directory — the group memberships
+};
+
+/** Legend swatch — same marks as the slices, as fills. */
+const sliceSwatch = (kind: SupersetSourceRow['edgeKind']): React.CSSProperties => ({
+  background: kind === 'viewed' ? 'var(--viz-secondary)' : 'var(--viz-memberof)',
+});
 
 export function SupersetOverlay() {
   const state = usePlayground((s) => s.state);
@@ -131,7 +138,7 @@ export function SupersetOverlay() {
               cursor: 'pointer',
               border: `1px solid ${color.teal}`,
               background: 'transparent',
-              color: color.teal,
+              color: 'var(--color-text)',
             }}
           >
             ✕ clear drill
@@ -144,8 +151,9 @@ export function SupersetOverlay() {
 
       {/* Dashboard grid — 3 panels (stacked for the narrow split-pane) */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {/* (1) Bar — products by exposure count */}
-        <section style={panel} aria-label="Products by exposure count" role="img">
+        {/* (1) Bar — products by exposure count. No role="img" here: the rows
+            are real drill <button>s, and img descendants are presentational. */}
+        <section style={panel} aria-label="Products by exposure count">
           <p style={label}>Bar · products by exposure count</p>
           {barRows.length === 0 ? (
             <p style={{ ...label, textTransform: 'none', letterSpacing: '0.04em' }}>no products match the filter</p>
@@ -181,13 +189,13 @@ export function SupersetOverlay() {
                     style={{
                       height: 14,
                       width: w,
-                      borderRadius: 4,
-                      background: barColor(row),
-                      border: drilled ? `1px solid ${color.jade}` : 'none',
-                      boxShadow: drilled ? `0 0 0 2px rgba(20,167,122,0.18)` : 'none',
+                      borderRadius: 9999,
+                      ...barColor(row),
+                      outline: drilled ? '2px solid var(--color-accent)' : 'none',
+                      outlineOffset: 1,
                     }}
                   />
-                  <span style={{ color: row.exposureCount > 0 && row.sensitive ? color.jade : 'var(--color-text-muted)' }}>
+                  <span style={row.exposureCount > 0 && row.sensitive ? { color: 'var(--color-text)', fontWeight: 700 } : { color: 'var(--color-text-muted)' }}>
                     {row.exposureCount} exposed · {row.viewCount} view{row.viewCount === 1 ? '' : 's'}
                   </span>
                 </button>
@@ -196,15 +204,16 @@ export function SupersetOverlay() {
           )}
         </section>
 
-        {/* (2) Table — users with anomalous views (j.harper flagged) */}
-        <section style={panel} aria-label="Users with anomalous views" role="table">
+        {/* (2) Table — users with anomalous views (j.harper flagged). The old
+            role="table" was invalid (a <p> child among the rows); the panel
+            label + plain grid read correctly without fake table semantics. */}
+        <section style={panel} aria-label="Users with anomalous views">
           <p style={label}>Table · users with anomalous views</p>
           {tableRows.length === 0 ? (
             <p style={{ ...label, textTransform: 'none', letterSpacing: '0.04em' }}>no anomalous views</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <div
-                role="row"
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '84px 1fr 64px 1fr',
@@ -217,15 +226,14 @@ export function SupersetOverlay() {
                   textTransform: 'uppercase',
                 }}
               >
-                <span role="columnheader">user</span>
-                <span role="columnheader">product</span>
-                <span role="columnheader">owner</span>
-                <span role="columnheader">status</span>
+                <span>user</span>
+                <span>product</span>
+                <span>owner</span>
+                <span>status</span>
               </div>
               {tableRows.map((u) => (
                 <div
                   key={u.edgeId}
-                  role="row"
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '84px 1fr 64px 1fr',
@@ -234,15 +242,18 @@ export function SupersetOverlay() {
                     fontSize: 11,
                     color: 'var(--color-text)',
                     padding: '3px 4px',
-                    borderLeft: `2px solid ${color.jade}`,
-                    background: 'rgba(20, 167, 122, 0.06)',
-                    borderRadius: 4,
+                    // The finding reads as a quiet accent WASH (the Honest Status
+                    // Rule's teal-wash pattern, tuned to jade's role) — not a
+                    // colored border + raw rgba tint + jade text, which failed
+                    // contrast and the shape/shadow rules.
+                    background: 'color-mix(in srgb, var(--color-accent) 8%, transparent)',
+                    borderRadius: radius.inner,
                   }}
                 >
-                  <span role="cell" style={{ fontWeight: 700 }}>{u.user}</span>
-                  <span role="cell">{u.productName}</span>
-                  <span role="cell" style={{ color: 'var(--color-text-muted)' }}>{u.ownerGroup}</span>
-                  <span role="cell" style={{ color: color.jade }}>no backing membership</span>
+                  <span style={{ fontWeight: 700 }}>{u.user}</span>
+                  <span>{u.productName}</span>
+                  <span style={{ color: 'var(--color-text-muted)' }}>{u.ownerGroup}</span>
+                  <span style={{ fontWeight: 700 }}>no backing membership</span>
                 </div>
               ))}
             </div>
@@ -296,7 +307,7 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
                     r={r}
                     fill="none"
                     strokeWidth={14}
-                    stroke={SLICE_COLOR[s.edgeKind]}
+                    style={SLICE_STYLE[s.edgeKind]}
                     strokeDasharray={`${dash} ${c - dash}`}
                     strokeDashoffset={offset}
                   />
@@ -336,8 +347,8 @@ function DonutPanel({ sources }: { sources: SupersetSourceRow[] }) {
                   style={{
                     width: 10,
                     height: 10,
-                    borderRadius: 3,
-                    background: SLICE_COLOR[s.edgeKind],
+                    borderRadius: 9999,
+                    ...sliceSwatch(s.edgeKind),
                     flexShrink: 0,
                   }}
                   aria-hidden="true"

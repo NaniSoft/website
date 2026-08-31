@@ -32,7 +32,7 @@ function Row({ row }: { row: TrinoResultRow }) {
     <tr
       aria-label={row.anomalous ? `${row.user} anomalous view of ${row.product}` : `${row.user} view of ${row.product}`}
       style={{
-        background: row.anomalous ? 'rgba(20, 167, 122, 0.10)' : 'transparent',
+        background: row.anomalous ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)' : 'transparent',
         color: 'var(--color-text)',
       }}
     >
@@ -41,7 +41,7 @@ function Row({ row }: { row: TrinoResultRow }) {
           key={i}
           style={{
             padding: '6px 10px',
-            borderBottom: `1px solid ${row.anomalous ? color.jade : 'var(--color-border)'}`,
+            borderBottom: `1px solid ${row.anomalous ? 'var(--color-accent)' : 'var(--color-border)'}`,
             fontFamily: font.data,
             fontSize: 12,
             whiteSpace: 'nowrap',
@@ -53,7 +53,7 @@ function Row({ row }: { row: TrinoResultRow }) {
       <td
         style={{
           padding: '6px 10px',
-          borderBottom: `1px solid ${row.anomalous ? color.jade : 'var(--color-border)'}`,
+          borderBottom: `1px solid ${row.anomalous ? 'var(--color-accent)' : 'var(--color-border)'}`,
           fontFamily: font.data,
           fontSize: 11,
           letterSpacing: '0.08em',
@@ -75,7 +75,7 @@ function Row({ row }: { row: TrinoResultRow }) {
         ) : (
           <span
             style={{
-              color: color.teal,
+              color: 'var(--color-text)',
               border: `1px solid ${color.teal}`,
               borderRadius: 9999,
               padding: '1px 7px',
@@ -125,7 +125,6 @@ export function TrinoOverlay() {
       <button
         onClick={step}
         disabled={!results.canRun}
-        aria-label="Run seeded SQL query"
         style={{
           alignSelf: 'flex-start',
           fontFamily: font.voice,

@@ -30,6 +30,18 @@
      bone pairing was ~2.7:1 in light; identity decision 2026-08-24). */
   --color-on-accent: #0C2A33; /* color.petrol */
 
+  /* The locked live/active accent, for CSS-side tints (color-mix). Keep in
+     sync with identity color.jade — components import the TS value. */
+  --color-accent: #14A77A;    /* color.jade — live/active only */
+
+  /* Data-viz marks, light mode — each ≥3:1 (WCAG 1.4.11) on its panel surface.
+     SVG presentation attributes can't take var(); these reach the SVGs through
+     style props, so mode flips are pure CSS. */
+  --viz-anomalous: #0E8A62; /* role: jade deepened for 3:1+ on bone (the landing's --color-accent-strong) */
+  --viz-secondary: #2A8C97; /* color.teal */
+  --viz-memberof: #4A5E64;  /* color.inkMuted */
+  --viz-neutral: #3C6770;   /* color.petrolSoft */
+
   color-scheme: light;
 }
 
@@ -47,6 +59,15 @@
   --color-on-primary: #0C2A33; /* color.petrol */
 
   --color-on-accent: #0C2A33; /* color.petrol — role.onAccent, same in both modes */
+
+  --color-accent: #14A77A;    /* color.jade — mode-invariant, same in both modes */
+
+  /* Data-viz marks, dark mode — the light set sinks into petrolMid (petrolSoft
+     sits at 1.78:1 there); these stay ≥3:1 on the elevated panel. */
+  --viz-anomalous: #14A77A;  /* color.jade */
+  --viz-secondary: #4DB0BB;  /* role: survey teal bright (the dark-mode focus teal) */
+  --viz-memberof: #8FB0B6;   /* color.petrolTint */
+  --viz-neutral: color-mix(in srgb, var(--color-text-muted) 55%, var(--color-bg-elev));
 
   color-scheme: dark;
 }
@@ -79,19 +100,31 @@ body {
    suppressed); the inline jade border/edge carries the active state without
    motion, so content/state stays visible and still in both modes. */
 
-@keyframes spine-ripple {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 167, 122, 0); }
-  50%      { box-shadow: 0 0 0 6px rgba(20, 167, 122, 0.18); }
-}
-/* The beckon: a full-UI tool node that is the active step's openTool AND whose
-   overlay is not open — invites a click. (The jade active border is inline via
-   NodeChip's borderFor; this class only adds the ripple.) */
+/* The beckon ring: a ::after pseudo-element ring that scales and fades —
+   transform + opacity only (composited), replacing the old animated
+   box-shadow, which repainted every frame for the session's whole lifetime.
+   (The jade active FILL is inline via NodeChip's surfaceFor; this class only
+   adds the invitation pulse.) */
 .spine-node-beckon {
+  position: relative;
+}
+.spine-node-beckon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit; /* follows the chip's identity radius.inner */
+  border: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  pointer-events: none;
   animation: spine-ripple 1.1s cubic-bezier(.32, .72, 0, 1) infinite;
 }
+@keyframes spine-ripple {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.14); opacity: 0; }
+}
 /* The node's overlay is open — no ripple (reads as "opened", not "inviting"). */
-.spine-node-open {
+.spine-node-open::after {
   animation: none;
+  content: none;
 }
 
 @keyframes spine-flow {

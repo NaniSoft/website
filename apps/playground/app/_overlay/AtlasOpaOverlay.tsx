@@ -39,9 +39,11 @@ function DecisionPill({ allow }: { allow: boolean }) {
         letterSpacing: '0.08em',
         padding: '3px 10px',
         borderRadius: 9999,
-        border: `1px solid ${allow ? color.jade : color.petrolSoft}`,
-        color: allow ? color.jade : 'var(--color-text-muted)',
-        background: allow ? 'rgba(20, 167, 122, 0.10)' : 'transparent',
+        border: `1px solid ${allow ? color.jade : 'var(--color-text-muted)'}`,
+        // ALLOW is a live decision: jade fill + petrol text (role.onAccent,
+        // ~4.9:1) — the old jade-on-boneTINT text sat at ~2.9:1.
+        color: allow ? 'var(--color-on-accent)' : 'var(--color-text-muted)',
+        background: allow ? color.jade : 'transparent',
       }}
     >
       {allow ? 'ALLOW' : 'pending'}
@@ -142,7 +144,6 @@ export function AtlasOpaOverlay() {
         <button
           onClick={step}
           disabled={!canAct}
-          aria-label="Evaluate authz decision"
           style={{
             alignSelf: 'flex-start',
             fontFamily: font.voice,

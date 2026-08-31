@@ -1,94 +1,241 @@
 /*
- * nanisoft brand overlay on nextra-theme-docs.
+ * nanisoft brand layer on nextra-theme-docs.
  *
- * Values mapped from @nanisoft/identity (SPEC §2 "Living Map"):
+ * LESSON OF THE FIRST ATTEMPT (2026-08-30 audit): overriding theme CSS custom
+ * properties alone is not enough — some theme rules consume the vars, others
+ * compile to literal values, and the audit found the rendered site still white
+ * and zinc. This layer therefore works on THREE levels, and every one of them
+ * is verified against the BUILT export, not the theme source:
+ *
+ *   1. semantic tokens (--color-*) — the same set apps/landing/app/globals.css
+ *      defines, keyed to the `.dark` class (next-themes attribute mode) instead
+ *      of the landing's `data-theme` attribute;
+ *   2. theme variables (--nextra-* / --x-color-*) — the theme's real recolor
+ *      API, so its primary scale, washes, and borders stay brand-derived;
+ *   3. rule-level overrides on html/body/article — unlayered author CSS beats
+ *      the theme's layered utilities regardless of how each rule is compiled.
+ *
+ * Values mapped from @nanisoft/identity ("Living Map"):
  *   base = petrol + bone · secondary = teal · accent = jade (live/active only)
  *   No purple, no neon, no pure black, no pure white.
- *
- * IMPORTANT — the theme's REAL variable API (verified against
- *   nextra-theme-docs@4.6.1/dist/style.css and nextra/dist/client/components/head.js):
- * The theme does NOT expose --nextra-text / --nextra-border / --nextra-secondary /
- * --nextra-accent / --nextra-focus / --nextra-radius / --nextra-font-sans. It exposes
- * only:
- *   --nextra-primary-hue / -saturation / -lightness  (HSL components → primary scale)
- *   --nextra-bg                                      (comma-separated RGB triplet)
- *   --nextra-content-width / -navbar-height / -banner-height (layout)
- * Text, borders, fonts are wired through Tailwind v4 --x-* variables. So the brand
- * is recolored by overriding the REAL --nextra-* HSL/RGB variables plus the
- * relevant --x-color-gray-* / --x-color-neutral-* / --x-font-* tokens. The hex
- * values below are the brand source of truth; the variable names that receive them
- * are the theme's real names.
+ *   CSS cannot import TS values; each var carries its identity-package name —
+ *   keep them in sync when tokens change.
  */
 
+/* ── 1. Semantic tokens ─────────────────────────────────────────────────────── */
+
 :root {
-  /* Primary = petrol #0C2A33 ≈ hsl(194, 62%, 12%).
-     Drives the primary-50..800 scale used for links, focus rings, active marks. */
+  /* Light mode surfaces (bone family). Same values as the landing. */
+  --color-bg: #F4EFE6;         /* color.bone */
+  --color-bg-elev: #FBF7EF;    /* color.boneElev */
+  --color-bg-sunken: #EAE2D3;  /* color.boneSunken */
+  --color-border: #EAE2D3;     /* color.boneSunken */
+  --color-text: #102A30;       /* color.ink */
+  --color-text-muted: #4A5E64; /* color.inkMuted */
+
+  /* role: per-mode focus indicator — passes 3:1 on bone. Brand teal/jade read
+     <3:1 on bone; this darkened teal is the identity package's own answer. */
+  --color-focus: #1F6E78;
+}
+
+.dark {
+  /* Dark mode surfaces (petrol family). */
+  --color-bg: #0C2A33;         /* color.petrol */
+  --color-bg-elev: #15414A;    /* color.petrolMid */
+  --color-bg-sunken: #08222A;  /* color.petrolDeep */
+  --color-border: #3C6770;     /* color.petrolSoft */
+  --color-text: #F4EFE6;       /* color.bone */
+  --color-text-muted: #8FB0B6; /* color.petrolTint */
+
+  /* role: focus indicator on petrol — the lighter survey teal. */
+  --color-focus: #4DB0BB;      /* color.tealBright */
+}
+
+/* ── 2. Theme variables ─────────────────────────────────────────────────────── */
+
+:root {
+  /* Primary = petrol #0C2A33 ≈ hsl(194, 62%, 12%). Drives the theme's
+     primary-50..800 scale (links, active washes, focus marks). */
   --nextra-primary-hue: 194deg;
   --nextra-primary-saturation: 62%;
   --nextra-primary-lightness: 12%;
 
-  /* Page background (light) = bone #F4EFE6 → RGB triplet for rgb(var(--nextra-bg)). */
+  /* Page background (light) = bone #F4EFE6 → RGB triplet for the theme's
+     rgb(var(--nextra-bg)) consumers. */
   --nextra-bg: 244, 239, 230;
 
   /* Layout tokens — keep the theme defaults. */
   --nextra-content-width: 90rem;
   --nextra-navbar-height: 64px;
+
+  /* Text + border recolor via the theme's gray/neutral scale (rule 2 of the
+     strategy). Light mode: hairlines = boneSunken, muted text = inkMuted,
+     body/strong/headings = ink. */
+  --x-color-gray-50: #FBF7EF;  /* boneElev — subtle surfaces */
+  --x-color-gray-100: #F4EFE6; /* bone — soft hover fills */
+  --x-color-gray-200: #EAE2D3; /* boneSunken — hairline borders */
+  --x-color-gray-400: #4A5E64; /* inkMuted — muted text */
+  --x-color-gray-500: #4A5E64; /* inkMuted */
+  --x-color-gray-600: #102A30; /* ink — body text */
+  --x-color-gray-700: #102A30; /* ink */
+  --x-color-gray-800: #102A30; /* ink */
+  --x-color-gray-900: #102A30; /* ink — headings/strong */
 }
 
 .dark {
-  /* In dark mode the page background becomes petrolDeep #08222A and the primary
-     shifts to teal #2A8C97 ≈ hsl(186, 57%, 38%) so links/active marks stay
-     visible on the dark petrol surface. Teal is the brand secondary. */
+  /* In dark mode the primary shifts to teal #2A8C97 ≈ hsl(186, 57%, 38%) so
+     links/active marks stay visible on petrol. Teal is the brand secondary. */
   --nextra-primary-hue: 186deg;
   --nextra-primary-saturation: 57%;
   --nextra-primary-lightness: 38%;
 
-  --nextra-bg: 8, 34, 42;
-}
+  /* Page background (dark) = petrol #0C2A33. */
+  --nextra-bg: 12, 42, 51;
 
-/*
- * Text + border recolor via the theme's Tailwind v4 gray/neutral scale.
- * Body text uses gray-600/700, headings gray-900; borders use gray-200.
- * boneSunken #EAE2D3 ≈ gray-200; ink #102A30 ≈ gray-900. Only the two
- * brand-bearing stops are overridden so shadows/hover states still read neutral.
- */
-:root {
-  --x-color-gray-200: #EAE2D3; /* boneSunken — hairline borders (light) */
-  --x-color-gray-900: #102A30; /* ink — headings/strong text (light) */
-}
-.dark {
-  --x-color-neutral-800: #0C2A33; /* petrol — dark borders + dark hover surface */
+  /* Dark mode: hairlines/borders = petrolSoft, dark hover surfaces = petrolMid,
+     body text = bone, muted text = petrolTint. */
+  --x-color-neutral-700: #3C6770; /* petrolSoft */
+  --x-color-neutral-800: #15414A; /* petrolMid — dark borders + hover surface */
+  --x-color-gray-50: #15414A;     /* petrolMid — subtle surfaces */
   --x-color-gray-100: #F4EFE6;    /* bone — dark-mode text */
-  --x-color-gray-200: #EAE2D3;    /* boneSunken — dark-mode muted text */
+  --x-color-gray-200: #8FB0B6;    /* petrolTint — muted text */
+  --x-color-gray-300: #8FB0B6;    /* petrolTint */
+  --x-color-gray-400: #8FB0B6;    /* petrolTint */
+  --x-color-gray-500: #8FB0B6;    /* petrolTint */
+  --x-color-gray-600: #F4EFE6;    /* bone — body text */
+  --x-color-gray-700: #F4EFE6;    /* bone */
+  --x-color-gray-800: #F4EFE6;    /* bone */
+  --x-color-gray-900: #F4EFE6;    /* bone — headings/strong */
 }
 
+/* ── 3. Fonts ───────────────────────────────────────────────────────────────── */
+
 /*
- * Satoshi is the voice (UI/body/headings); JetBrains Mono is the data face.
- * The localFont loader in layout.tsx defines --font-satoshi on <html>.
+ * Satoshi is the voice (UI/body/headings) — the localFont loader in layout.tsx
+ * defines --font-satoshi on <html>. JetBrains Mono is the data face — the
+ * JetBrains_Mono loader defines --font-mono. Until 2026-08-30 the mono face
+ * was named here but never loaded, so code fell back to the system mono.
  */
 :root {
   --font-satoshi: 'Satoshi', system-ui, -apple-system, sans-serif;
   --x-font-sans: var(--font-satoshi), 'Satoshi', system-ui, -apple-system, sans-serif;
-  --x-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --x-font-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
   --x-default-font-family: var(--x-font-sans);
 }
 
+/* ── 4. Base surface — the level-(3) rule overrides ─────────────────────────── */
+
+html {
+  background: var(--color-bg);
+}
+
 body {
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--x-font-sans);
 }
 
-/*
- * Jade #14A77A is reserved for live/active states only — never a decorative
- * fill or border. The theme's navbar marks the current page with
- * aria-current="page" but only bumps font-weight (no color). Wire jade in here
- * so the active cross-site link reads as "live".
- */
-nav a[aria-current='page'],
-nav a[aria-current='true'] {
-  color: #14A77A;
+/* Headings and prose text always speak in the mode's ink — belt and braces for
+   any theme rule that compiled to a literal zinc value. */
+article h1, article h2, article h3, article h4, article strong, article b {
+  color: var(--color-text);
 }
 
-/* Focus ring = darkened teal #1F6E78 (passes 3:1 on bone). */
+article {
+  color: var(--color-text);
+}
+
+::selection {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* Focus ring: the identity package's per-mode focus color, always visible. */
 :where(a, button, input, [tabindex]):focus-visible {
-  outline-color: #1F6E78;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* The active cross-site/category link reads as current via the focus color —
+   NOT jade: #14A77A sits at 2.68:1 on bone (fails WCAG 1.4.3/1.4.11), while
+   --color-focus is the palette's accessible "mark" per mode (5.15:1 light,
+   5.9:1 dark). Weight carries the rest. */
+nav a[aria-current='page'] {
+  color: var(--color-focus);
+  font-weight: 600;
+}
+
+/* ── 5. Docs-specific: the cross-site brand segment ─────────────────────────── */
+
+/*
+ * The docs theme renders its own sticky navbar and passes <DocsNavbar> through
+ * the `navbar` slot, so unlike the blog this app only styles ITS segment of
+ * that bar: the wordmark + cross-site links. Min-height floors give the links
+ * real touch targets inside the theme's 64px bar.
+ */
+
+.docs-nav-segment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.docs-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: 8px;
+}
+
+.docs-nav-rule {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border);
+  margin-inline-end: 8px;
+}
+
+.docs-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* touch-target floor */
+  padding: 0 10px;
+  border-radius: 9999px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  /* No explicit size — inherits body 16px (the documented Body stop), exactly
+     like the landing's TopNav links. */
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.docs-nav-link:hover {
+  color: var(--color-text);
+}
+
+/* ── 6. The wordmark ────────────────────────────────────────────────────────── */
+
+/*
+ * W1 wordmark: wordmarkSvg() sets font-family="'Satoshi', …" as a presentation
+ * attribute, but next/font registers the webfont under a hashed family name
+ * exposed via --font-satoshi. A CSS rule reaches into the inline SVG and
+ * re-points <text> at that variable so the mark renders in the real Satoshi.
+ * Both mode variants render server-side; CSS shows the one for the page mode.
+ */
+.wordmark { display: inline-flex; }
+.wordmark svg { display: block; height: 100%; width: auto; }
+.wordmark svg text { font-family: var(--font-satoshi), 'Satoshi', system-ui, sans-serif; }
+
+/* Mode variants are toggled here — the spans carry NO inline display, which
+   would override these class rules and render both marks overlapping. */
+.wordmark-dark { display: none; }
+.dark .wordmark-light { display: none; }
+.dark .wordmark-dark { display: inline-flex; }
+
+/* ── 7. Reduced motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

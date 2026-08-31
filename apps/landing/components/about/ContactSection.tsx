@@ -6,10 +6,17 @@ import { contactSchema, submitContact, type ContactInput } from '@/lib/contact';
 
 function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
+  // Submit status rendered INLINE in a role="status" region — the antd toast is
+  // the secondary channel only. The toast carries no aria-live (verified in
+  // rc-notification), auto-dismisses in ~3s, and was the sole feedback for both
+  // success and failure; screen readers heard nothing and a network failure was
+  // completely silent.
+  const [status, setStatus] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
   const { message } = App.useApp();
 
   const onFinish = async (values: ContactInput) => {
     setSubmitting(true);
+    setStatus(null);
     try {
       // safeParse (not parse) so a client/server rule divergence never throws
       // and leaves the button stuck loading. It still normalizes the honeypot
@@ -17,12 +24,21 @@ function ContactForm() {
       // .optional().default('') yields '' so the server sees company: '').
       const parsed = contactSchema.safeParse(values);
       if (!parsed.success) {
-        message.error('Please check your input and try again.');
+        setStatus({ tone: 'error', text: 'Please check your input and try again.' });
         return;
       }
       const result = await submitContact(parsed.data);
-      if (result.ok) message.success('Thanks — we’ll be in touch shortly.');
-      else message.error(result.error);
+      if (result.ok) {
+        setStatus({ tone: 'ok', text: 'Thanks — we’ll be in touch shortly.' });
+        message.success('Thanks — we’ll be in touch shortly.');
+      } else {
+        setStatus({ tone: 'error', text: result.error });
+        message.error(result.error);
+      }
+    } catch {
+      // fetch rejects on network failure — never leave the user guessing
+      // whether the message was sent.
+      setStatus({ tone: 'error', text: 'The message could not be sent — check your connection and try again.' });
     } finally {
       setSubmitting(false);
     }
@@ -46,6 +62,19 @@ function ContactForm() {
         <Input.TextArea rows={5} />
       </Form.Item>
       <Button type="primary" htmlType="submit" loading={submitting}>Send</Button>
+      {/* Inline, persistent, announced (WCAG 4.1.3). Tones are token-paired. */}
+      <p
+        role="status"
+        style={{
+          margin: '12px 0 0',
+          minHeight: 20,
+          fontSize: 'var(--text-sm)',
+          color: status ? (status.tone === 'ok' ? 'var(--color-text)' : 'var(--color-danger)') : 'transparent',
+          fontWeight: status?.tone === 'error' ? 600 : 400,
+        }}
+      >
+        {status ? status.text : ' '}
+      </p>
     </Form>
   );
 }

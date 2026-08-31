@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { font } from '@nanisoft/identity';
+import { font, radius } from '@nanisoft/identity';
 import { COMPONENT_BY_ID, MOCK_TOOL_BY_COMPONENT } from '@nanisoft/architecture';
 import { usePlayground } from '../_store/usePlayground';
 import { TOOL_CONTENT } from './tool-content';
@@ -17,15 +17,25 @@ export function ToolOverlay() {
   const overlay = usePlayground((s) => s.overlay);
   const closeTool = usePlayground((s) => s.closeTool);
   const ref = useRef<HTMLDivElement>(null);
+  // Where focus came from when the overlay opened — restored on close so a
+  // keyboard user isn't dropped at <body> among 19 chips (they keep their place).
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!overlay) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
     ref.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeTool();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      // The chip that opened the overlay survives close (the graph never
+      // unmounts) — put the focus back where the journey started.
+      restoreFocusRef.current?.focus?.();
+      restoreFocusRef.current = null;
+    };
   }, [overlay, closeTool]);
 
   if (!overlay) return null;
@@ -93,7 +103,7 @@ export function ToolOverlay() {
             border: '1px solid var(--color-border)',
             background: 'transparent',
             color: 'var(--color-text)',
-            borderRadius: 8,
+            borderRadius: radius.inner,
             padding: '2px 9px',
             cursor: 'pointer',
           }}

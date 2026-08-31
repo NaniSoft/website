@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { color, font } from '@nanisoft/identity';
+import { color, font, radius } from '@nanisoft/identity';
 import { usePlayground, STEPS } from '../_store/usePlayground';
 
 export function Controls() {
@@ -85,7 +85,7 @@ export function Controls() {
               background: 'var(--color-bg-sunken)',
               color: 'var(--color-text)',
               border: '1px solid var(--color-border)',
-              borderRadius: 8,
+              borderRadius: radius.inner,
               padding: 8,
             }}
           />

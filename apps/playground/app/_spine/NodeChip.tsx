@@ -25,10 +25,25 @@ function realNameLine(c: Component): string | null {
   return null;
 }
 
-function borderFor(status: NodeStatus): string {
-  if (status === 'active') return `1px solid ${color.jade}`;
-  if (status === 'done') return `1px solid ${color.teal}`;
-  return '1px solid var(--color-border)';
+function surfaceFor(status: NodeStatus): { background: string; border: string; text: string; subText: string } {
+  if (status === 'active') {
+    // The live node: jade fill + petrol text (role.onAccent, ~4.9:1) — the
+    // sanctioned accent pairing. A 1px jade BORDER was the old treatment, but
+    // jade-on-elev sits at 2.87:1 (WCAG 1.4.11 fail) and was color-only.
+    return {
+      background: color.jade,
+      border: `1px solid ${color.jade}`,
+      text: 'var(--color-on-accent)',
+      subText: 'var(--color-on-accent)',
+    };
+  }
+  if (status === 'done') {
+    // Teal border = non-text mark at 3.46:1 on elev (1.4.11 pass).
+    return { background: 'var(--color-bg-elev)', border: `1px solid ${color.teal}`, text: 'var(--color-text)', subText: 'var(--color-text-muted)' };
+  }
+  // Idle: a muted-ink hairline — the old --color-border (boneSunken on elev,
+  // 1.2:1) made the nodes read as floating text instead of a map.
+  return { background: 'var(--color-bg-elev)', border: '1px solid var(--color-text-muted)', text: 'var(--color-text)', subText: 'var(--color-text-muted)' };
 }
 
 export function NodeChip({
@@ -49,6 +64,7 @@ export function NodeChip({
   const sub = realNameLine(c);
   const status = data.status;
   const clickable = c.fullUi;
+  const surface = surfaceFor(status);
   const className = data.open ? 'spine-node-open' : data.beckon ? 'spine-node-beckon' : undefined;
   return (
     <div
@@ -56,6 +72,9 @@ export function NodeChip({
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}
       aria-label={clickable ? `Open ${c.codename} mock` : undefined}
+      // The live node announces itself, not just by the jade fill — assistive
+      // tech traversing the graph gets the active state without color.
+      aria-current={status === 'active' ? 'true' : undefined}
       onClick={clickable ? () => data.onOpenTool(c.id) : undefined}
       onKeyDown={
         clickable
@@ -71,21 +90,21 @@ export function NodeChip({
         width: CHIP_W,
         minHeight: CHIP_H,
         borderRadius: radius.inner,
-        background: 'var(--color-bg-elev)',
-        border: borderFor(status),
+        background: surface.background,
+        border: surface.border,
         padding: '8px 12px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         fontFamily: font.data,
-        color: 'var(--color-text)',
+        color: surface.text,
         cursor: clickable ? 'pointer' : 'default',
       }}
     >
       <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>{c.codename}</div>
       {sub && (
-        <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 2, lineHeight: 1.2 }}>
+        <div style={{ fontSize: 11, color: surface.subText, marginTop: 2, lineHeight: 1.2 }}>
           {sub}
         </div>
       )}
