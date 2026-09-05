@@ -22,11 +22,14 @@ import { usePlayground } from '../_store/usePlayground';
  *
  * Charts read as one system (dataviz): nanisoft tokens, jade reserved for the
  * live/anomalous state only (the j.harper row + the sensitive product's exposure
- * bar + the active filter accent), teal for the viewed/source slice, petrolMid
- * for the memberof slice, petrolSoft for neutral marks. Accessible (roles,
- * aria-labels, legend with direct labels) and consistent across modes (matching
- * the sibling overlays). SVG fills/strokes use the style prop — presentation
- * attributes cannot resolve var().
+ * bar + the active filter accent), all chart marks through the mode-aware
+ * --viz-* roles: teal/bright for the viewed/source slice, inkMuted/petrolTint
+ * for the memberof slice, petrolSoft (light) / a petrolTint-petrolMid mix
+ * (dark) for neutral marks. No raw petrolMid anywhere — it was invisible on
+ * its own panel. Accessible (roles, aria-labels, legend with direct labels)
+ * and consistent across modes (matching the sibling overlays). SVG
+ * fills/strokes use the style prop — presentation attributes cannot resolve
+ * var().
  */
 
 const label: CSSProperties = {

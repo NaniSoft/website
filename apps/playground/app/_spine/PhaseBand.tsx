@@ -7,9 +7,12 @@ export type PhaseStatus = 'idle' | 'active' | 'done';
 /**
  * A phase band — a labeled rectangle spanning its phase's columns, rendered as
  * a non-interactive React Flow node below the spine. `status` reflects the
- * playbook cursor: active phase = jade, done phases = teal, idle = sunken.
- * The neutral Sources band is always idle (it is not one of the 4 phases).
- * Surfaces are semantic vars (mode-aware); jade/teal stay identity constants.
+ * playbook cursor: active phase = jade fill + onAccent text, done phases =
+ * sunken + teal border with ink text (teal TEXT sat at ~3.1:1 on sunken — a
+ * 1.4.3 fail; the border is the mark, the label carries by weight), idle =
+ * sunken + hairline. The neutral Sources band is always idle (it is not one
+ * of the 4 phases). Surfaces are semantic vars (mode-aware); the jade fill
+ * stays the identity constant.
  */
 export function PhaseBand({ data }: { data: { name: string; width: number; subtle?: boolean; status: PhaseStatus } }) {
   const { subtle, status } = data;
@@ -20,7 +23,7 @@ export function PhaseBand({ data }: { data: { name: string; width: number; subtl
     : 'var(--color-bg-sunken)';
   const fg =
     !isSources && status === 'active' ? 'var(--color-on-accent)'
-    : !isSources && status === 'done' ? color.teal
+    : !isSources && status === 'done' ? 'var(--color-text)'
     : 'var(--color-text-muted)';
   const border =
     !isSources && status === 'active' ? `1px solid ${color.jade}`

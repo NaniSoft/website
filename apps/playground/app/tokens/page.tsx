@@ -151,20 +151,28 @@ export default function TokensPage() {
                   style={{
                     height: 72,
                     background: s.hex,
-                    // a thin inset border so bone/petrol edges read against the card
-                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.06)',
+                    // Hairline separation per the tonal trio (no box-shadows,
+                    // ever): the mode's border token reads against both the
+                    // bone and petrol swatch families in either mode.
+                    borderBottom: '1px solid var(--color-border)',
                   }}
                 />
                 <div style={{ padding: '12px 14px' }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                     <span style={{ fontWeight: 700, fontSize: 15 }}>{s.name}</span>
                     {s.accent && (
+                      // The live badge is the sanctioned accent pairing (the
+                      // Trino-pill pattern): jade fill + role.onAccent petrol
+                      // text — raw jade TEXT sat at 2.87:1 on the card (1.4.3 fail).
                       <span
                         style={{
                           fontSize: 10,
                           letterSpacing: '0.12em',
                           textTransform: 'uppercase',
-                          color: color.jade,
+                          color: 'var(--color-on-accent)',
+                          background: color.jade,
+                          borderRadius: 9999,
+                          padding: '2px 8px',
                           fontFamily: font.data,
                         }}
                       >
@@ -374,7 +382,7 @@ function MotionCell({ variant, reduced }: { variant: MotionVariant; reduced: boo
           style={{
             width: 14,
             height: 14,
-            borderRadius: '50%',
+            borderRadius: radius.pill,
             background: dotColor,
             display: 'inline-block',
             ...animatedStyle,

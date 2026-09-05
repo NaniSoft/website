@@ -54,7 +54,10 @@ export function DataGerryOverlay() {
           height: 7,
           borderRadius: 9999,
           flexShrink: 0,
-          background: done ? color.teal : 'var(--color-border)',
+          // Done = teal mark (≥3:1 on sunken); idle = the viz-neutral mark —
+          // the old --color-border dot vanished (border IS boneSunken here,
+          // the panel's own background).
+          background: done ? color.teal : 'var(--viz-neutral)',
         }}
       />
       {text}
@@ -88,8 +91,16 @@ export function DataGerryOverlay() {
               key={f.name}
               style={{
                 ...row,
-                color: f.name === 'Sensitive' ? color.jade : 'var(--color-text)',
-                fontWeight: f.name === 'Sensitive' ? 700 : 400,
+                // The sensitive field is THE finding-as-a-row (the Trino
+                // anomalous-row pattern): quiet accent wash + weight — raw jade
+                // TEXT sat at ~2.6:1 on the sunken panel (WCAG 1.4.3 fail).
+                ...(f.name === 'Sensitive'
+                  ? {
+                      background: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+                      color: 'var(--color-text)',
+                      fontWeight: 700,
+                    }
+                  : { color: 'var(--color-text)' }),
               }}
             >
               <span>{f.name}</span>

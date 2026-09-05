@@ -47,8 +47,10 @@ const label: CSSProperties = {
 };
 
 function borderFor(state: AirflowTask['state']): string {
+  // Running stays the identity jade (matching the fill); success is the
+  // mode-aware viz teal — raw teal sank to 2.81:1 on petrolMid in dark.
   if (state === 'running') return color.jade;
-  if (state === 'success') return color.teal;
+  if (state === 'success') return 'var(--viz-secondary)';
   return 'var(--color-text-muted)';
 }
 
@@ -79,8 +81,24 @@ function TaskBox({ task, compact }: { task: AirflowTask; compact?: boolean }) {
       }}
     >
       <span>{task.label}</span>
-      {task.state === 'success' && <span style={{ color: color.teal, fontSize: compact ? 9 : undefined }}>✓</span>}
-      {running && <span style={{ color: color.jade, fontSize: compact ? 7 : undefined }}>●</span>}
+      {/* State marks are non-text dots (the DataGerry/Superset legend pattern):
+          ✓/● GLYPH text sat at 2.8–3.7:1 (WCAG 1.4.3 fail) — and the old running
+          ● was jade ON the jade fill, i.e. invisible. Done = --viz-secondary dot
+          (mode-aware teal, ≥3:1 on elev); running = an onAccent dot (petrol on
+          jade, the sanctioned pairing). State itself is carried by the fill +
+          the role="img" label above. */}
+      {task.state === 'success' && (
+        <span
+          aria-hidden="true"
+          style={{ width: compact ? 6 : 7, height: compact ? 6 : 7, borderRadius: 9999, background: 'var(--viz-secondary)', flexShrink: 0 }}
+        />
+      )}
+      {running && (
+        <span
+          aria-hidden="true"
+          style={{ width: compact ? 6 : 7, height: compact ? 6 : 7, borderRadius: 9999, background: 'var(--color-on-accent)', flexShrink: 0 }}
+        />
+      )}
     </div>
   );
 }
@@ -99,12 +117,15 @@ function MiniDag({ dag, ariaLabel }: { dag: AirflowDag; ariaLabel: string }) {
       </div>
     );
   }
-  // ingestion fan-in: 3 extracts (each with a ↓) → load_Bronze
+  // ingestion fan-in: 3 extracts (each with a ↓) → load_Bronze. The extract row
+  // wraps (centered): at split-pane widths three boxes + gaps overflowed the
+  // pane and CLIPPED at both edges — chips fused with the pane boundary instead
+  // of reading as separate map objects.
   const extracts = dag.tasks.slice(0, 3);
   const load = dag.tasks[3];
   return (
     <div role="group" aria-label={ariaLabel} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, rowGap: 8, maxWidth: '100%' }}>
         {extracts.map((t) => (
           <div key={t.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <TaskBox task={t} />

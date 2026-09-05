@@ -55,7 +55,7 @@ test('B — Airflow canonical action lands Bronze exactly like applyStep', async
   await page.goto('/');
   await resetViaUi(page);
   await stepTo(page, 6); // steps 1–6 applied; step 7 (load_Bronze) is next
-  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Trailhead', 'Run ingestion DAG');
+  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Trailhead', 'Run this DAG');
   expectSameStepAsProgrammatic(beforeJson, afterJson);
   const bronze = parseState(afterJson).bronze as { products: unknown[]; viewLogs: unknown[] };
   expect(bronze.products).toHaveLength(2);
@@ -67,7 +67,7 @@ test('B — Atlas canonical action writes the audit entry exactly like applyStep
   await page.goto('/');
   await resetViaUi(page);
   await stepTo(page, 13); // step 14 (audit write) is next
-  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Atlas', 'Evaluate authz decision');
+  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Atlas', 'Evaluate authz');
   expectSameStepAsProgrammatic(beforeJson, afterJson);
   expect(parseState(afterJson).auditLog).toHaveLength(1);
   // NB: the button carries a static aria-label; its visible text flips.
@@ -79,7 +79,7 @@ test('B — Trino canonical action reads Gold into results exactly like applySte
   await page.goto('/');
   await resetViaUi(page);
   await stepTo(page, 15); // step 16 (Overlook reads Gold) is next
-  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Overlook', 'Run seeded SQL query');
+  const { beforeJson, afterJson } = await performCanonicalAction(page, 'Overlook', 'Run query');
   expectSameStepAsProgrammatic(beforeJson, afterJson);
   // Read lens: the anomalous row surfaces (derived pre-finding).
   await expect(page.locator('[aria-label="query results"]')).toBeVisible();

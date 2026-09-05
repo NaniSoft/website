@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { color } from '@nanisoft/identity';
-import { closeOverlay, openToolChip, resetViaUi, stepTo } from './helpers';
+import { closeOverlay, openToolChip, resetViaUi, rgbOf, stepTo } from './helpers';
 
 /**
  * Spec C — ticket 17 criteria 3 + 5: the inspector shows the lakehouse state
@@ -13,8 +12,6 @@ import { closeOverlay, openToolChip, resetViaUi, stepTo } from './helpers';
  * dashboard DATA after Gold exists. Resolving boot-from-seed is out of scope.
  */
 
-const JADE = color.jade; // anomalous viewed edge stroke (identity token)
-
 test('C — inspector evolves across 22 steps; three read lenses show the finding', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.react-flow')).toBeVisible();
@@ -25,8 +22,8 @@ test('C — inspector evolves across 22 steps; three read lenses show the findin
   const countsRow = page.locator(
     'xpath=//p[text()="shared in-browser state · live"]/following-sibling::div[1]',
   );
-  const tabs = page.locator('[aria-label="inspector-state"]').locator('xpath=preceding-sibling::div[1]');
-  const body = page.locator('[aria-label="inspector-state"]');
+  const tabs = page.locator('[aria-label="inspector state"]').locator('xpath=preceding-sibling::div[1]');
+  const body = page.locator('[aria-label="inspector state"]');
 
   // 1. Boot: blank lakehouse (documented carry-forward — NOT seeded data).
   await expect(countsRow).toHaveText(/Bronze0/);
@@ -84,7 +81,15 @@ test('C — inspector evolves across 22 steps; three read lenses show the findin
   const dialog = page.locator('[role="dialog"][aria-label="Compass"]');
   await expect(dialog).toBeVisible(); // opened WITHOUT clicking the Compass chip
   await expect(dialog.locator('svg line[stroke-dasharray="4 4"]')).toHaveCount(1);
-  await expect(dialog.locator(`svg line[stroke="${JADE}"]`)).toHaveCount(1);
+  // The anomalous edge's stroke is a mode-aware --viz-* role applied as an
+  // inline STYLE (SVG presentation attributes cannot take var()), so assert
+  // the computed stroke against the resolved token — light mode resolves it
+  // to the deepened jade (the raw accent fails 1.4.11 on bone).
+  const vizAnomalous = await dialog.evaluate((el) => getComputedStyle(el).getPropertyValue('--viz-anomalous').trim());
+  const anomalousStrokes = await dialog.locator('svg line').evaluateAll((lines) =>
+    lines.map((l) => getComputedStyle(l).stroke),
+  );
+  expect(anomalousStrokes).toContain(rgbOf(vizAnomalous));
   await expect(dialog.getByRole('list')).toContainText('j.harper viewed P-1042');
   await expect(dialog.getByRole('list')).toContainText('no memberof edge to G-SR');
   // Drill-into detail (canonical action): j.harper's "why".

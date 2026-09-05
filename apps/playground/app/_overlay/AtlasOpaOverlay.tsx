@@ -13,8 +13,8 @@ import { usePlayground, STEPS } from '../_store/usePlayground';
  * applyStep auto-run uses (one code path) — and applies step 14 (the audit-log
  * write, the only mutate). OPA is stateless (static Rego, writes nothing); the
  * audit write is Atlas's. The traversal result is a hand-off to Compass — a log
- * line only, never rendered here. Jade = ALLOW (live); teal = success statuses;
- * petrol = pending.
+ * line only, never rendered here. Jade = ALLOW (live, onAccent pairing); log
+ * lines are prose — writes carry by weight, never by hue.
  */
 
 /** The cursor at which Atlas's canonical action is live (step 14 is next). */
@@ -53,14 +53,17 @@ function DecisionPill({ allow }: { allow: boolean }) {
 
 function LogLine({ line }: { line: AtlasLogLine }) {
   const success = line.status >= 200 && line.status < 300;
+  // Log lines are prose on a sunken panel, where teal TEXT sat at ~2.9:1
+  // (WCAG 1.4.3 fail) — same treatment as the Airflow run log: writes carry
+  // by weight, successes stay muted, anything unusual goes bold ink.
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
       <span
         style={{
           fontFamily: font.data,
           fontSize: 11,
-          fontWeight: 700,
-          color: line.method === 'POST' ? color.teal : 'var(--color-text)',
+          fontWeight: line.method === 'POST' ? 700 : 400,
+          color: 'var(--color-text)',
           minWidth: 38,
         }}
       >
@@ -69,7 +72,7 @@ function LogLine({ line }: { line: AtlasLogLine }) {
       <span style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text)', flex: 1 }}>
         {line.path}
       </span>
-      <span style={{ fontFamily: font.data, fontSize: 11, color: success ? color.teal : 'var(--color-text-muted)' }}>
+      <span style={{ fontFamily: font.data, fontSize: 11, color: success ? 'var(--color-text-muted)' : 'var(--color-text)', fontWeight: success ? 400 : 700 }}>
         → {line.status}
       </span>
       {line.body && (

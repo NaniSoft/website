@@ -67,7 +67,10 @@
   --viz-anomalous: #14A77A;  /* color.jade */
   --viz-secondary: #4DB0BB;  /* role: survey teal bright (the dark-mode focus teal) */
   --viz-memberof: #8FB0B6;   /* color.petrolTint */
-  --viz-neutral: color-mix(in srgb, var(--color-text-muted) 55%, var(--color-bg-elev));
+  /* The neutral mark is petrolTint sliced with the panel it sits on. The old
+     55/45 mix landed at ~2.5:1 on petrolMid — under the 3:1 non-text floor;
+     75% tint clears it at ~3.4:1. */
+  --viz-neutral: color-mix(in srgb, var(--color-text-muted) 75%, var(--color-bg-elev));
 
   color-scheme: dark;
 }
@@ -132,4 +135,27 @@ body {
 }
 .spine-edge-active {
   animation: spine-flow 0.7s linear infinite;
+}
+
+/* ── React Flow chrome: shape-lock + Flat Estate overrides ───────────────────
+   @xyflow/react's stylesheet themes its chrome through --xy-* custom
+   properties with library defaults (3px node radius, hover/selected/controls
+   box-shadows, navy #1a192b borders, blue selection). Our node types set
+   their own identity styles, but anything the library draws — wrappers,
+   selection rects, connection lines — would otherwise surface those
+   defaults. Pin them to the identity contract: the 12px inner radius (shape
+   lock: card 20 / inner 12 / pill, no fourth radius) and ZERO box-shadows
+   (DESIGN.md "Flat Estate Rule": depth is tonal surfaces + 1px hairlines). */
+.react-flow {
+  --xy-node-border-radius: 12px;               /* radius.inner — no 3px default */
+  --xy-node-boxshadow-hover: none;             /* no shadows, ever */
+  --xy-node-boxshadow-selected: none;          /* selection is the 2px accent outline */
+  --xy-controls-box-shadow: none;              /* not rendered; pinned regardless */
+  --xy-node-border: 1px solid var(--color-border);
+  --xy-node-background-color: var(--color-bg-elev);
+  --xy-selection-background-color: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  --xy-selection-border: 1px dashed var(--color-accent);
+  --xy-connectionline-stroke: var(--color-text-muted);
+  --xy-edge-label-background-color: var(--color-bg-elev);
+  --xy-edge-label-color: var(--color-text-muted);
 }

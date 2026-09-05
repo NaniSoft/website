@@ -64,7 +64,17 @@ const label: CSSProperties = {
 
 // SVG presentation ATTRIBUTES cannot resolve var(); mode-aware fills/strokes on
 // SVG elements go through the style prop instead.
-const svgTextMuted: CSSProperties = { fill: 'var(--color-text-muted)' };
+// Edge-kind labels sit ON their lines. Without a halo the stroke strikes
+// through the glyphs and fuses label, line, and node chips into one mass; a
+// paint-order stroke in the panel's own surface color cuts the line out
+// around the text (the SVG analogue of the tonal trio's separation).
+const svgEdgeLabel: CSSProperties = {
+  fill: 'var(--color-text-muted)',
+  stroke: 'var(--color-bg-sunken)',
+  strokeWidth: 3,
+  strokeLinejoin: 'round',
+  paintOrder: 'stroke',
+};
 
 function nodeRingClass(node: CompassNode, ready: boolean, selected: boolean): string {
   if (selected) return 'var(--color-accent)';
@@ -135,7 +145,7 @@ export function CompassOverlay() {
                   textAnchor="middle"
                   fontFamily="var(--font-mono), 'JetBrains Mono', monospace"
                   fontSize="8"
-                  style={svgTextMuted}
+                  style={svgEdgeLabel}
                 >
                   {e.kind}
                 </text>

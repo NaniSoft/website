@@ -38,8 +38,10 @@ function surfaceFor(status: NodeStatus): { background: string; border: string; t
     };
   }
   if (status === 'done') {
-    // Teal border = non-text mark at 3.46:1 on elev (1.4.11 pass).
-    return { background: 'var(--color-bg-elev)', border: `1px solid ${color.teal}`, text: 'var(--color-text)', subText: 'var(--color-text-muted)' };
+    // Teal border = non-text mark via --viz-secondary: the raw teal constant
+    // sinks to 2.81:1 on petrolMid in dark mode (1.4.11 fail); the viz token
+    // lifts it to tealBright there while staying the same teal in light.
+    return { background: 'var(--color-bg-elev)', border: '1px solid var(--viz-secondary)', text: 'var(--color-text)', subText: 'var(--color-text-muted)' };
   }
   // Idle: a muted-ink hairline — the old --color-border (boneSunken on elev,
   // 1.2:1) made the nodes read as floating text instead of a map.
