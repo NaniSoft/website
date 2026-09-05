@@ -33,6 +33,12 @@
   --color-text: #102A30;       /* color.ink */
   --color-text-muted: #4A5E64; /* color.inkMuted */
 
+  /* role: the interactive base (button-primary) — the Monochrome Inversion
+     Rule: petrol fill with bone text in light; bone fill with petrol text in
+     dark. Buttons stay the highest-contrast object on the page. */
+  --color-action-bg: #0C2A33;  /* color.petrol */
+  --color-action-fg: #F4EFE6;  /* color.bone */
+
   /* role: per-mode focus indicator — passes 3:1 on bone. Brand teal/jade read
      <3:1 on bone; this darkened teal is the identity package's own answer. */
   --color-focus: #1F6E78;
@@ -49,16 +55,24 @@
 
   /* role: focus indicator on petrol — the lighter survey teal. */
   --color-focus: #4DB0BB;      /* color.tealBright */
+
+  /* role: interactive base inverts — bone fill, petrol text. */
+  --color-action-bg: #FBF7EF;  /* color.boneElev */
+  --color-action-fg: #0C2A33;  /* color.petrol */
 }
 
 /* ── 2. Theme variables ─────────────────────────────────────────────────────── */
 
 :root {
-  /* Primary = petrol #0C2A33 ≈ hsl(194, 62%, 12%). Drives the theme's
-     primary-50..800 scale (links, active washes, focus marks). */
-  --nextra-primary-hue: 194deg;
-  --nextra-primary-saturation: 62%;
-  --nextra-primary-lightness: 12%;
+  /* Primary base = the focus mark #1F6E78 ≈ hsl(187, 59%, 30%). The theme
+     derives primary-50..800 by OFFSETTING this lightness (50:+52% … 600:±0 …
+     800:-13%), so the base must sit mid-scale: 600 — the link/active color —
+     lands on the focus mark, and 50/100 (hover/active washes) stay pale
+     bone-teal. The 2026-08-30 12% base overshot those offsets: bright azure
+     washes, and 800 clamped below 0% to pure-black active text. */
+  --nextra-primary-hue: 187deg;
+  --nextra-primary-saturation: 59%;
+  --nextra-primary-lightness: 30%;
 
   /* Page background (light) = bone #F4EFE6 → RGB triplet for the theme's
      rgb(var(--nextra-bg)) consumers. */
@@ -83,20 +97,28 @@
 }
 
 .dark {
-  /* In dark mode the primary shifts to teal #2A8C97 ≈ hsl(186, 57%, 38%) so
-     links/active marks stay visible on petrol. Teal is the brand secondary. */
+  /* In dark mode the primary base = survey teal lifted toward tealBright —
+     hsl(186, 45%, 48%). 600 (the link/active color) lands ≈ #43A6B1 — 5.3:1
+     on petrol, AA at the sidebar's 14px where the 2026-08-30 38% base gave
+     3.83:1 — and 48% keeps the pale stops (100 = 97%) unclamped. */
   --nextra-primary-hue: 186deg;
-  --nextra-primary-saturation: 57%;
-  --nextra-primary-lightness: 38%;
+  --nextra-primary-saturation: 45%;
+  --nextra-primary-lightness: 48%;
 
   /* Page background (dark) = petrol #0C2A33. */
   --nextra-bg: 12, 42, 51;
 
   /* Dark mode: hairlines/borders = petrolSoft, dark hover surfaces = petrolMid,
-     body text = bone, muted text = petrolTint. */
+     body text = bone, muted text = petrolTint. gray-50 is the theme's LIGHTEST
+     stop (the sidebar's dark:hover:text-gray-50) — it must be bone; the
+     2026-08-30 petrolMid mapping made hover DARKEN text. neutral-400 was left
+     unmapped, leaking the theme's zinc into the dark sidebar. */
+  --x-color-neutral-400: #8FB0B6; /* petrolTint — dark muted text */
+  --x-color-neutral-500: #8FB0B6; /* petrolTint — dark borders */
   --x-color-neutral-700: #3C6770; /* petrolSoft */
   --x-color-neutral-800: #15414A; /* petrolMid — dark borders + hover surface */
-  --x-color-gray-50: #15414A;     /* petrolMid — subtle surfaces */
+  --x-color-neutral-900: #08222A; /* petrolDeep — dark wells */
+  --x-color-gray-50: #F4EFE6;     /* bone — lightest dark-mode text */
   --x-color-gray-100: #F4EFE6;    /* bone — dark-mode text */
   --x-color-gray-200: #8FB0B6;    /* petrolTint — muted text */
   --x-color-gray-300: #8FB0B6;    /* petrolTint */
@@ -163,6 +185,30 @@ article {
 nav a[aria-current='page'] {
   color: var(--color-focus);
   font-weight: 600;
+}
+
+/* The Two Faces Rule: a date is data — the twin's readings are set in the
+   mono face (post headers and the index), not the voice. */
+time {
+  font-family: var(--x-font-mono);
+  font-size: 12px; /* the Label stop */
+}
+
+/* Prose links carry the mode's link mark with a surveyor's underline —
+   offset off the baseline, hairline weight, in the focus color on hover. */
+article a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+article a:hover {
+  color: var(--color-focus);
+  text-decoration-thickness: 2px;
+}
+
+/* The caret belongs to the map too — the browser default is no design. */
+input, textarea {
+  caret-color: var(--color-focus);
 }
 
 /* ── 5. The cross-site brand bar ────────────────────────────────────────────── */
@@ -240,6 +286,73 @@ nav a[aria-current='page'] {
   border-radius: 9999px;
 }
 
+/* Narrow viewports fold the bar: the wordmark owns the 64px top row with the
+   toggle pinned at its right edge (out of the flex flow), and the links wrap
+   onto their own rows below. */
+@media (max-width: 639px) {
+  .site-nav-rule {
+    display: none;
+  }
+
+  .site-nav-inner {
+    position: relative;
+  }
+
+  .site-nav-brand {
+    flex-basis: 100%;
+    min-height: 64px; /* row 1 keeps the bar's landing height */
+  }
+
+  .site-nav-toggle {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+  }
+}
+
+/* The footer — the close of the page, in the nav's grammar: a hairline, the
+   brand line at muted ink, and the cross-site links as mono labels. */
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.site-footer-brand {
+  color: var(--color-text-muted);
+  /* The nav tagline's register — the 13px the landing's TopNav documents. */
+  font-size: 13px;
+}
+
+.site-footer-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.site-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* touch-target floor */
+  padding: 0 4px;
+  color: var(--color-text-muted);
+  font-family: var(--x-font-mono);
+  font-size: 12px; /* the Label stop — cross-site links are annotations */
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-footer-links a:hover {
+  color: var(--color-text);
+}
+
 /* ── 6. The wordmark ────────────────────────────────────────────────────────── */
 
 /*
@@ -260,7 +373,79 @@ nav a[aria-current='page'] {
 .dark .wordmark-light { display: none; }
 .dark .wordmark-dark { display: inline-flex; }
 
-/* ── 7. Reduced motion ──────────────────────────────────────────────────────── */
+/* ── 7. The 404 — a page off the map ────────────────────────────────────────── */
+
+/*
+ * The not-found route keeps the reading measure and the surveyor's grammar:
+ * the coordinate (404) in the mono data face, the verdict in the voice, and
+ * one recovery ask as the interactive-base pill. No illustration, no blame.
+ */
+
+.nf {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: 96px 24px 48px;
+}
+
+.nf h1 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 56px); /* the Display stop */
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: var(--color-text);
+}
+
+/* The coordinate, in the surveyor's hand. */
+.nf-code {
+  font-family: var(--x-font-mono);
+  letter-spacing: 0;
+}
+
+.nf-copy {
+  margin: 16px 0 0;
+  max-width: 65ch;
+  color: var(--color-text-muted);
+}
+
+.nf-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin: 32px 0 0;
+}
+
+/* The recovery ask is button-primary: the interactive-base pill, 32px. Hover
+   lifts tonally toward the foreground — no shadows (The Flat Estate Rule). */
+.nf-button {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  background: var(--color-action-bg);
+  color: var(--color-action-fg);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nf-button:hover {
+  background: color-mix(in srgb, var(--color-action-bg) 88%, var(--color-action-fg));
+}
+
+.nf-alt {
+  color: var(--color-focus);
+  text-underline-offset: 3px;
+}
+
+.nf-alt:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ── 8. Reduced motion ──────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

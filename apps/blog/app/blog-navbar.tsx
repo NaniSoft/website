@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ThemeSwitch } from 'nextra-theme-blog'
 import { wordmarkSvg, color, type NavLink } from '@nanisoft/identity'
+import { SELF_ORIGIN } from '../lib/site'
 
 /**
  * Cross-site + category bar for the blog.
@@ -26,9 +27,6 @@ import { wordmarkSvg, color, type NavLink } from '@nanisoft/identity'
  */
 const wordmarkLight = wordmarkSvg({ bg: color.bone, ink: color.petrol, height: 26 })
 const wordmarkDark = wordmarkSvg({ bg: color.petrol, ink: color.bone, height: 26 })
-
-/** The blog's own entry in the shared cross-site list — a self-link is noise. */
-const SELF_ORIGIN = 'https://blog.nanisoft.com'
 
 export default function BlogNavbar({ links }: { links: readonly NavLink[] }) {
   const pathname = usePathname()

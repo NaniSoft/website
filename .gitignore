@@ -33,3 +33,6 @@ CLAUDE.md
 # Playwright output (apps/playground)
 test-results/
 playwright-report/
+
+# Impeccable design-hook session state (the design.json sidecar IS tracked)
+.impeccable/hook.cache.json

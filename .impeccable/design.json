@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-05T07:47:02Z",
+  "title": "Design System: nanisoft",
+  "extensions": {
+    "colorMeta": {
+      "petrol": { "role": "primary", "displayName": "Deep Petrol", "canonical": "#0C2A33", "tonalRamp": ["oklch(15% 0.045 220)", "oklch(26% 0.045 220)", "oklch(37% 0.045 220)", "oklch(48% 0.045 220)", "oklch(60% 0.045 220)", "oklch(72% 0.045 220)", "oklch(84% 0.045 220)", "oklch(95% 0.045 220)"] },
+      "petrol-mid": { "role": "neutral", "displayName": "Petrol Mid", "canonical": "#15414A", "tonalRamp": ["oklch(15% 0.045 220)", "oklch(26% 0.045 220)", "oklch(37% 0.045 220)", "oklch(48% 0.045 220)", "oklch(60% 0.045 220)", "oklch(72% 0.045 220)", "oklch(84% 0.045 220)", "oklch(95% 0.045 220)"] },
+      "petrol-deep": { "role": "neutral", "displayName": "Petrol Deep", "canonical": "#08222A", "tonalRamp": ["oklch(15% 0.045 220)", "oklch(26% 0.045 220)", "oklch(37% 0.045 220)", "oklch(48% 0.045 220)", "oklch(60% 0.045 220)", "oklch(72% 0.045 220)", "oklch(84% 0.045 220)", "oklch(95% 0.045 220)"] },
+      "petrol-soft": { "role": "neutral", "displayName": "Petrol Soft", "canonical": "#3C6770", "tonalRamp": ["oklch(15% 0.045 220)", "oklch(26% 0.045 220)", "oklch(37% 0.045 220)", "oklch(48% 0.045 220)", "oklch(60% 0.045 220)", "oklch(72% 0.045 220)", "oklch(84% 0.045 220)", "oklch(95% 0.045 220)"] },
+      "petrol-tint": { "role": "neutral", "displayName": "Petrol Tint", "canonical": "#8FB0B6", "tonalRamp": ["oklch(15% 0.045 220)", "oklch(26% 0.045 220)", "oklch(37% 0.045 220)", "oklch(48% 0.045 220)", "oklch(60% 0.045 220)", "oklch(72% 0.045 220)", "oklch(84% 0.045 220)", "oklch(95% 0.045 220)"] },
+      "bone": { "role": "primary", "displayName": "Warm Bone", "canonical": "#F4EFE6", "tonalRamp": ["oklch(15% 0.02 90)", "oklch(26% 0.02 90)", "oklch(37% 0.02 90)", "oklch(48% 0.02 90)", "oklch(60% 0.02 90)", "oklch(72% 0.02 90)", "oklch(84% 0.02 90)", "oklch(95% 0.02 90)"] },
+      "bone-elev": { "role": "neutral", "displayName": "Bone Elevated", "canonical": "#FBF7EF", "tonalRamp": ["oklch(15% 0.02 90)", "oklch(26% 0.02 90)", "oklch(37% 0.02 90)", "oklch(48% 0.02 90)", "oklch(60% 0.02 90)", "oklch(72% 0.02 90)", "oklch(84% 0.02 90)", "oklch(95% 0.02 90)"] },
+      "bone-sunken": { "role": "neutral", "displayName": "Bone Sunken", "canonical": "#EAE2D3", "tonalRamp": ["oklch(15% 0.02 90)", "oklch(26% 0.02 90)", "oklch(37% 0.02 90)", "oklch(48% 0.02 90)", "oklch(60% 0.02 90)", "oklch(72% 0.02 90)", "oklch(84% 0.02 90)", "oklch(95% 0.02 90)"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#102A30", "tonalRamp": ["oklch(15% 0.04 230)", "oklch(26% 0.04 230)", "oklch(37% 0.04 230)", "oklch(48% 0.04 230)", "oklch(60% 0.04 230)", "oklch(72% 0.04 230)", "oklch(84% 0.04 230)", "oklch(95% 0.04 230)"] },
+      "ink-muted": { "role": "neutral", "displayName": "Muted Ink", "canonical": "#4A5E64", "tonalRamp": ["oklch(15% 0.04 230)", "oklch(26% 0.04 230)", "oklch(37% 0.04 230)", "oklch(48% 0.04 230)", "oklch(60% 0.04 230)", "oklch(72% 0.04 230)", "oklch(84% 0.04 230)", "oklch(95% 0.04 230)"] },
+      "teal": { "role": "secondary", "displayName": "Survey Teal", "canonical": "#2A8C97", "tonalRamp": ["oklch(15% 0.08 210)", "oklch(26% 0.08 210)", "oklch(37% 0.08 210)", "oklch(48% 0.08 210)", "oklch(60% 0.08 210)", "oklch(72% 0.08 210)", "oklch(84% 0.08 210)", "oklch(95% 0.08 210)"] },
+      "teal-bright": { "role": "secondary", "displayName": "Survey Teal Bright", "canonical": "#4DB0BB", "tonalRamp": ["oklch(15% 0.08 210)", "oklch(26% 0.08 210)", "oklch(37% 0.08 210)", "oklch(48% 0.08 210)", "oklch(60% 0.08 210)", "oklch(72% 0.08 210)", "oklch(84% 0.08 210)", "oklch(95% 0.08 210)"] },
+      "jade": { "role": "accent", "displayName": "Signal Jade", "canonical": "#14A77A", "tonalRamp": ["oklch(15% 0.12 165)", "oklch(26% 0.12 165)", "oklch(37% 0.12 165)", "oklch(48% 0.12 165)", "oklch(60% 0.12 165)", "oklch(72% 0.12 165)", "oklch(84% 0.12 165)", "oklch(95% 0.12 165)"] },
+      "jade-strong": { "role": "accent", "displayName": "Signal Jade Deep", "canonical": "#0E8A62", "tonalRamp": ["oklch(15% 0.12 165)", "oklch(26% 0.12 165)", "oklch(37% 0.12 165)", "oklch(48% 0.12 165)", "oklch(60% 0.12 165)", "oklch(72% 0.12 165)", "oklch(84% 0.12 165)", "oklch(95% 0.12 165)"] },
+      "focus": { "role": "focus", "displayName": "Focus Teal", "canonical": "#1F6E78", "tonalRamp": ["oklch(15% 0.07 215)", "oklch(26% 0.07 215)", "oklch(37% 0.07 215)", "oklch(48% 0.07 215)", "oklch(60% 0.07 215)", "oklch(72% 0.07 215)", "oklch(84% 0.07 215)", "oklch(95% 0.07 215)"] },
+      "success": { "role": "success", "displayName": "Status Success", "canonical": "#10A48B", "tonalRamp": ["oklch(15% 0.11 170)", "oklch(26% 0.11 170)", "oklch(37% 0.11 170)", "oklch(48% 0.11 170)", "oklch(60% 0.11 170)", "oklch(72% 0.11 170)", "oklch(84% 0.11 170)", "oklch(95% 0.11 170)"] },
+      "warning": { "role": "warning", "displayName": "Status Warning", "canonical": "#D08C1A", "tonalRamp": ["oklch(15% 0.115 75)", "oklch(26% 0.115 75)", "oklch(37% 0.115 75)", "oklch(48% 0.115 75)", "oklch(60% 0.115 75)", "oklch(72% 0.115 75)", "oklch(84% 0.115 75)", "oklch(95% 0.115 75)"] },
+      "danger": { "role": "danger", "displayName": "Status Danger", "canonical": "#D43A3A", "tonalRamp": ["oklch(15% 0.17 25)", "oklch(26% 0.17 25)", "oklch(37% 0.17 25)", "oklch(48% 0.17 25)", "oklch(60% 0.17 25)", "oklch(72% 0.17 25)", "oklch(84% 0.17 25)", "oklch(95% 0.17 25)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The hero statement only, capped at ~14ch." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2s — exactly one per section." },
+      "title": { "displayName": "Title", "purpose": "Card and subsection titles at 22px (18px in tighter cards)." },
+      "body": { "displayName": "Body", "purpose": "Running copy at 16px/1.6; leads at 18px, blocks stop at 640-720px." },
+      "label": { "displayName": "Label", "purpose": "Mono uppercase eyebrows and cartographic annotations." },
+      "data": { "displayName": "Data", "purpose": "Anything the twin produces: tables, query, logs, node labels, step numbers." }
+    },
+    "motion": [
+      { "name": "brand-easing", "value": "cubic-bezier(.32,.72,0,1)", "purpose": "The single brand easing curve, shared by all four motion variants; transform and opacity only." },
+      { "name": "breathe", "value": "scale(1 -> 1.04 -> 1), 4200ms infinite", "purpose": "A node at rest, visibly alive (state: alive, not loading)." },
+      { "name": "traverse", "value": "translateX(0 -> 100%), 900ms infinite", "purpose": "The wavefront flowing through the pipeline as a step advances." },
+      { "name": "ripple", "value": "scale(.8 -> 1 -> 1.5), opacity(0 -> 1 -> 0), 600ms infinite", "purpose": "The beckon that invites a click on the active tool node." },
+      { "name": "settle", "value": "translateY(-12px -> 0), opacity(0 -> 1), 500ms", "purpose": "Content arriving and landing at its resting place." },
+      { "name": "reduced-motion", "value": "static endState, opacity 1", "purpose": "prefers-reduced-motion shows every variant's static end state; no content is ever removed." }
+    ],
+    "breakpoints": [
+      { "name": "nav-compact", "value": "1023px" },
+      { "name": "grid-collapse", "value": "900px" },
+      { "name": "footer-stack", "value": "899px" },
+      { "name": "hero-stack", "value": "719px" },
+      { "name": "nav-mobile", "value": "639px" },
+      { "name": "mobile", "value": "600px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Pill Button (light)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The landing's only button — a true pill (radius = control height). Deep Petrol fill, Warm Bone text.",
+      "html": "<button class=\"ds-btn-primary\">Open the playground</button>",
+      "css": ".ds-btn-primary { background: var(--color-primary, #0C2A33); color: var(--color-on-primary, #F4EFE6); border: none; border-radius: 9999px; height: 32px; padding: 0 16px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 200ms cubic-bezier(.32,.72,0,1), filter 200ms cubic-bezier(.32,.72,0,1); } .ds-btn-primary:hover { filter: brightness(1.35); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-focus, #1F6E78); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Pill Button (dark)",
+      "kind": "button",
+      "refersTo": "button-primary-dark",
+      "description": "The monochrome inversion: in dark mode the primary pill fills Bone Elevated with petrol text.",
+      "html": "<button class=\"ds-btn-primary-dark\">Open the playground</button>",
+      "css": ".ds-btn-primary-dark { background: #FBF7EF; color: #0C2A33; border: none; border-radius: 9999px; height: 32px; padding: 0 16px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: filter 200ms cubic-bezier(.32,.72,0,1); } .ds-btn-primary-dark:hover { filter: brightness(0.94); } .ds-btn-primary-dark:focus-visible { outline: 2px solid #4DB0BB; outline-offset: 2px; }"
+    },
+    {
+      "name": "Nav Text Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Borderless text button used for top-nav groups and links — Muted Ink at 500 weight, no pill.",
+      "html": "<button class=\"ds-nav-link\">Platform</button>",
+      "css": ".ds-nav-link { background: none; border: none; padding: 0 4px; color: var(--color-text-muted, #4A5E64); font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; transition: color 200ms ease-out; } .ds-nav-link:hover { color: var(--color-text, #102A30); } .ds-nav-link:focus-visible { outline: 2px solid var(--color-focus, #1F6E78); outline-offset: 2px; border-radius: 12px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The flat container: elevated surface, 20px radius, 1px hairline, 24px body. No shadow, ever.",
+      "html": "<div class=\"ds-card\"><span class=\"ds-tag-mono\">01</span><h3>Land</h3><p>Raw source data lands untouched in Bronze. Nothing is interpreted at the door.</p></div>",
+      "css": ".ds-card { background: var(--color-bg-elev, #FBF7EF); color: var(--color-text, #102A30); border: 1px solid var(--color-border, #EAE2D3); border-radius: 20px; padding: 24px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; } .ds-card h3 { font-size: 22px; font-weight: 600; margin: 12px 0 8px; } .ds-card p { font-size: 15px; line-height: 1.6; color: var(--color-text-muted, #4A5E64); margin: 0; } .ds-tag-mono { display: inline-block; background: var(--color-bg-sunken, #EAE2D3); color: var(--color-text-muted, #4A5E64); border: 1px solid var(--color-border, #EAE2D3); border-radius: 9999px; padding: 0 8px; font-family: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace; font-size: 12px; line-height: 20px; }"
+    },
+    {
+      "name": "Card (dark)",
+      "kind": "card",
+      "refersTo": "card-dark",
+      "description": "The elevated surface on petrol: Petrol Mid card, bone text, 20px radius, 24px body — for forced-dark sections (the .hero pattern).",
+      "html": "<div class=\"ds-card-dark\"><span class=\"ds-tag-mono-dark\">02</span><h3>Conform</h3><p>Records are conformed until one person is one node, with quality gates at every boundary.</p></div>",
+      "css": ".ds-card-dark { background: #15414A; color: #F4EFE6; border: 1px solid #3C6770; border-radius: 20px; padding: 24px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; } .ds-card-dark h3 { font-size: 22px; font-weight: 600; margin: 12px 0 8px; } .ds-card-dark p { font-size: 15px; line-height: 1.6; color: #8FB0B6; margin: 0; } .ds-tag-mono-dark { display: inline-block; background: #08222A; color: #8FB0B6; border: 1px solid #3C6770; border-radius: 9999px; padding: 0 8px; font-family: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace; font-size: 12px; line-height: 20px; }"
+    },
+    {
+      "name": "Status Tag (flagship)",
+      "kind": "chip",
+      "refersTo": "tag-mono",
+      "description": "Honest status: flagship as a 14% Survey Teal wash — never jade. Planned variant is sunken bone.",
+      "html": "<span class=\"ds-tag-flagship\">Flagship · available today</span> <span class=\"ds-tag-planned\">Planned</span>",
+      "css": ".ds-tag-flagship { display: inline-block; background: color-mix(in srgb, var(--color-secondary, #2A8C97) 14%, transparent); color: var(--color-text, #102A30); border: none; border-radius: 9999px; padding: 0 10px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 12px; line-height: 22px; } .ds-tag-planned { display: inline-block; background: var(--color-bg-sunken, #EAE2D3); color: var(--color-text-muted, #4A5E64); border: none; border-radius: 9999px; padding: 0 10px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 12px; line-height: 22px; }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "antd-derived field: elevated surface, 12px inner radius, hairline border, primary-color active border on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"you@company.com\" />",
+      "css": ".ds-input { background: var(--color-bg-elev, #FBF7EF); color: var(--color-text, #102A30); border: 1px solid var(--color-border, #EAE2D3); border-radius: 12px; height: 32px; padding: 0 12px; font-family: var(--font-satoshi, 'Satoshi'), system-ui, sans-serif; font-size: 14px; width: 240px; transition: border-color 200ms cubic-bezier(.32,.72,0,1); } .ds-input:hover { border-color: var(--color-text-muted, #4A5E64); } .ds-input:focus { border-color: var(--color-primary, #0C2A33); outline: 2px solid var(--color-focus, #1F6E78); outline-offset: 2px; }"
+    },
+    {
+      "name": "Mono Eyebrow Label",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "The cartographic annotation: JetBrains Mono, uppercase, +0.16em tracking — marks anything measured, never decorated.",
+      "html": "<span class=\"ds-label-mono\">nanisoft · the living twin</span>",
+      "css": ".ds-label-mono { font-family: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-text-muted, #4A5E64); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Living Map",
+    "overview": "nanisoft renders an IT estate the way a good chart renders a coastline: precisely, calmly, and visibly alive. Every surface is cartography — petrol water, bone paper, teal contour lines — and the estate itself is the subject: a graph that breathes, traverses, and answers. The system's warmth comes from bone, never from decoration; its authority comes from the mono data face that annotates the map like a surveyor's hand.\n\nThe aesthetic philosophy is engineered restraint. Surfaces are flat and honest: depth is tonal, borders are hairlines, geometry does the work. Color appears only where state lives — the palette's single green accent is a pulse, not a paint. Nothing is ornamented that the twin cannot show; the map earns trust the same way the product does, by being produced rather than assembled.\n\nDensity is airy and editorial at the section level (96px vertical rhythm, generous 1200px containers) and compact inside components (24px card padding, 16px grid gaps). The tone is confident, factual, and slightly warm — a field instrument with a paper texture.",
+    "keyCharacteristics": [
+      "Two-mode world, one identity: bone-warm light mode, petrol-deep dark mode; the interactive base monochrome-inverts between them",
+      "Shape lock of three radii only — card 20, inner 12, pill — with pills for both buttons and tags",
+      "Flat by design: zero shadows; depth is tonal layering plus 1px hairlines",
+      "One accent (jade) reserved exclusively for live/active states — it never decorates",
+      "Two typefaces with a strict division of labor: Satoshi speaks, JetBrains Mono measures",
+      "The hero is a forced-dark full-bleed map panel in both page modes, with a living canvas DAG"
+    ],
+    "rules": [
+      { "name": "The One Pulse Rule", "body": "Signal Jade appears only where the system is alive right now: the active edge, the active link, the Run button. If nothing is running, there is no jade on the screen. Its rarity is the point.", "section": "colors" },
+      { "name": "The Monochrome Inversion Rule", "body": "The interactive base inverts per mode — petrol-on-bone in light, bone-on-petrol in dark — so buttons are always the highest-contrast object on the page. Content sitting on a jade fill is petrol in both modes (role.onAccent, ~4.9:1); bone on jade fails light mode at ~2.7:1.", "section": "colors" },
+      { "name": "The Honest Status Rule", "body": "Status is teal-washed or muted, never green-flagged: the flagship use-case reads as a 14% teal wash, \"Planned\" as sunken bone. Status must not borrow the accent's authority — a roadmap item that glowed like a live edge would be a lie.", "section": "colors" },
+      { "name": "The Two Faces Rule", "body": "Satoshi speaks; JetBrains Mono measures. If a string is from the system (a reading, a step, a label on the map), it is mono. If it is about the system (an argument, a promise), it is Satoshi. Emphasis is italic of whichever face is already speaking.", "section": "typography" },
+      { "name": "The Flat Estate Rule", "body": "Surfaces are flat at rest and in every state. If a design needs a shadow to separate, it hasn't used the tonal trio: lift with --color-bg-elev, sink with --color-bg-sunken, divide with a 1px hairline.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the shape lock: card 20 / inner 12 / pill for every corner in the system — no fourth radius ever.",
+      "Do treat jade as a pulse: live edges, active links, Run buttons only; content on a jade fill is petrol, never bone.",
+      "Do use JetBrains Mono for anything the twin produces — tables, query, logs, step numbers, node labels, eyebrows.",
+      "Do force a dark section by re-declaring the semantic tokens on its class (the .hero pattern), never by hardcoding hexes in a component.",
+      "Do separate surfaces tonally — elevated on --color-bg-elev, sunken into --color-bg-sunken, divided by 1px hairlines.",
+      "Do pick type sizes from the scale (--text-xs … --text-display); the named stops are the only sizes."
+    ],
+    "donts": [
+      "Don't use pure black (#000000) or pure white (#FFFFFF) — Ink and Warm Bone are the bounds of the world.",
+      "Don't introduce purple or neon hues — the identity package's test suite guards them out.",
+      "Don't add box-shadows for depth; if separation is missing, the tonal trio and a hairline haven't been used yet.",
+      "Don't let jade become a background, border, text, or status color — the identity package exposes it only through the accent role, and that is what keeps the One Pulse Rule enforceable.",
+      "Don't swap in a serif for emphasis — italic of the same family only.",
+      "Don't put the playground CTA in the hero; the site has one ask, and it lives at the close."
+    ]
+  }
+}

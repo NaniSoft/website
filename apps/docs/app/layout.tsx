@@ -5,7 +5,7 @@ import { JetBrains_Mono } from 'next/font/google'
 import { Layout } from 'nextra-theme-docs'
 import { getPageMap } from 'nextra/page-map'
 import { crossNavLinks } from '@nanisoft/identity'
-import DocsNavbar from './docs-navbar'
+import DocsNavbar, { SELF_ORIGIN } from './docs-navbar'
 // The docs theme's stylesheet — WITHOUT this import the entire Nextra theme
 // CSS is missing from the build and the site ships as unstyled HTML (the app
 // CSS bundle then contains only the Satoshi @font-face rules). Mirrors
@@ -48,7 +48,30 @@ const config = {
   docsRepositoryBase:
     'https://github.com/durgaprasadreddyv/website/tree/main/apps/docs',
   navbar: <DocsNavbar links={crossNavLinks} />,
-  footer: <span>{new Date().getFullYear()} · nanisoft</span>,
+  // The close of the page, in the nav's grammar: brand line at muted ink and
+  // the cross-site links as mono labels (.docs-footer-* in globals.css) —
+  // mirrors apps/blog/app/layout.tsx's Footer.
+  footer: (
+    <div className="docs-footer">
+      <span className="docs-footer-brand">
+        © {new Date().getFullYear()} · nanisoft — digital twin of the IT estate
+      </span>
+      <nav aria-label="Footer" className="docs-footer-links">
+        {crossNavLinks
+          .filter((l) => l.href !== SELF_ORIGIN)
+          .map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              target={l.external ? '_blank' : undefined}
+              rel={l.external ? 'noopener noreferrer' : undefined}
+            >
+              {l.label}
+            </a>
+          ))}
+      </nav>
+    </div>
+  ),
   nextThemes: { defaultTheme: 'system', forcedTheme: undefined },
 }
 

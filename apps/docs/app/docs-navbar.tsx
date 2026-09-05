@@ -20,7 +20,7 @@ const wordmarkLight = wordmarkSvg({ bg: color.bone, ink: color.petrol, height: 2
 const wordmarkDark = wordmarkSvg({ bg: color.petrol, ink: color.bone, height: 26 })
 
 /** The docs' own entry in the shared cross-site list — a self-link is noise. */
-const SELF_ORIGIN = 'https://docs.nanisoft.com'
+export const SELF_ORIGIN = 'https://docs.nanisoft.com'
 
 export default function DocsNavbar({ links }: { links: readonly NavLink[] }) {
   return (

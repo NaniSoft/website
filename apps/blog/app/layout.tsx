@@ -5,6 +5,7 @@ import { JetBrains_Mono } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Footer, Layout } from 'nextra-theme-blog'
 import { crossNavLinks } from '@nanisoft/identity'
+import { SELF_ORIGIN } from '../lib/site'
 import BlogNavbar from './blog-navbar'
 // The blog theme's stylesheet — WITHOUT this import the entire Nextra theme
 // CSS is missing from the build and prose/scaffolding render unstyled (this
@@ -63,8 +64,28 @@ export default async function RootLayout({
           <BlogNavbar links={crossNavLinks} />
           <Layout>{children}</Layout>
           <Footer>
-            © {new Date().getFullYear()} · nanisoft — digital twin of the IT
-            estate
+            {/* The close of the page, in the nav's grammar: hairline, brand
+                line, cross-site links as mono labels (.site-footer-*). */}
+            <div className="site-footer">
+              <span className="site-footer-brand">
+                © {new Date().getFullYear()} · nanisoft — digital twin of the
+                IT estate
+              </span>
+              <nav aria-label="Footer" className="site-footer-links">
+                {crossNavLinks
+                  .filter((l) => l.href !== SELF_ORIGIN)
+                  .map((l) => (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      target={l.external ? '_blank' : undefined}
+                      rel={l.external ? 'noopener noreferrer' : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+              </nav>
+            </div>
           </Footer>
         </ThemeProvider>
       </body>
