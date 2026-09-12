@@ -328,11 +328,13 @@ export function HeroDag() {
 
         if (e.dash) {
           ctx.setLineDash([3, 5]);
-          ctx.strokeStyle = rgba(T.muted, 0.24);
+          ctx.strokeStyle = rgba(T.muted, 0.28);
           ctx.lineWidth = 1;
         } else {
           ctx.setLineDash([]);
-          ctx.strokeStyle = active ? rgba(T.jade, 0.62) : rgba(T.muted, 0.16);
+          // Idle edges at 0.28 ≈ 2.9:1 on petrol — quiet, but the pipeline reads
+          // at rest (0.16 sat near 1.5:1, invisible until the wavefront lit it).
+          ctx.strokeStyle = active ? rgba(T.jade, 0.62) : rgba(T.muted, 0.28);
           ctx.lineWidth = active ? 1.8 : 1;
         }
         roundPoly(pts, 12);
@@ -348,7 +350,7 @@ export function HeroDag() {
         ctx.lineTo(end[0] - ah * Math.cos(ang - 0.5), end[1] - ah * Math.sin(ang - 0.5));
         ctx.moveTo(end[0], end[1]);
         ctx.lineTo(end[0] - ah * Math.cos(ang + 0.5), end[1] - ah * Math.sin(ang + 0.5));
-        ctx.strokeStyle = active ? rgba(T.jade, 0.7) : rgba(T.muted, 0.32);
+        ctx.strokeStyle = active ? rgba(T.jade, 0.7) : rgba(T.muted, 0.5);
         ctx.lineWidth = 1.2;
         ctx.stroke();
 

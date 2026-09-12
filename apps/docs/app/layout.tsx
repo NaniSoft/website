@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { JetBrains_Mono } from 'next/font/google'
 import { Layout } from 'nextra-theme-docs'
+import { Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { crossNavLinks } from '@nanisoft/identity'
 import DocsNavbar, { SELF_ORIGIN } from './docs-navbar'
@@ -48,6 +49,10 @@ const config = {
   docsRepositoryBase:
     'https://github.com/durgaprasadreddyv/website/tree/main/apps/docs',
   navbar: <DocsNavbar links={crossNavLinks} />,
+  // The search empty state in the surveyor's voice (the 404's grammar — a
+  // coordinate with nothing on it), not the theme's "No results found.". The
+  // rest of the component stays the theme's; globals.css §4 paints the panel.
+  search: <Search emptyResult="Nothing on the map at these coordinates." />,
   // The close of the page, in the nav's grammar: brand line at muted ink and
   // the cross-site links as mono labels (.docs-footer-* in globals.css) —
   // mirrors apps/blog/app/layout.tsx's Footer.

@@ -9,9 +9,10 @@ import { Wordmark } from './Wordmark';
 import { BRAND, NAV } from '@/lib/data';
 import type { NavItem } from '@/lib/types';
 
-function anchorStyle(): React.CSSProperties {
-  return { color: 'var(--color-text-muted)', fontWeight: 500 };
-}
+// Nav chrome shares one affordance (globals.css `.nav-link`): muted ink at
+// rest, shifting to full ink on hover — the same shift for flat links,
+// dropdown items, and the group triggers.
+const NAV_LINK_CLASS = 'nav-link';
 
 // antd Menu items render <a> when given href. External items (external: true)
 // open in a new tab with rel="noopener noreferrer"; in-page anchors (e.g.
@@ -22,7 +23,7 @@ function toMenuItems(items: readonly NavItem[]): MenuProps['items'] {
     label: (
       <a
         href={i.href}
-        style={anchorStyle()}
+        className={NAV_LINK_CLASS}
         target={i.external ? '_blank' : undefined}
         rel={i.external ? 'noopener noreferrer' : undefined}
       >
@@ -62,7 +63,7 @@ export function TopNav() {
       <Link href="/" aria-label={BRAND.name} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <Wordmark height={26} />
         <span aria-hidden className="top-nav-tagline-rule" style={{ width: 1, height: 16, background: 'var(--color-border)' }} />
-        <span className="top-nav-tagline" style={{ color: 'var(--color-text-muted)', fontSize: 13, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+        <span className="top-nav-tagline" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-xs)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
           {BRAND.tagline.replace(/\.$/, '')}
         </span>
       </Link>
@@ -73,9 +74,15 @@ export function TopNav() {
             menu={{ items: toMenuItems(group.items) }}
             trigger={['hover', 'click']}
           >
+            {/* Borderless text trigger (SPEC §Navigation). antd v6 requires the
+                color/variant PAIR: `variant="text"` alone falls through the
+                Button's prop resolution to the default outlined chip, which is
+                exactly the boxed drift this replaces. */}
             <Button
-              type="text"
-              style={{ ...anchorStyle(), padding: '0 4px', height: 'auto' }}
+              color="default"
+              variant="text"
+              className={NAV_LINK_CLASS}
+              style={{ padding: '0 4px', height: 'auto' }}
             >
               {group.label}
             </Button>
@@ -87,7 +94,7 @@ export function TopNav() {
             <a
               key={item.href}
               href={item.href}
-              style={anchorStyle()}
+              className={NAV_LINK_CLASS}
               target={external ? '_blank' : undefined}
               rel={external ? 'noopener noreferrer' : undefined}
             >

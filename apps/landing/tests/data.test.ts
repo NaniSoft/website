@@ -3,7 +3,7 @@ import {
   BRAND,
   PROBLEM_CARDS,
   PLATFORM_FLOW,
-  PLATFORM_FEATURES,
+  PLATFORM_PILLARS,
   USE_CASES,
   USE_CASES_MORE,
   STACK_PRODUCTS,
@@ -24,7 +24,7 @@ describe('data module', () => {
   it('carries no Sentinel/TrueAccess branding in any copy constant', () => {
     const dump = JSON.stringify([
       BRAND, PROBLEM_CARDS, PLATFORM_FLOW,
-      PLATFORM_FEATURES, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
+      PLATFORM_PILLARS, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
       BUILT_IN_HOUSE, INTEGRATIONS_NOTE, FINAL_CTA, FOOTER_LINKS,
     ]);
     expect(dump.includes('Sentinel')).toBe(false);
@@ -47,7 +47,7 @@ describe('data module', () => {
   });
 
   it('introduces codenames naturally across the how-we-build features', () => {
-    const dump = JSON.stringify(PLATFORM_FEATURES);
+    const dump = JSON.stringify(PLATFORM_PILLARS);
     for (const name of ['Trailhead', 'Watchtower', 'Anchor', 'Conveyor']) {
       expect(dump).toContain(name);
     }
@@ -106,7 +106,7 @@ describe('data module', () => {
   it('carries no demo or mailto ask anywhere in the copy constants', () => {
     const dump = JSON.stringify([
       BRAND, PROBLEM_CARDS, PLATFORM_FLOW,
-      PLATFORM_FEATURES, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
+      PLATFORM_PILLARS, USE_CASES, USE_CASES_MORE, STACK_PRODUCTS,
       BUILT_IN_HOUSE, INTEGRATIONS_NOTE, FINAL_CTA, FOOTER_LINKS,
     ]).toLowerCase();
     expect(dump.includes('demo')).toBe(false);

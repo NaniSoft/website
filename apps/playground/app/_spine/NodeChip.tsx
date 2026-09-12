@@ -25,7 +25,7 @@ function realNameLine(c: Component): string | null {
   return null;
 }
 
-function surfaceFor(status: NodeStatus): { background: string; border: string; text: string; subText: string } {
+function surfaceFor(status: NodeStatus): { background: string; border: string; text: string; subText: string; mark?: string } {
   if (status === 'active') {
     // The live node: jade fill + petrol text (role.onAccent, ~4.9:1) — the
     // sanctioned accent pairing. A 1px jade BORDER was the old treatment, but
@@ -38,10 +38,20 @@ function surfaceFor(status: NodeStatus): { background: string; border: string; t
     };
   }
   if (status === 'done') {
-    // Teal border = non-text mark via --viz-secondary: the raw teal constant
-    // sinks to 2.81:1 on petrolMid in dark mode (1.4.11 fail); the viz token
-    // lifts it to tealBright there while staying the same teal in light.
-    return { background: 'var(--color-bg-elev)', border: '1px solid var(--viz-secondary)', text: 'var(--color-text)', subText: 'var(--color-text-muted)' };
+    // Done = the sanctioned done treatment, the AirflowOverlay TaskBox grammar:
+    // teal hairline + a 12% teal wash + a small teal dot, all through
+    // --viz-secondary (the raw teal constant sinks to 2.81:1 on petrolMid in
+    // dark mode, 1.4.11 fail; the viz token lifts it to tealBright there while
+    // staying the same teal in light). Wash + mark make a done chip read as
+    // visited rather than merely re-bordered; jade here would be a lie (the
+    // Honest Status Rule — done is not live).
+    return {
+      background: 'color-mix(in srgb, var(--viz-secondary) 12%, var(--color-bg-elev))',
+      border: '1px solid var(--viz-secondary)',
+      text: 'var(--color-text)',
+      subText: 'var(--color-text-muted)',
+      mark: 'var(--viz-secondary)',
+    };
   }
   // Idle: a muted-ink hairline — the old --color-border (boneSunken on elev,
   // 1.2:1) made the nodes read as floating text instead of a map.
@@ -104,7 +114,13 @@ export function NodeChip({
         cursor: clickable ? 'pointer' : 'default',
       }}
     >
-      <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>{c.codename}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
+        <span>{c.codename}</span>
+        {/* Done mark (the TaskBox dot) — non-text state, aria-hidden. */}
+        {surface.mark && (
+          <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: 9999, background: surface.mark, flexShrink: 0 }} />
+        )}
+      </div>
       {sub && (
         <div style={{ fontSize: 11, color: surface.subText, marginTop: 2, lineHeight: 1.2 }}>
           {sub}

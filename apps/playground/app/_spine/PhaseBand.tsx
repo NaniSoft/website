@@ -11,8 +11,8 @@ export type PhaseStatus = 'idle' | 'active' | 'done';
  * sunken + teal border with ink text (teal TEXT sat at ~3.1:1 on sunken — a
  * 1.4.3 fail; the border is the mark, the label carries by weight), idle =
  * sunken + hairline. The neutral Sources band is always idle (it is not one
- * of the 4 phases). Surfaces are semantic vars (mode-aware); the jade fill
- * stays the identity constant.
+ * of the 4 phases). Surfaces and the done mark are semantic vars (mode-aware,
+ * matching NodeChip's done chips); the jade fill stays the identity constant.
  */
 export function PhaseBand({ data }: { data: { name: string; width: number; subtle?: boolean; status: PhaseStatus } }) {
   const { subtle, status } = data;
@@ -27,7 +27,7 @@ export function PhaseBand({ data }: { data: { name: string; width: number; subtl
     : 'var(--color-text-muted)';
   const border =
     !isSources && status === 'active' ? `1px solid ${color.jade}`
-    : !isSources && status === 'done' ? `1px solid ${color.teal}`
+    : !isSources && status === 'done' ? '1px solid var(--viz-secondary)'
     : `1px ${isSources ? 'dashed' : 'solid'} var(--color-border)`;
   return (
     <div

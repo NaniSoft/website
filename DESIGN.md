@@ -175,9 +175,9 @@ The palette is mineral and maritime — deep petrol water against warm bone pape
 
 The landing's spatial grammar: a single centered container system on a 96px vertical rhythm. (Other apps keep this rhythm, container discipline, and hairline separations, adapting columns to their own content.) Sections use `padding: 96px 24px` with content capped at 1200px (the hero panel at 1240px; the contact section narrows to 640px as a reading measure). Inside sections, CSS grids of 3–4 columns with 16–24px gaps hold the card population.
 
-The hero is a two-column grid — copy at 2fr, the living DAG at 3fr — with a `clamp(32px, 5vw, 72px)` gap, stretching to a `min(88vh, 860px)` band. Grids collapse in two steps: 4→2 at 900px, →1 at 600px; the hero stacks at 719px with the canvas given `clamp(360px, 50vh, 520px)` of height.
+The hero is a two-column grid — copy at 2fr, the living DAG at 3fr — with a `clamp(32px, 5vw, 72px)` gap, stretching to a `min(88vh, 860px)` band. Grids collapse in two steps: 4→2 at 900px, →1 at 600px; 3-col grids fall 3→1 in a single step at 900px. The hero stacks at 719px with the canvas given `clamp(360px, 50vh, 520px)` of height.
 
-The top nav is sticky at 64px: transparent over the hero, then after 8px of scroll it grows a glass surface — 80% page background via `color-mix`, `blur(12px) saturate(160%)`, and a 1px hairline. Brand sits left (wordmark, 1px rule, 13px tagline that drops below 1023px); nav links at muted 500-weight; the theme toggle alone on the right.
+The top nav is sticky at 64px: transparent over the hero, then after 8px of scroll it grows a glass surface — 80% page background via `color-mix`, `blur(12px) saturate(160%)`, and a 1px hairline. Brand sits left (wordmark, 1px rule, tagline at the `--text-xs` stop that drops below 1023px); nav links at muted 500-weight; the theme toggle alone on the right.
 
 Observed breakpoints: 1023px and 639px (nav reflow), 900px/600px (grids), 719px (hero stack), 899px (footer stack).
 
@@ -190,7 +190,7 @@ The system is flat by design and contains **zero box-shadows** — not low shado
 
 ## Shapes
 
-One corner-radius system, locked: **cards at 20px, inner elements at 12px, buttons as full pills** (9999px). Tags and chips are pills too — the pill is the shape of anything pressable or label-like. Borders are always 1px hairlines, never chunky strokes. Focus is a 2px outline in the mode-appropriate focus color with 2px offset and the inner radius. Mixed corner systems are banned by the identity package's tests, not just by taste.
+One corner-radius system, locked: **cards at 20px, inner elements at 12px, buttons as full pills** (9999px). Tags and chips are pills too — the pill is the shape of anything pressable or label-like. Borders are always 1px hairlines, never chunky strokes. Focus is a 2px outline in the mode-appropriate focus color with 2px offset, **following each element's own radius** — the outline never overrides geometry, so a pill keeps its pill while focused. Mixed corner systems are banned by the identity package's tests, not just by taste.
 
 ## Components
 
@@ -219,10 +219,16 @@ The landing is the canonical expression of every component below; docs, blog, an
 - **Error / Disabled:** antd default treatments over token colors; errors are sentence-case, specific ("Enter a valid email")
 
 ### Navigation (landing TopNav)
-Sticky 64px header: transparent over the hero, glass after 8px of scroll. Left: wordmark (26px, inline SVG set in Satoshi), a 1px vertical rule, and the 13px tagline. Center-left: dropdown groups (Product, Docs — hover and click) plus flat links (Blog, About us, Contact us), all Muted Ink at 500 weight. Right: theme toggle. The playground pill is deliberately absent — the site's single ask lives in the final section and footer.
+Sticky 64px header: transparent over the hero, glass after 8px of scroll. Left: wordmark (26px, inline SVG set in Satoshi), a 1px vertical rule, and the `--text-xs` tagline. Center-left: dropdown groups (Product, Docs — hover and click) rendered as borderless text triggers, plus flat links (Blog, About us, Contact us), all Muted Ink at 500 weight and shifting to full ink on hover. Right: theme toggle, whose switch runs the **resurvey wipe** — the new mode is revealed in a circle expanding from the pointer (View Transitions API, brand easing), the map redrawn rather than swapped; instant under reduced motion or where the API is absent. The playground pill is deliberately absent — the site's single ask lives in the final section and footer.
 
 ### Signature: The Living Map hero (landing)
-The page opens on a full-bleed petrol panel forced dark **in both page modes**: the semantic tokens are re-declared on the `.hero` class, so the canvas DAG and every child render their dark appearance without a single hardcoded hex. Bone-dot grain textures the panel; a mono eyebrow ("nanisoft · the living twin") sits above the display statement with its italic emphasis; the right three-fifths is a breathing canvas DAG of the digital-twin pipeline animated by the identity motion variants (breathe / traverse / ripple, all transform+opacity only, single easing `cubic-bezier(.32,.72,0,1)`, fully static under reduced motion). The hero carries no buttons and no CTA — one story, told as a map.
+The page opens on a full-bleed petrol panel forced dark **in both page modes**: the semantic tokens are re-declared on the `.hero` class, so the canvas DAG and every child render their dark appearance without a single hardcoded hex. Bone-dot grain textures the panel; an **announcement pill** — the panel's one editorial object, a surveyor's plate of petrol-mid chip, hairline, mono annotation, and a survey-teal dot linking the latest real field note on the blog — sits above the mono eyebrow ("nanisoft · the living twin"), which precedes the display statement with its italic emphasis; the right three-fifths is a breathing canvas DAG of the digital-twin pipeline animated by the identity motion variants (breathe / traverse / ripple, all transform+opacity only, single easing `cubic-bezier(.32,.72,0,1)`, fully static under reduced motion). The hero carries no buttons and no product CTA — one story, told as a map; the pill points at evidence, never at an ask.
+
+### Pillar tabs (landing Platform)
+The platform's capability blurbs render as three pillar tabs on the antd `Segmented` control, pinned by the shared theme: the **active segment follows the Monochrome Inversion Rule** — petrol fill with bone text in light, bone fill with petrol text in dark — because a selected tab is a choice, not a live edge; jade never appears in it. Each panel shows two capability entries separated by a 1px hairline, closed by the mono annotation naming the real components that carry the pillar.
+
+### Survey plate (landing Integrations)
+The section's closing factual beat: the platform's own verifiable readings (16 oss products carried · 8 under codenames · 4 built in-house · 0 forks) on a hairline-ruled strip — figures in JetBrains Mono with tabular numerals, labels as mono uppercase annotations. No trend arrows, no user counts: the system publishes no history and no customers, and inventing either would break the Honest Status Rule.
 
 ### Wordmark (shared — `@nanisoft/identity`)
 Inline SVG `<text>` set in Satoshi, re-pointed at the loaded webfont via CSS so the mark renders in the real face; dark and light modes, with a forced-dark form for dark surfaces like the hero. One wordmark, rendered by every app.
@@ -243,4 +249,4 @@ Inline SVG `<text>` set in Satoshi, re-pointed at the loaded webfont via CSS so 
 - **Don't** add box-shadows for depth; if separation is missing, the tonal trio and a hairline haven't been used yet.
 - **Don't** let jade become a background, border, text, or status color — the identity package exposes it only through the accent role, and that is what keeps the One Pulse Rule enforceable.
 - **Don't** swap in a serif for emphasis — italic of the same family only.
-- **Don't** put the playground CTA in the hero; the site has one ask, and it lives at the close.
+- **Don't** put the playground CTA in the hero; the site has one ask, and it lives at the close. (The hero's announcement pill is the sanctioned exception to "nothing asks in the hero" — it is editorial, not a product ask.)

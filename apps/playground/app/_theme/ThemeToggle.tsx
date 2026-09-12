@@ -44,7 +44,11 @@ export function ThemeToggle() {
               fontFamily: font.data,
               fontSize: 11,
               lineHeight: 1,
-              padding: '5px 10px',
+              // Header chrome carries the 44px touch floor unconditionally —
+              // same treatment the blog bar gives its theme toggle.
+              minWidth: 44,
+              minHeight: 44,
+              padding: '0 10px',
               cursor: 'pointer',
               border: 'none',
               background: active ? 'var(--color-primary)' : 'transparent',

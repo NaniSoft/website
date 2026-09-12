@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { APP_NAME, ARCHITECTURE_VERSION } from '@nanisoft/architecture';
-import { font, IDENTITY_VERSION, radius } from '@nanisoft/identity';
+import { font, IDENTITY_VERSION } from '@nanisoft/identity';
 import { ThemeToggle } from './_theme/ThemeToggle';
 import { Narrative } from './_spine/Narrative';
 import { Controls } from './_controls/Controls';
@@ -34,14 +34,16 @@ export default function PlaygroundClient() {
   // Climax auto-open (SPEC §4.8 cross-cutting 3): Compass auto-opens at the
   // finding step — the ONE mid-run auto-open. Every other tool only beckons.
   // Fires in both auto-run and single-step (both advance `cursor` to the
-  // finding step via applyStep). The ref guard prevents re-opening after the
-  // user closes it; it resets when the cursor drops below the finding step
-  // (reset / before-climax). Keyed on `cursor` (not `overlay`) so closing the
-  // overlay at the finding step does not re-trigger it.
+  // finding step via applyStep). It opens with `auto: true`: the dialog does
+  // NOT take focus (a programmatic focus steal mid-run/mid-typing) and instead
+  // announces through the narrative live region. The ref guard prevents
+  // re-opening after the user closes it; it resets when the cursor drops below
+  // the finding step (reset / before-climax). Keyed on `cursor` (not `overlay`)
+  // so closing the overlay at the finding step does not re-trigger it.
   const autoOpenedFinding = useRef(false);
   useEffect(() => {
     if (cursor === FINDING_STEP_N && !autoOpenedFinding.current) {
-      if (!usePlayground.getState().overlay) openTool('compass');
+      if (!usePlayground.getState().overlay) openTool('compass', { auto: true });
       autoOpenedFinding.current = true;
     }
     if (cursor < FINDING_STEP_N) {
@@ -62,7 +64,9 @@ export default function PlaygroundClient() {
     >
       <header
         style={{
-          padding: '20px 32px 12px',
+          // Side gutter breathes on desktop, holds 16px on phones (clamp, not a
+          // breakpoint — the gutter is fluid like the landing's sections).
+          padding: '20px clamp(16px, 4vw, 32px) 12px',
           display: 'flex',
           alignItems: 'baseline',
           justifyContent: 'space-between',
@@ -82,40 +86,37 @@ export default function PlaygroundClient() {
         <div style={{ display: 'flex', gap: 16, rowGap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end', fontFamily: font.data, fontSize: 12, color: 'var(--color-text-muted)' }}>
           <span>arch v{ARCHITECTURE_VERSION}</span>
           <span>identity v{IDENTITY_VERSION}</span>
-          <Link href="/tokens" style={{ color: 'var(--color-text-muted)', textDecoration: 'underline' }}>tokens</Link>
+          {/* Nav chrome carries the 44px touch floor (blog-bar grammar):
+              inline-flex + min-height, not a bare underlined word. */}
+          <Link
+            href="/tokens"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              minHeight: 44,
+              padding: '0 8px',
+              color: 'var(--color-text-muted)',
+              textDecoration: 'underline',
+            }}
+          >
+            tokens
+          </Link>
           <ThemeToggle />
         </div>
       </header>
 
-      <main style={{ flex: 1, padding: '0 32px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 18, alignItems: 'start' }}>
+      <main style={{ flex: 1, padding: '0 clamp(16px, 4vw, 32px) 24px' }}>
+        {/* grid + ≤980px re-flow live in globals.css (.pg-grid, .spine-card) —
+            one media query owns them, no !important fights with inline styles. */}
+        <div className="pg-grid">
           {/* left: spine + narrative + controls */}
           <div>
-            <div
-              className="spine-card"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: overlayOpen ? 'minmax(280px, 0.6fr) minmax(360px, 0.4fr)' : '1fr',
-                width: '100%',
-                height: '70vh',
-                minHeight: 520,
-                borderRadius: radius.card,
-                border: '1px solid var(--color-border)',
-                overflow: 'hidden',
-                background: 'var(--color-bg-elev)',
-              }}
-            >
-              <div style={{ position: 'relative', overflow: 'hidden', minWidth: 0 }}>
+            <div className={`spine-card${overlayOpen ? ' spine-card--split' : ''}`}>
+              <div className="spine-card-pane">
                 <Spine />
               </div>
               {overlayOpen && (
-                <div
-                  style={{
-                    overflow: 'auto',
-                    minWidth: 0,
-                    borderLeft: '1px solid var(--color-border)',
-                  }}
-                >
+                <div className="spine-card-overlay">
                   <ToolOverlay />
                 </div>
               )}
@@ -126,19 +127,11 @@ export default function PlaygroundClient() {
           {/* right: inspector */}
           <Inspector />
         </div>
-        {/* stack on narrow screens */}
-        <style>{`
-          @media (max-width: 980px) {
-            main > div { grid-template-columns: 1fr !important; }
-            .spine-card { grid-template-columns: 1fr !important; grid-template-rows: minmax(280px, 0.5fr) 1fr !important; }
-            .spine-card > div + div { border-left: none !important; border-top: 1px solid var(--color-border); }
-          }
-        `}</style>
       </main>
 
       <footer
         style={{
-          padding: '12px 32px 20px',
+          padding: '12px clamp(16px, 4vw, 32px) 20px',
           fontFamily: font.data,
           fontSize: 11,
           color: 'var(--color-text-muted)',

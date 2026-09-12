@@ -52,13 +52,15 @@ function ContactForm() {
           <Input name="company" tabIndex={-1} aria-hidden autoComplete="off" />
         </Form.Item>
       </div>
-      <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Required' }]}>
+      {/* Field-level errors are specific and sentence-case (SPEC §Inputs):
+          each names the field and the problem, never a bare "Required". */}
+      <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Enter your name' }]}>
         <Input autoComplete="name" />
       </Form.Item>
-      <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Required' }, { type: 'email', message: 'Enter a valid email' }]}>
+      <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Enter a valid email' }, { type: 'email', message: 'Enter a valid email' }]}>
         <Input type="email" autoComplete="email" />
       </Form.Item>
-      <Form.Item name="message" label="Message" rules={[{ required: true, message: 'Required' }]}>
+      <Form.Item name="message" label="Message" rules={[{ required: true, message: 'Tell us briefly what you need' }]}>
         <Input.TextArea rows={5} />
       </Form.Item>
       <Button type="primary" htmlType="submit" loading={submitting}>Send</Button>

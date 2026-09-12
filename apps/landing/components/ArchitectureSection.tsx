@@ -345,7 +345,7 @@ export function ArchitectureSection() {
                         y={n.cy}
                         textAnchor="middle"
                         dominantBaseline="central"
-                        style={{ fontFamily: font.voice, fontSize: 13, fontWeight: 600, fill: 'var(--color-text)' }}
+                        style={{ fontFamily: font.voice, fontSize: 'var(--text-xs)', fontWeight: 600, fill: 'var(--color-text)' }}
                       >
                         {n.component.codename}
                       </text>
@@ -414,11 +414,11 @@ export function ArchitectureSection() {
       </div>{/* /track */}
 
       {/* Bridge CTA — always visible, never gated behind scroll depth. */}
-      <div style={{ textAlign: 'center', padding: '40px 0 8px' }}>
+      <div style={{ textAlign: 'center', padding: '48px 0 8px' }}>
         <PillButton type="primary" size="large" href={PLAYGROUND_URL} target="_blank" rel="noopener noreferrer">
           Open the playground
         </PillButton>
-        <p style={{ marginTop: 14, marginBottom: 0, fontSize: 14, color: 'var(--color-text-muted)' }}>
+        <p style={{ marginTop: 16, marginBottom: 0, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
           The same architecture runs interactively — seeded with a worked audit you can step through.
         </p>
       </div>

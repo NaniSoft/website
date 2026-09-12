@@ -41,6 +41,15 @@ function isPostRoute(route: string, category?: string): boolean {
   return category ? segments[0] === category : true
 }
 
+/** Distinct tags across `posts`, alphabetical — the source of truth for both
+ *  `/tags` (the index) and `/tags/[tag]` (`generateStaticParams`), so the two
+ *  can never drift apart. */
+export function collectTags(posts: Post[]): string[] {
+  return [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) =>
+    a.localeCompare(b),
+  )
+}
+
 export function collectPosts(pageMap: PageMapItem[], prefix?: string): Post[] {
   const category = prefix ? prefix.replace(/^\//, '') : undefined
   return flatten(pageMap)

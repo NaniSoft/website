@@ -60,11 +60,21 @@ export const darkTokens = {
 export const lightTheme: ThemeConfig = {
   algorithm: antdTheme.defaultAlgorithm,
   token: lightTokens,
-  components: { Button: { primaryColor: color.bone } },
+  components: {
+    Button: { primaryColor: color.bone },
+    // Segmented's active thumb follows the Monochrome Inversion Rule — the
+    // selected segment is the interactive base (petrol fill, bone text in
+    // light), never an accent. A selected tab is a choice, not a live edge.
+    Segmented: { itemSelectedBg: color.petrol, itemSelectedColor: color.bone },
+  },
 };
 
 export const darkTheme: ThemeConfig = {
   algorithm: antdTheme.darkAlgorithm,
   token: darkTokens,
-  components: { Button: { primaryColor: color.petrol } },
+  components: {
+    Button: { primaryColor: color.petrol },
+    // Dark inversion: bone fill, petrol text.
+    Segmented: { itemSelectedBg: color.boneElev, itemSelectedColor: color.petrol },
+  },
 };

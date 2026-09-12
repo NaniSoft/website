@@ -32,10 +32,12 @@ export function Footer() {
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 8 }}>
               {links.map((link) => (
                 <li key={link.label}>
+                  {/* Shared chrome affordance (globals.css `.nav-link`): muted at
+                      rest, shifting to full ink on hover. */}
                   <a
                     href={link.href}
+                    className="nav-link"
                     {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    style={{ color: 'var(--color-text-muted)' }}
                   >
                     {link.label}
                   </a>

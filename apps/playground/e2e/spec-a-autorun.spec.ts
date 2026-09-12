@@ -24,7 +24,9 @@ test('A — full auto-run: 22 steps, stops at the end, no console errors, spine 
   await expect(page.locator('.react-flow')).toBeVisible();
   await resetViaUi(page);
 
-  await page.getByRole('button', { name: '▶ Run playbook' }).click();
+  // The Run glyph is a drawn SVG mark (aria-hidden) — the accessible name is
+  // the text label only.
+  await page.getByRole('button', { name: 'Run playbook' }).click();
 
   // Auto-run paces ~1.1s/step → ~25s for 22 steps; the store flips running=false
   // when it applies the last step (stop-at-end).

@@ -53,8 +53,13 @@ interface PlaygroundStore {
   running: boolean;
   /** The open tool overlay (null = closed). SPEC §4.8. */
   overlay: OverlayState;
-  /** Open a full-UI tool overlay for a component id. */
-  openTool: (componentId: string) => void;
+  /** True when the open overlay was opened by the TOUR, not by the user — the
+      one mid-run auto-open (the Compass climax) must announce, never steal
+      focus (the reader may be mid-run, mid-typing, or mid-scroll). */
+  overlayAuto: boolean;
+  /** Open a full-UI tool overlay for a component id. `auto` marks a
+      programmatic (tour-driven) open. */
+  openTool: (componentId: string, opts?: { auto?: boolean }) => void;
   /** Close the open tool overlay. */
   closeTool: () => void;
   /** Advance one step; stops at the end. */
@@ -75,17 +80,23 @@ export const usePlayground = create<PlaygroundStore>((set, get) => ({
   state: blankState(),
   running: false,
   overlay: null,
+  overlayAuto: false,
 
-  openTool: (componentId) =>
+  openTool: (componentId, opts) =>
     set((s) => ({
       overlay: overlayReducer(s.overlay, {
         type: 'open',
         componentId,
         cursor: s.state.cursor,
       }),
+      overlayAuto: !!opts?.auto,
     })),
 
-  closeTool: () => set((s) => ({ overlay: overlayReducer(s.overlay, { type: 'close' }) })),
+  closeTool: () =>
+    set((s) => ({
+      overlay: overlayReducer(s.overlay, { type: 'close' }),
+      overlayAuto: false,
+    })),
 
   step: () => {
     const { state } = get();
@@ -119,7 +130,7 @@ export const usePlayground = create<PlaygroundStore>((set, get) => ({
 
   reset: () => {
     clearTimer();
-    set({ state: blankState(), running: false, overlay: null });
+    set({ state: blankState(), running: false, overlay: null, overlayAuto: false });
   },
 
   exportJson: () => exportPlaygroundState(get().state),
@@ -128,7 +139,7 @@ export const usePlayground = create<PlaygroundStore>((set, get) => ({
     try {
       const imported = importPlaygroundState(json);
       clearTimer();
-      set({ state: imported, running: false, overlay: null });
+      set({ state: imported, running: false, overlay: null, overlayAuto: false });
       return { ok: true };
     } catch (e) {
       const error = e instanceof InvalidStateError ? e.message : 'invalid state';

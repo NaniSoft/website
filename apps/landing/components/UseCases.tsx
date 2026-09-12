@@ -63,13 +63,15 @@ export function UseCases() {
           </Card>
         ))}
       </div>
-      <p style={{ color: 'var(--color-text-muted)', marginTop: 40, maxWidth: 720 }}>
+      {/* Inline ask carries a permanent underline (globals.css `.inline-link`) so
+          the link is legible without color (WCAG 1.4.1). */}
+      <p style={{ color: 'var(--color-text-muted)', marginTop: 48, maxWidth: 720 }}>
         {USE_CASES_MORE.line}{' '}
         <a
           href={USE_CASES_MORE.cta.href}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: 'var(--color-primary)', fontWeight: 500 }}
+          className="inline-link"
         >
           {USE_CASES_MORE.cta.label}
         </a>

@@ -74,7 +74,9 @@ export function Inspector() {
       </>
     );
   } else if (tab === 'Gold') {
-    body = (
+    body = state.gold.nodes.length === 0 ? (
+      <div style={emptyStyle}>Gold empty — graph not built yet.</div>
+    ) : (
       <>
         <div style={rowBorder}><span style={k}>graph_nodes</span> · <span style={k}>{state.gold.nodes.length}</span></div>
         {state.gold.nodes.map((n) => (
@@ -118,6 +120,17 @@ export function Inspector() {
     { label: 'Audit', value: state.auditLog.length },
   ];
 
+  // One compact line summarizing tour position + tab content, announced when it
+  // changes (role="status"). The body above is deliberately NOT a live region —
+  // it re-renders ~50 lines every step, and announcing all of it per step was a
+  // screen-reader wall; the change now rides on this line instead.
+  const summary =
+    tab === 'Gold' ? `step ${state.cursor} · Gold · ${state.gold.nodes.length} nodes · ${state.gold.edges.length} edges`
+    : tab === 'Bronze' ? `step ${state.cursor} · Bronze · ${bronzeRows} rows`
+    : tab === 'Silver' ? `step ${state.cursor} · Silver · ${silverRows} rows`
+    : tab === 'Schema' ? `step ${state.cursor} · Schema · ${Object.keys(state.schemaRegistry).length} types`
+    : `step ${state.cursor} · Audit · ${state.auditLog.length} entries`;
+
   return (
     <div style={cardStyle}>
       <p style={labelStyle}>shared in-browser state · live</p>
@@ -137,6 +150,7 @@ export function Inspector() {
         {TABS.map((t) => (
           <button
             key={t}
+            className="pg-tab"
             onClick={() => setTab(t)}
             style={{
               fontFamily: font.data,
@@ -153,9 +167,15 @@ export function Inspector() {
           >{t}</button>
         ))}
       </div>
-      {/* Announced politely: the state body is the tab panel's content, and a
-          plain aria-label on a div is not a live region (old gap). */}
-      <div style={bodyStyle} role="region" aria-label="inspector state" aria-live="polite">{body}</div>
+      {/* A labelled region, not a live region (a plain aria-label on a div is
+          not one either, but politeness here meant ~50 lines re-announced every
+          step). Step-by-step change is announced by the status line below, which
+          sits AFTER the body so the tab row stays the body's preceding sibling
+          (e2e spec C locates the tabs that way). */}
+      <div style={bodyStyle} role="region" aria-label="inspector state">{body}</div>
+      <div role="status" style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)', minHeight: 14 }}>
+        {summary}
+      </div>
     </div>
   );
 }

@@ -156,6 +156,43 @@ h1, h2, h3 { text-wrap: balance; }
 
 a { color: inherit; text-decoration: none; }
 
+/*
+ * The two link roles, one shared pattern each (WCAG 1.4.1 — the ask is never
+ * color-only):
+ *   .nav-link    nav/footer chrome — muted at rest, shifts to full text on
+ *                hover; no underline (it is navigation, not an ask).
+ *   .inline-link body-copy links — always underlined, so the link is legible
+ *                as a link without relying on color.
+ * Both stay on semantic tokens; no new hues. The nav's dropdown triggers are
+ * antd Buttons whose own hover rule (.ant-btn:not(…):hover, specificity 0,4,0)
+ * would out-rank `.nav-link:hover`, so the scoped rule below re-asserts the
+ * same muted→text shift for them at 0,5,0.
+ */
+.nav-link { color: var(--color-text-muted); font-weight: 500; }
+.nav-link:hover { color: var(--color-text); }
+/* antd styles dropdown items with `.ant-dropdown .ant-dropdown-menu
+   .ant-dropdown-menu-title-content > a { color: inherit }` (0,3,1), which
+   out-ranks `.nav-link`; out-rank it back so the items follow the same
+   muted→text shift as the header chrome they belong to. */
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-title-content > a.nav-link { color: var(--color-text-muted); }
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-title-content > a.nav-link:hover { color: var(--color-text); }
+/* The trigger also gets antd's filled-hover wash; dropping it keeps the
+   trigger's hover identical to the flat links beside it — the color shift only. */
+.top-nav-links a.nav-link:hover,
+.top-nav-links .ant-btn.nav-link:not(:disabled):hover,
+.top-nav-links .ant-btn.nav-link:not(:disabled):active {
+  color: var(--color-text);
+  background: transparent;
+}
+
+.inline-link {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
 ::selection { background: var(--color-primary); color: var(--color-on-primary); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -165,10 +202,15 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+/*
+ * The focus contract: 2px outline in the mode's --color-focus at 2px offset.
+ * No border-radius here — the outline follows each element's own radius, so
+ * a pill button keeps its pill while focused (the old 12px override turned
+ * every pill into a rounded rect at the moment of focus).
+ */
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
-  border-radius: var(--radius-inner);
 }
 
 a[href="#main"] {
@@ -179,10 +221,29 @@ a[href="#main"] {
   z-index: 200;
 }
 a[href="#main"]:not(:focus) { left: -9999px; position: absolute; }
+/* Fixed (not static) when focused: the link stays out of flow, so taking focus
+   never reflows the page content beneath the nav. */
+a[href="#main"]:focus { position: fixed; top: 8px; left: 8px; }
 
 @media (prefers-reduced-motion: reduce) {
   .ant-motion, [data-framer-component] { animation: none !important; transition: none !important; }
 }
+
+/*
+ * The resurvey wipe (theme switch). When the mode flips, the new chart is
+ * revealed in a circle expanding from the toggle — the map is redrawn, not
+ * swapped. ThemeToggle starts the ViewTransition and animates the clip-path;
+ * these rules strip the default cross-fade so the expanding circle is the
+ * whole effect. Browsers without View Transitions, and every visitor under
+ * prefers-reduced-motion, get the instant swap (guarded in ThemeToggle).
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
 
 /*
  * W1 wordmark: wordmarkSvg() sets font-family="'Satoshi', …" as a presentation

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { collectPosts, type PageMapItem } from '../lib/posts'
+import { collectPosts, collectTags, type PageMapItem } from '../lib/posts'
 
 // Fixture mirroring the Nextra page map for the blog (home + 2 categories,
 // each with an index page + one post). Posts carry frontMatter.date.
@@ -87,5 +87,20 @@ describe('collectPosts', () => {
 
   it('returns an empty array when the category has no posts', () => {
     expect(collectPosts(pageMap, '/nope')).toEqual([])
+  })
+})
+
+describe('collectTags', () => {
+  it('lists every distinct tag across posts, alphabetically', () => {
+    expect(collectTags(collectPosts(pageMap))).toEqual(['access', 'architecture', 'meta'])
+  })
+
+  it('deduplicates a tag shared by several posts', () => {
+    const posts = collectPosts(pageMap).map((p) => ({ ...p, tags: ['shared'] }))
+    expect(collectTags(posts)).toEqual(['shared'])
+  })
+
+  it('returns an empty array when no post carries tags', () => {
+    expect(collectTags([{ ...collectPosts(pageMap)[0], tags: [] }])).toEqual([])
   })
 })

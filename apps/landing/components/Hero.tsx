@@ -1,11 +1,12 @@
 import { HeroDag } from './hero/HeroDag';
-import { Wordmark } from './Wordmark';
+import { AnnouncementPill } from './AnnouncementPill';
 
 /**
  * The nanisoft hero — the "Living Map" panel: positioning copy on the left,
  * a breathing canvas DAG of the digital-twin pipeline on the right, on a
- * full-bleed dark petrol band in BOTH page modes. ONE story, no buttons, no
- * CTA (the playground ask lives in the nav pill and the closing section).
+ * full-bleed dark petrol band in BOTH page modes. ONE story: the announcement
+ * pill (an editorial link to the blog, not a product CTA), then no buttons
+ * and no ask — the playground CTA lives in the closing section and footer.
  *
  * Layout is a two-column grid (Text | DAG, the DAG column widest) that
  * collapses to a single stacked column on narrow screens (<=719px).
@@ -13,11 +14,13 @@ import { Wordmark } from './Wordmark';
  * The dark panel is achieved by scoping the semantic color tokens to the dark
  * surface values on `.hero` (see globals.css). HeroDag reads those tokens from
  * the computed style, so the canvas graph renders in its dark-mode appearance
- * with no raw hex in the component. The wordmark is forced to its dark form
- * (`mode="dark"`) so it reads bone-on-petrol regardless of the page theme.
+ * with no raw hex in the component.
  *
- * The wordmark wrapper is decorative here: TopNav carries the brand
- * announcement for assistive tech, so the page keeps exactly two labeled marks.
+ * The hero carries no wordmark of its own: the sticky nav already renders the
+ * brand mark directly above the panel, and DESIGN.md documents this panel as
+ * opening on the mono eyebrow ("nanisoft · the living twin") over the display
+ * statement — repeating "nanisoft" a third time in the first viewport read as
+ * a stamped label, not a composition.
  *
  * Server Component; HeroDag is the client boundary ('use client' in its own
  * file). `.hero` is a flex row that stretches the grid to the full panel height
@@ -29,9 +32,7 @@ export function Hero() {
       <div className="hero-grain" aria-hidden />
       <div className="hero-inner">
         <div className="hero-text">
-          <span className="hero-wordmark" aria-hidden>
-            <Wordmark height={64} band="bg" mode="dark" />
-          </span>
+          <AnnouncementPill />
           <p className="hero-eyebrow mono">nanisoft · the living twin</p>
           <h1 id="hero-positioning" className="hero-h1">
             Digital <em>twin</em> of the IT estate.
@@ -51,7 +52,7 @@ export function Hero() {
           display: flex;
           align-items: stretch;
           min-height: min(88vh, 860px);
-          padding: 96px 24px 40px;
+          padding: 96px 24px 48px;
           background: var(--color-bg);
           color: var(--color-text);
           overflow: hidden;
@@ -83,17 +84,72 @@ export function Hero() {
           justify-content: center;
           min-width: 0;
         }
-        .hero-wordmark { display: inline-flex; height: 64px; }
-        .hero-wordmark .wordmark { height: 64px; }
+        /*
+         * The announcement pill — a surveyor's plate above the eyebrow.
+         * Petrol-mid chip (hero-scoped --color-bg-elev), 1px petrol-soft
+         * hairline, full pill. The mono annotation is uppercase at 11px;
+         * the tag reads quieter than the post title. Hover keeps the Flat
+         * Estate: text brightens and the arrow advances — no shadow, no
+         * fill wash.
+         */
+        .announcement-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          align-self: flex-start;
+          max-width: 100%;
+          padding: 6px 14px 6px 12px;
+          background: var(--color-bg-elev);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-pill);
+          color: var(--color-text-muted);
+          transition: color 200ms cubic-bezier(0.32, 0.72, 0, 1), border-color 200ms cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .announcement-pill:hover {
+          color: var(--color-text);
+          border-color: var(--color-text-muted);
+        }
+        .announcement-dot {
+          flex: none;
+          width: 6px;
+          height: 6px;
+          border-radius: var(--radius-pill);
+          /* Survey teal — the supporting mark, never the accent (One Pulse). */
+          background: var(--color-secondary-on-dark, var(--color-secondary));
+        }
+        .announcement-text {
+          /* min-width: 0 lets the flex item actually shrink so the ellipsis
+             can engage — without it the nowrap text forces page overflow. */
+          min-width: 0;
+          font-size: 11px;
+          letter-spacing: var(--tracking-upper);
+          text-transform: uppercase;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .announcement-tag {
+          margin-right: 10px;
+          padding-right: 10px;
+          border-right: 1px solid var(--color-border);
+          color: var(--color-secondary-on-dark, var(--color-secondary));
+        }
+        .announcement-arrow {
+          flex: none;
+          transition: transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .announcement-pill:hover .announcement-arrow {
+          transform: translate(1px, -1px);
+        }
         .hero-eyebrow {
-          margin: 18px 0 0;
+          margin: 16px 0 0;
           font-size: 11px;
           letter-spacing: var(--tracking-upper);
           text-transform: uppercase;
           color: var(--color-text-muted);
         }
         .hero-h1 {
-          margin: 14px 0 0;
+          margin: 16px 0 0;
           font-size: clamp(34px, 5vw, 56px);
           line-height: var(--lh-tight);
           font-weight: 700;
@@ -104,9 +160,10 @@ export function Hero() {
            is reserved for the live/active wavefront only. */
         .hero-h1 em { font-style: italic; }
         .hero-sub {
-          margin: 22px 0 0;
+          margin: 24px 0 0;
           max-width: 52ch;
-          font-size: clamp(15px, 1.6vw, 19px);
+          /* Named stops only: the lead ramps --text-base → --text-md. */
+          font-size: clamp(var(--text-base), 1.6vw, var(--text-md));
           color: var(--color-text-muted);
         }
         .hero-canvas {
@@ -115,8 +172,7 @@ export function Hero() {
           min-width: 0;
         }
 
-        /* Narrow screens: stack text above the DAG. The wordmark !important
-           beats Wordmark's inline height, as in the old layout. */
+        /* Narrow screens: stack text above the DAG. */
         @media (max-width: 719px) {
           .hero { padding-top: 72px; }
           .hero-inner {
@@ -125,8 +181,6 @@ export function Hero() {
           }
           .hero-text { justify-content: flex-start; }
           .hero-canvas { min-height: clamp(360px, 50vh, 520px); }
-          .hero-wordmark { height: 44px !important; }
-          .hero-wordmark .wordmark { height: 44px !important; }
         }
       `}</style>
     </section>

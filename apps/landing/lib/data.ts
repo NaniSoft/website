@@ -6,6 +6,23 @@ export const BRAND = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// The announcement pill (Hero) — one editorial link above the eyebrow
+// ---------------------------------------------------------------------------
+
+/**
+ * The hero's single permitted editorial object: a link to the latest real
+ * field note on the blog. It is NOT a product CTA — the playground ask stays
+ * in the closing section and the footer (SPEC §Don't). The tag is a static
+ * marker for "recently published", rendered as a teal supporting mark — never
+ * jade, because a changelog is not a live state (One Pulse Rule).
+ */
+export const ANNOUNCEMENT = {
+  tag: 'Field note',
+  label: 'Producing the access twin',
+  href: 'https://blog.nanisoft.com/engineering/producing-the-access-twin',
+} as const;
+
+// ---------------------------------------------------------------------------
 // What it is (Problem)
 // ---------------------------------------------------------------------------
 
@@ -38,13 +55,40 @@ export const PLATFORM_FLOW = [
   { step: '04', title: 'Serve', body: 'Atlas serves traversals, checks every question against policy, and writes an audit trail.' },
 ] as const;
 
-export const PLATFORM_FEATURES = [
-  { title: 'Orchestrated end to end', body: 'Trailhead sequences every move — ingestion, promotion, maintenance — as reviewable DAGs.' },
-  { title: 'Versioned at every layer', body: 'The lakehouse catalog keeps history, so last quarter’s twin can be reproduced exactly.' },
-  { title: 'Promoted only when clean', body: 'Quality gates decide what advances. Bad input stops at the boundary and never reaches the twin.' },
-  { title: 'Watched continuously', body: 'Watchtower observes every component — pipelines, queries, engine — from one place.' },
-  { title: 'Governed by default', body: 'Policy checks sit in front of the graph, and every answer is logged.' },
-  { title: 'Declared as code', body: 'Anchor declares the infrastructure; Conveyor delivers it. No snowflake deployments.' },
+/**
+ * The platform's capabilities, grouped into three pillars. Each pillar names
+ * the real components that carry it (the mono annotation line under the
+ * panel). The six capability blurbs are the former feature-card grid — same
+ * copy, now one pill-tabbed panel deep instead of ten cards of sprawl.
+ */
+export const PLATFORM_PILLARS = [
+  {
+    key: 'orchestration',
+    label: 'Orchestration',
+    features: [
+      { title: 'Orchestrated end to end', body: 'Trailhead sequences every move — ingestion, promotion, maintenance — as reviewable DAGs.' },
+      { title: 'Versioned at every layer', body: 'The lakehouse catalog keeps history, so last quarter’s twin can be reproduced exactly.' },
+    ],
+    components: 'Trailhead · Nessie catalog',
+  },
+  {
+    key: 'quality',
+    label: 'Quality & policy',
+    features: [
+      { title: 'Promoted only when clean', body: 'Quality gates decide what advances. Bad input stops at the boundary and never reaches the twin.' },
+      { title: 'Governed by default', body: 'Policy checks sit in front of the graph, and every answer is logged.' },
+    ],
+    components: 'Great Expectations · OPA',
+  },
+  {
+    key: 'operations',
+    label: 'Operations',
+    features: [
+      { title: 'Watched continuously', body: 'Watchtower observes every component — pipelines, queries, engine — from one place.' },
+      { title: 'Declared as code', body: 'Anchor declares the infrastructure; Conveyor delivers it. No snowflake deployments.' },
+    ],
+    components: 'Watchtower · Anchor + Conveyor',
+  },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -124,6 +168,25 @@ export const BUILT_IN_HOUSE: readonly CustomComponent[] = [
   { name: 'DataGerry Bridge', blurb: 'Glue that syncs authored schema into the lakehouse and the engine.' },
   { name: 'Scout', blurb: 'Connectors for internal systems no catalog covers.' },
 ];
+
+// ---------------------------------------------------------------------------
+// The survey plate (Integrations) — the platform's own verifiable readings
+// ---------------------------------------------------------------------------
+
+/**
+ * The closing factual beat before the page's ask: the platform's own
+ * inspectable properties, every figure derivable from the data above (16 =
+ * STACK_PRODUCTS.length, 8 = the codenamed half, 4 = BUILT_IN_HOUSE.length).
+ * Presented in the mono data face like any reading the twin produces. No
+ * trend arrows and no user counts — the system publishes no history and no
+ * customers, and inventing either would break the Honest Status Rule.
+ */
+export const PLATFORM_SPECS = [
+  { value: '16', label: 'oss products carried' },
+  { value: '8', label: 'under nanisoft codenames' },
+  { value: '4', label: 'components built in-house' },
+  { value: '0', label: 'forks — everything unmodified' },
+] as const;
 
 // ---------------------------------------------------------------------------
 // See the system think (FinalCTA) — the page's only ask

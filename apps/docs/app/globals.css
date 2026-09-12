@@ -78,9 +78,34 @@
      rgb(var(--nextra-bg)) consumers. */
   --nextra-bg: 244, 239, 230;
 
-  /* Layout tokens — keep the theme defaults. */
+  /* Layout tokens — the content band keeps the theme default (it sizes the
+     whole band: sidebar + TOC + article); the prose measure is ours (§4). */
   --nextra-content-width: 90rem;
   --nextra-navbar-height: 64px;
+
+  /* The reading measure: DESIGN.md stops prose blocks at 640–720px. Applied to
+     the article's blocks in §4 — tables, code plates and the Cards grid are
+     excluded there, they are not prose. */
+  --nextra-prose-measure: 680px;
+
+  /* Shape lock (DESIGN.md §Shapes: card 20 / inner 12 / pill). The theme's
+     radius defaults are 4/6/8/12px; mapped onto the lock, its inner-scale stops
+     (sm/md/lg — sidebar rows, inputs, chips, the theme-switch button) all land
+     on inner-12 and its card-scale stop (xl — the search panel) on card-20.
+     Pills are the theme's own rounded-full and need no mapping. */
+  --x-radius-sm: 12px;
+  --x-radius-md: 12px;
+  --x-radius-lg: 12px;
+  --x-radius-xl: 20px;
+
+  /* No pure black, no pure white (DESIGN.md §Don't): the theme's two absolute
+     tokens become ink and the elevated surface. This is what stops the
+     breadcrumb's current page rendering #000 and warms the search input's
+     bg-black/[.05] fill. The code plate reads its own surfaces (§4) — the
+     theme's bg-white/bg-black utilities stand on the `pre` and would otherwise
+     inherit these, which would lift the dark plate to bone. */
+  --x-color-black: var(--color-text);
+  --x-color-white: var(--color-bg-elev);
 
   /* Text + border recolor via the theme's gray/neutral scale (rule 2 of the
      strategy). Light mode: hairlines = boneSunken, muted text = inkMuted,
@@ -187,13 +212,16 @@ nav a[aria-current='page'] {
   font-weight: 600;
 }
 
-/* The active sidebar page reads as current via the focus mark — the per-mode
-   pair the user pinned: #1F6E78 on the pale primary-100 wash in light,
-   tealBright #4DB0BB on the 10% primary wash in dark. (2026-08-30 audit: the
-   theme's derived active text clamped to pure black in light.) The washes
-   stay the theme's — the retuned scale keeps them pale bone-teal. */
+/* The active sidebar page sits ON a wash — primary-100 in light, 10% primary-400
+   in dark — so it reads in the mode's strong text: #102A30 on the pale wash is
+   ~10.6:1 and bone on the dark wash ~10.6:1. The previous mark (--color-focus)
+   measured 4.09:1 light / 4.24:1 dark on those washes, under the 4.5 the
+   sidebar's 14px semibold needs (WCAG 1.4.3). --color-focus stays the mark for
+   hover and plain-current states, where no wash sits behind the text (the
+   theme's own derived active text is also gone: it clamped to pure black in
+   light in the 2026-08-30 audit). */
 aside li.active > a {
-  color: var(--color-focus);
+  color: var(--color-text);
 }
 
 /* The Two Faces Rule: "Last updated on …" is a reading, not a promise — the
@@ -212,7 +240,9 @@ article h1 {
 }
 
 /* Prose links carry the mode's link mark with a surveyor's underline —
-   offset off the baseline, hairline weight, thickening on hover. */
+   offset off the baseline, hairline weight, thickening on hover. (Visited
+   links carry no style at all, by design: the docs are one territory, and the
+   palette has no third ink to spend on a trail the page doesn't track.) */
 article a {
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -223,18 +253,153 @@ article a:hover {
   text-decoration-thickness: 2px;
 }
 
+/* The reading measure. --nextra-content-width (§2) sizes the whole band —
+   sidebar, TOC and all — which left the prose running 90–110ch. DESIGN.md
+   stops prose blocks at 640–720px, so the cap lands on the article's blocks
+   (--nextra-prose-measure). Tables, code plates and the Cards grid are data
+   surfaces, not prose: the mono face measures wide, and they keep the band. */
+article main > * {
+  max-width: var(--nextra-prose-measure);
+}
+
+article main > table,
+article main > .nextra-code,
+article main > .nextra-cards {
+  max-width: none;
+}
+
+/* Code plates: the Two Faces Rule's evidence surface. The theme paints `pre`
+   bg-white / bg-black — pure white and pure black, both out of bounds — so the
+   plate reads the mode's own tonal pair (elevated bone / petrol-deep) with the
+   1px hairline the ring already is. Token hues come from the brand Shiki
+   themes in next.config.mjs (--shiki-light / --shiki-dark, emitted per token
+   by Shiki and consumed by the theme's stylesheet per mode). */
+.nextra-code > pre {
+  background-color: var(--color-bg-elev);
+  color: var(--color-text);
+  --tw-ring-color: var(--color-border);
+}
+
+.dark .nextra-code > pre {
+  background-color: var(--color-bg-sunken);
+}
+
 /* The caret belongs to the map too — the browser default is no design. */
 input, textarea {
   caret-color: var(--color-focus);
 }
 
+/* One focus indicator, not two. The theme's `.x:nextra-focus` paints a 2px
+   box-shadow ring in primary-200 (1.42:1 — a ghost) and removes the outline on
+   focus-visible, so both the theme's ring and the brand outline above were
+   firing. Zeroing the ring leaves the brand outline as the single indicator;
+   it follows each element's own radius, so the shape lock holds while
+   focused — this rule deliberately sets no border-radius. */
+.x\:nextra-focus,
+.x\:focus-visible\:nextra-focus:focus-visible {
+  --tw-ring-shadow: 0 0 #0000;
+  box-shadow: none;
+}
+
+/* The Flat Estate Rule holds on shipped chrome, not just the page: the theme
+   switch popover (`ul.x:shadow-lg`), the search panel and cards all ship
+   default shadows. Zero shadows is the system's law, so this is a kill switch
+   at rule level, not a variable. */
+ul.x\:shadow-lg,
+.nextra-search-results,
+.nextra-card {
+  box-shadow: none;
+}
+
+/* The two floating panels take the tonal pair instead of translucency + blur:
+   raised on --color-bg-elev, divided by the 1px hairline, text in muted ink.
+   Muted ink matters — the panel inherits the theme's gray-100, which §2 maps
+   to bone, so the empty state was bone-on-bone (invisible). */
+ul.x\:shadow-lg,
+.nextra-search-results {
+  background-color: var(--color-bg-elev);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  backdrop-filter: none;
+}
+
+/* ── 4b. Callouts — the palette the theme compiles in ───────────────────────── */
+
+/*
+ * The theme's Callout ships GitHub's palette: info=blue, default=green,
+ * warning=yellow, important=purple — and purple is banned outright. The type
+ * classes are Tailwind utilities compiled into the theme bundle (there is no
+ * per-type class to hook), so each override hangs on the utility the type
+ * carries; `.dark` only has to swing the border, because the 14% washes are
+ * transparent and composite over whichever surface they land on.
+ *
+ * Per the Honest Status Rule the surface carries the status and the text stays
+ * the mode's ink: #D08C1A reads 2.33:1 as text on its own wash, ink reads
+ * 12.4:1. The status glyph in the gutter carries the meaning with it, so the
+ * hairline is not the only carrier.
+ *
+ * Hues are the identity package's own values (CSS cannot import TS): teal =
+ * color.teal, bright = color.tealBright, amber/red = the functional statuses
+ * documented in apps/landing/app/globals.css (--color-warning/--color-danger).
+ */
+
+.nextra-callout {
+  color: var(--color-text);
+}
+
+/* info → 14% teal wash: the flagship's own status surface. */
+.nextra-callout.x\:bg-blue-100 {
+  background-color: color-mix(in srgb, #2A8C97 14%, transparent);
+  border-color: #2A8C97;
+}
+.dark .nextra-callout.x\:bg-blue-100 {
+  border-color: #4DB0BB;
+}
+
+/* default + important → sunken bone. `important` loses purple and lands where
+   a note lands: muted, borrowing no status it doesn't have. */
+.nextra-callout.x\:bg-green-100,
+.nextra-callout.x\:bg-purple-100 {
+  background-color: var(--color-bg-sunken);
+  border-color: var(--color-border);
+}
+
+/* warning → the functional caution hue. */
+.nextra-callout.x\:bg-yellow-50 {
+  background-color: color-mix(in srgb, #D08C1A 14%, transparent);
+  border-color: #D08C1A;
+}
+
+/* error → the functional danger hue. */
+.nextra-callout.x\:bg-red-100 {
+  background-color: color-mix(in srgb, #D43A3A 14%, transparent);
+  border-color: #D43A3A;
+}
+
+/* The theme's `x:rounded` is a compiled 4px literal (sidebar rows, search
+   inputs) — the one radius the §2 var mapping can't reach. */
+.x\:rounded {
+  border-radius: var(--x-radius-md);
+}
+
+/* Anything pressable is a pill (DESIGN.md §Shapes) — the theme switch button
+   is a 28px control wearing the popover's `rounded-md`. */
+.nextra-sidebar-footer button.x\:rounded-md,
+.nextra-mobile-nav button.x\:rounded-md {
+  border-radius: 9999px;
+}
+
 /* ── 5. Docs-specific: the cross-site brand segment ─────────────────────────── */
 
 /*
- * The docs theme renders its own sticky navbar and passes <DocsNavbar> through
- * the `navbar` slot, so unlike the blog this app only styles ITS segment of
- * that bar: the wordmark + cross-site links. Min-height floors give the links
- * real touch targets inside the theme's 64px bar.
+ * <DocsNavbar> goes through the theme's `navbar` slot, which nextra-theme-docs
+ * renders BARE at the top of <body> — the slot takes a node, not the theme's
+ * <Navbar>, so no sticky <header class="nextra-navbar"> wraps this segment and
+ * nothing clips it. That is why the bar's height has to be owned here:
+ * --nextra-navbar-height is what the sidebar's sticky top, the mobile nav's
+ * padding-top and the article's min-height all subtract, so the segment fills
+ * exactly that height at every width and the reserved space never disagrees
+ * with what the eye sees.
  */
 
 .docs-nav-segment {
@@ -242,6 +407,11 @@ input, textarea {
   flex-wrap: wrap;
   gap: 4px 8px;
   align-items: center;
+  /* The node is bare in the flow — the 24px gutter (DESIGN.md §spacing) keeps
+     the mark off the viewport edge, as on every other nanisoft surface. */
+  padding-inline: max(env(safe-area-inset-left), 24px)
+    max(env(safe-area-inset-right), 24px);
+  min-height: var(--nextra-navbar-height);
 }
 
 .docs-nav-brand {
@@ -273,6 +443,41 @@ input, textarea {
 
 .docs-nav-link:hover {
   color: var(--color-text);
+}
+
+/* Below the theme's md break the links leave the wordmark's row: 26px mark +
+   4px gap + 44px links = 74px, and the height var is re-declared to match, so
+   the mobile nav's padding-top and the article's min-height follow the real
+   bar instead of a 64px bar that no longer exists. The forced break makes the
+   two-row shape independent of font metrics — the height is the var, always. */
+@media (max-width: 47.999rem) {
+  :root {
+    --nextra-navbar-height: 74px;
+  }
+
+  .docs-nav-segment {
+    align-content: center;
+  }
+
+  /* The 1px rule is a desktop divider between mark and links; on the wrapped
+     bar the rows already do that separating. */
+  .docs-nav-rule {
+    display: none;
+  }
+
+  .docs-nav-segment::after {
+    content: '';
+    order: 1;
+    flex-basis: 100%;
+  }
+
+  .docs-nav-brand {
+    order: 0;
+  }
+
+  .docs-nav-link {
+    order: 2;
+  }
 }
 
 /* The footer slot (the theme pins it under the sidebar): brand line at muted
@@ -412,5 +617,39 @@ input, textarea {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── 9. Environment states ──────────────────────────────────────────────────── */
+
+/* Scrollbars are furniture on the map: the theme's .nextra-scrollbar only sets
+   `scrollbar-width: thin`, leaving the thumb to the UA's default gray. The
+   thumb takes muted ink (visible in both modes, quiet in both) and the track
+   stays transparent so the surface it sits on shows through — tonal
+   separation, not a channel cut into the page. */
+.nextra-scrollbar {
+  scrollbar-color: var(--color-text-muted) transparent;
+}
+
+/* Paper reads the light map in both page modes: a dark-mode print would dump
+   petrol ink on a white sheet, and the dark primary scale's lifted teals would
+   wash out to nothing. Re-declaring the §1 set (plus the §2 primary triple the
+   links and marks derive from) keeps every consumer honest — the values are the
+   identity package's own light-mode stops, not new ones. */
+@media print {
+  :root, .dark {
+    --color-bg: #F4EFE6;         /* color.bone */
+    --color-bg-elev: #FBF7EF;    /* color.boneElev */
+    --color-bg-sunken: #EAE2D3;  /* color.boneSunken */
+    --color-border: #EAE2D3;     /* color.boneSunken */
+    --color-text: #102A30;       /* color.ink */
+    --color-text-muted: #4A5E64; /* color.inkMuted */
+    --color-action-bg: #0C2A33;  /* color.petrol */
+    --color-action-fg: #F4EFE6;  /* color.bone */
+    --color-focus: #1F6E78;      /* color.focus */
+
+    --nextra-primary-hue: 187deg;
+    --nextra-primary-saturation: 59%;
+    --nextra-primary-lightness: 30%;
   }
 }

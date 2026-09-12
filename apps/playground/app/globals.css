@@ -42,6 +42,11 @@
   --viz-memberof: #4A5E64;  /* color.inkMuted */
   --viz-neutral: #3C6770;   /* color.petrolSoft */
 
+  /* role: per-mode focus indicator — passes 3:1 on page bg + elev surfaces.
+     Light value is a darkened teal (brand jade/teal read <3:1 on bone).
+     Same value and role as the landing's --color-focus. */
+  --color-focus: #1F6E78;
+
   color-scheme: light;
 }
 
@@ -72,6 +77,10 @@
      75% tint clears it at ~3.4:1. */
   --viz-neutral: color-mix(in srgb, var(--color-text-muted) 75%, var(--color-bg-elev));
 
+  /* role: per-mode focus indicator — passes 3:1 on petrol + petrolMid.
+     Same value and role as the landing's --color-focus. */
+  --color-focus: #4DB0BB;
+
   color-scheme: dark;
 }
 
@@ -93,6 +102,17 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* The identity focus contract, identical to the landing's rule: 2px outline in
+   the mode's --color-focus at 2px offset. No radius here — an outline follows
+   each element's own corner (pill buttons ring as pills, inner-12 chips as
+   inner-12); forcing 12px turned the pill Run button into a rounded rect
+   whenever it was focused. Covers everything the app renders — buttons, tabs,
+   the io textarea, NodeChip's role="button" chips, the overlay close. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 /* ── Spine reactivity (ticket 10) ───────────────────────────────────────────
@@ -158,4 +178,114 @@ body {
   --xy-connectionline-stroke: var(--color-text-muted);
   --xy-edge-label-background-color: var(--color-bg-elev);
   --xy-edge-label-color: var(--color-text-muted);
+}
+
+/* ── App chrome: shell grid + spine card (adapt pass 2026-09-12) ─────────────
+   Layout lives in classes, not inline styles + a runtime <style> tag, so one
+   media query owns the ≤980px re-flow. The old arrangement fought inline
+   styles with !important AND applied the split rows unconditionally — with no
+   overlay open the graph was squeezed into row 1 (min 280px) and the rest of
+   the 70vh card sat empty. */
+
+.pg-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+.spine-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  height: 70vh;
+  min-height: 520px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px; /* radius.card — shape lock: card 20 / inner 12 / pill */
+  overflow: hidden;
+  background: var(--color-bg-elev);
+}
+
+/* Tool overlay open: the pane slims to ~60% and the tool takes the right
+   ~40% — same split the old inline style drew, now class-scoped. */
+.spine-card--split {
+  grid-template-columns: minmax(280px, 0.6fr) minmax(360px, 0.4fr);
+}
+
+.spine-card-pane {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.spine-card-overlay {
+  overflow: auto;
+  min-width: 0;
+  border-left: 1px solid var(--color-border);
+}
+
+@media (max-width: 980px) {
+  /* The inspector drops below the spine; the card stacks graph-over-overlay.
+     Rows exist ONLY when the overlay pane is present (.spine-card--split) —
+     a closed card gives the graph the full clamped height. The height hugs
+     fitView's band: the whole spine fits ~1040px of graph into a ~360–740px
+     pane, so the fitted band is 130–210px tall and the desktop 70vh card read
+     as two-thirds empty water. The clamp hands the reclaimed space to the
+     narrative + Run, which is where the tour actually lives on a phone. */
+  .pg-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spine-card {
+    height: clamp(280px, 46vh, 380px);
+    min-height: 0;
+  }
+
+  /* Split (overlay open): the clamped card height cannot be divided into two
+     usable rows — `0.5fr` of a 380px card left the overlay pane ~27px tall at
+     375×667. So a split card grows instead: the graph row keeps a floor, the
+     overlay row takes its content height, and the PAGE scrolls. The graph row
+     lands on its 220px min (React Flow is height:100%, so it contributes no
+     content height to an auto row) — still a full fitView band at ~0.2 zoom. */
+  .spine-card--split {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(220px, auto) minmax(320px, auto);
+  }
+
+  .spine-card-overlay {
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+/* Touch (adapt pass): the library's .react-flow__pane hardcodes
+   touch-action: none, which let the 70vh canvas EAT page scrolling — on a
+   phone nothing below the spine was reachable by swiping on the graph. pan-y
+   returns vertical swipes to the page (the guided tour's primary gesture)
+   while horizontal drags still pan and two-finger pinch still zooms (both
+   stay on in Spine.tsx). Mouse interaction is untouched. Selector is
+   two-deep so it beats the library rule regardless of import order. */
+@media (pointer: coarse) {
+  .react-flow .react-flow__pane {
+    touch-action: pan-y;
+  }
+
+  /* 44px tap floors for the compact in-page controls, pointer-scoped so the
+     desktop chrome keeps its dense data-tool scale. (Header chrome gets an
+     unconditional 44px instead — see ThemeToggle/header link — matching the
+     blog bar's touch-target floor.) */
+  .pg-btn,
+  .pg-tab,
+  .pg-overlay-close {
+    min-height: 44px;
+  }
+
+  /* The graph-pane zoom pair needs the floor on BOTH axes — they are square
+     icon buttons floating over the canvas, so a height-only floor leaves a
+     34px-wide target. */
+  .pg-zoom {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }

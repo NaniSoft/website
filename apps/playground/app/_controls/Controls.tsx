@@ -1,8 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { color, font, radius } from '@nanisoft/identity';
 import { usePlayground, STEPS } from '../_store/usePlayground';
+
+/** Drawn marks, not unicode: ⏸/▶ render at the mercy of the platform font, and
+    the brand's drawn-marks practice wants one stroke weight with round caps.
+    They are aria-hidden — the text label carries the accessible name. */
+function PlayGlyph() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style={{ display: 'block', flexShrink: 0 }}>
+      <path d="M3.75 2.6 9.4 6 3.75 9.4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
+function PauseGlyph() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style={{ display: 'block', flexShrink: 0 }}>
+      <path d="M4.1 2.8v6.4M7.9 2.8v6.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
 
 export function Controls() {
   const running = usePlayground((s) => s.running);
@@ -17,6 +36,16 @@ export function Controls() {
   const [ioOpen, setIoOpen] = useState(false);
   const [ioText, setIoText] = useState('');
   const [ioMsg, setIoMsg] = useState('');
+
+  // The io panel is a disclosure: when it opens, focus moves into the textarea
+  // so a keyboard user continues from the revealed control instead of hunting
+  // for it. (The panel has no close path, so there is nothing to restore.)
+  const ioTextRef = useRef<HTMLTextAreaElement>(null);
+  const ioWasOpen = useRef(false);
+  useEffect(() => {
+    if (ioOpen && !ioWasOpen.current) ioTextRef.current?.focus();
+    ioWasOpen.current = ioOpen;
+  }, [ioOpen]);
 
   const atEnd = cursor >= STEPS.length;
 
@@ -39,6 +68,24 @@ export function Controls() {
   // ("can lead to styling bugs"), caught by e2e spec A.
   const primary: React.CSSProperties = { ...btn, background: color.jade, color: 'var(--color-on-accent)', border: `1px solid ${color.jade}` };
   const disabled: React.CSSProperties = { ...btn, opacity: 0.4, cursor: 'not-allowed' };
+  // Run complete (step 22): the tour is DONE, not live, so the control reads the
+  // done state — teal wash + teal mark (the Airflow TaskBox grammar), never jade
+  // (the One Pulse Rule: nothing is running). It stays actionable: replay
+  // resets the lakehouse and runs the playbook again, instead of a 40%-opacity
+  // dead button.
+  const doneRun: React.CSSProperties = {
+    ...btn,
+    border: '1px solid var(--viz-secondary)',
+    background: 'color-mix(in srgb, var(--viz-secondary) 12%, var(--color-bg-elev))',
+    color: 'var(--color-text)',
+  };
+  const doneDot: React.CSSProperties = {
+    width: 6,
+    height: 6,
+    borderRadius: 9999,
+    background: 'var(--viz-secondary)',
+    flexShrink: 0,
+  };
 
   function onExport() {
     const json = exportJson();
@@ -62,20 +109,32 @@ export function Controls() {
     <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         {running ? (
-          <button style={primary} onClick={pause}>⏸ Pause</button>
+          <button className="pg-btn" style={primary} onClick={pause}><PauseGlyph /> Pause</button>
+        ) : atEnd ? (
+          <button
+            className="pg-btn"
+            style={doneRun}
+            onClick={() => { reset(); run(); }}
+            aria-label="Run again — resets the lakehouse and replays the playbook"
+          >
+            <span aria-hidden="true" style={doneDot} />
+            <PlayGlyph /> Run again
+          </button>
         ) : (
-          <button style={atEnd ? disabled : primary} onClick={run} disabled={atEnd}>▶ Run playbook</button>
+          <button className="pg-btn" style={primary} onClick={run}><PlayGlyph /> Run playbook</button>
         )}
-        <button style={atEnd ? disabled : btn} onClick={step} disabled={atEnd}>Step →</button>
-        <button style={btn} onClick={reset}>Reset</button>
-        <button style={btn} onClick={onExport}>Export state</button>
-        <button style={btn} onClick={onImport}>Import state</button>
+        <button className="pg-btn" style={atEnd ? disabled : btn} onClick={step} disabled={atEnd}>Step →</button>
+        <button className="pg-btn" style={btn} onClick={reset}>Reset</button>
+        <button className="pg-btn" style={btn} onClick={onExport}>Export state</button>
+        <button className="pg-btn" style={btn} onClick={onImport}>Import state</button>
       </div>
       {ioOpen && (
         <>
           <textarea
+            ref={ioTextRef}
             value={ioText}
             onChange={(e) => setIoText(e.target.value)}
+            aria-label="Exported or imported state JSON"
             placeholder="paste exported JSON here"
             style={{
               width: '100%',
@@ -89,7 +148,12 @@ export function Controls() {
               padding: 8,
             }}
           />
-          {ioMsg && <div style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)' }}>{ioMsg}</div>}
+          {/* Export/import feedback, announced politely (WCAG 4.1.3). The region
+              stays mounted and empty until a message lands — a region that
+              appears WITH its text is not reliably announced. */}
+          <div role="status" style={{ fontFamily: font.data, fontSize: 11, color: 'var(--color-text-muted)', minHeight: 14 }}>
+            {ioMsg}
+          </div>
         </>
       )}
     </div>

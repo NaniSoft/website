@@ -76,7 +76,9 @@ function Row({ row }: { row: TrinoResultRow }) {
           <span
             style={{
               color: 'var(--color-text)',
-              border: `1px solid ${color.teal}`,
+              // Done/ok mark via the mode-aware viz token — raw teal sank to
+              // 2.81:1 on the elevated panel in dark mode (WCAG 1.4.11).
+              border: '1px solid var(--viz-secondary)',
               borderRadius: 9999,
               padding: '1px 7px',
             }}

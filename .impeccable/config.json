@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font-size",
+        "value": "12px",
+        "files": [
+          "apps/blog/app/globals.css"
+        ],
+        "createdAt": "2026-09-12T03:34:53.523Z",
+        "reason": "Label stop: DESIGN.md typography documents the Label as JetBrains Mono 11-12px +0.16em (dates, tags, footer links)"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "13px",
+        "files": [
+          "apps/blog/app/globals.css"
+        ],
+        "createdAt": "2026-09-12T03:34:53.616Z",
+        "reason": "Nav tagline register: DESIGN.md Layout documents the 13px tagline/brand line carried over from the landing TopNav"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "18px",
+        "files": [
+          "apps/blog/app/globals.css"
+        ],
+        "createdAt": "2026-09-12T03:36:57.233Z",
+        "reason": "Title stop in tighter cards: DESIGN.md typography documents Title as 600 22px, 600 18px in tighter cards (post-card title)"
+      }
+    ]
+  }
+}

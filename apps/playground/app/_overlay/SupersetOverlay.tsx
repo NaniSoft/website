@@ -139,7 +139,9 @@ export function SupersetOverlay() {
               padding: '7px 14px',
               borderRadius: 9999,
               cursor: 'pointer',
-              border: `1px solid ${color.teal}`,
+              // Active-filter mark: the mode-aware viz teal, not the raw
+              // constant (2.81:1 on the elevated panel in dark mode).
+              border: '1px solid var(--viz-secondary)',
               background: 'transparent',
               color: 'var(--color-text)',
             }}

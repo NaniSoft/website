@@ -14,6 +14,11 @@
  *      API, so its primary scale, washes, and borders stay brand-derived;
  *   3. rule-level overrides on html/body/article — unlayered author CSS beats
  *      the theme's layered utilities regardless of how each rule is compiled.
+ *      (Its `x:*` utilities sit in `@layer utilities`; its component rules —
+ *      `.nextra-tag`, `code.nextra-code` — are unlayered like ours, and the
+ *      export ships the theme chunk SECOND, so a same-specificity tie goes to
+ *      the THEME. Any brand rule that collides with one of those must carry an
+ *      element or class of its own: `a.nextra-tag`, `code.nextra-code`.)
  *
  * Values mapped from @nanisoft/identity ("Living Map"):
  *   base = petrol + bone · secondary = teal · accent = jade (live/active only)
@@ -42,6 +47,19 @@
   /* role: per-mode focus indicator — passes 3:1 on bone. Brand teal/jade read
      <3:1 on bone; this darkened teal is the identity package's own answer. */
   --color-focus: #1F6E78;
+
+  /* role: the prose + card-title link mark. Light = petrol (color.petrol,
+     13.2:1 on bone); dark = survey teal lifted for petrol (color.tealBright,
+     5.9:1 on petrol). Hover shifts toward the mode's focus color and NEVER
+     removes the underline — the underline is the non-color signal. */
+  --color-link: #0C2A33;       /* color.petrol */
+  --color-link-hover: #1F6E78; /* color.focus */
+
+  /* The theme bakes its own prose link value (zinc-900 light / #fff dark).
+     Point both the light value and the inverted one at the brand mark so the
+     baked value cannot leak through `.x:dark:prose-invert`. */
+  --tw-prose-links: var(--color-link);
+  --tw-prose-invert-links: var(--color-link);
 }
 
 .dark {
@@ -59,6 +77,12 @@
   /* role: interactive base inverts — bone fill, petrol text. */
   --color-action-bg: #FBF7EF;  /* color.boneElev */
   --color-action-fg: #0C2A33;  /* color.petrol */
+
+  /* role: links on petrol. tealBright is 5.91:1 on the page surface; hover
+     lifts it tonally toward bone (the dark focus color IS tealBright, so the
+     lift is the only remaining direction), reaching 6.98:1. */
+  --color-link: #4DB0BB; /* color.tealBright */
+  --color-link-hover: color-mix(in srgb, var(--color-link) 70%, var(--color-text));
 }
 
 /* ── 2. Theme variables ─────────────────────────────────────────────────────── */
@@ -84,13 +108,16 @@
 
   /* Text + border recolor via the theme's gray/neutral scale (rule 2 of the
      strategy). Light mode: hairlines = boneSunken, muted text = inkMuted,
-     body/strong/headings = ink. */
+     body/strong/headings = ink. gray-600 — the theme's "secondary text" stop
+     (post-card excerpts, the byline) — is inkMuted in BOTH modes: mapping it
+     to full ink flattened light mode's hierarchy while dark mode muted
+     correctly. Body text stays ink via the `article` rule below. */
   --x-color-gray-50: #FBF7EF;  /* boneElev — subtle surfaces */
   --x-color-gray-100: #F4EFE6; /* bone — soft hover fills */
   --x-color-gray-200: #EAE2D3; /* boneSunken — hairline borders */
   --x-color-gray-400: #4A5E64; /* inkMuted — muted text */
   --x-color-gray-500: #4A5E64; /* inkMuted */
-  --x-color-gray-600: #102A30; /* ink — body text */
+  --x-color-gray-600: #4A5E64; /* inkMuted — secondary text (matches dark) */
   --x-color-gray-700: #102A30; /* ink */
   --x-color-gray-800: #102A30; /* ink */
   --x-color-gray-900: #102A30; /* ink — headings/strong */
@@ -188,22 +215,288 @@ nav a[aria-current='page'] {
 }
 
 /* The Two Faces Rule: a date is data — the twin's readings are set in the
-   mono face (post headers and the index), not the voice. */
+   mono face (post cards and the article byline), not the voice. One format
+   everywhere: ISO YYYY-MM-DD, from lib/date.ts, at the Label stop, muted, and
+   letter-spaced so the digits read as an annotation rather than copy. */
 time {
   font-family: var(--x-font-mono);
   font-size: 12px; /* the Label stop */
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
 }
 
-/* Prose links carry the mode's link mark with a surveyor's underline —
-   offset off the baseline, hairline weight, in the focus color on hover. */
+/* Prose and card-title links speak the brand: petrol in light, tealBright on
+   petrol in dark (--color-link, and --tw-prose-links above so the theme's
+   baked zinc/#fff value cannot leak). The underline is persistent — it is the
+   non-color signal, so hover may thicken it but never remove it. Chips exempt
+   themselves below. */
 article a {
+  color: var(--color-link);
   text-underline-offset: 3px;
+  text-decoration: underline;
   text-decoration-thickness: 1px;
 }
 
 article a:hover {
-  color: var(--color-focus);
+  color: var(--color-link-hover);
   text-decoration-thickness: 2px;
+}
+
+/* ── 4b. Chips — tags, category, and the dead-end control they replace ─────── */
+
+/*
+ * DESIGN's tag-mono component, one species for every label-like chip: pill,
+ * sunken background, muted text, 1px hairline, JetBrains Mono at the Label
+ * stop. Not the accent, not a button.
+ *
+ * This overrides the theme's `.nextra-tag`, which compiled to a near-black
+ * fill with pure-white (light) / pure-black (dark) text, a 6px radius and a
+ * box-shadow — four laws broken by one chip. Hairline + tokens in both modes;
+ * inkMuted/boneSunken is 5.30:1 light, petrolTint/petrolDeep 7.11:1 dark.
+ *
+ * CASCADE NOTE: the theme ships `.nextra-tag` UNLAYERED and its stylesheet
+ * chunk lands AFTER this one in the export (verified against the built site:
+ * the chip rendered 6px / near-black / 14px until this rule out-specified it).
+ * A tie goes to the theme, so these selectors carry an element — `a.nextra-tag`
+ * (0,1,1) over `.nextra-tag` (0,1,0), `a.nextra-tag:hover` (0,2,1) over its
+ * (0,2,0) hover. Every chip in this app is an anchor.
+ */
+a.nextra-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px; /* the tag-mono 0 8px, plus 2px for the pill's line box */
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: var(--color-bg-sunken);
+  color: var(--color-text-muted);
+  font-family: var(--x-font-mono);
+  font-size: 12px; /* the Label stop */
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-decoration: none;
+  box-shadow: none; /* the theme's --tw-shadow, silenced */
+  transition:
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* A chip is not a prose link — the hairline is its border, no underline. */
+a.nextra-tag,
+article a.nextra-tag {
+  text-decoration: none;
+}
+
+/* Hover lifts tonally toward the elevated surface (The Flat Estate Rule). The
+   `.dark` form out-ranks the theme's own `:where(.dark *)` hover variant. */
+a.nextra-tag:hover,
+.dark a.nextra-tag:hover,
+article a.nextra-tag:hover {
+  background: color-mix(in srgb, var(--color-bg-sunken) 55%, var(--color-bg-elev));
+  color: var(--color-text);
+  text-decoration: none;
+  text-decoration-thickness: 1px;
+}
+
+/* The category pill sits in the same slot the theme's GoBack used to fill.
+   Same tag-mono species as a tag — a place, not a status, and never jade. */
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: var(--color-bg-sunken);
+  color: var(--color-text-muted);
+  font-family: var(--x-font-mono);
+  font-size: 12px; /* the Label stop */
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+article a.category-pill {
+  text-decoration: none;
+}
+
+.category-pill:hover,
+article a.category-pill:hover {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* Belt and braces: the theme's GoBack (router.back() — a dead end for every
+   deep-linked reader) is removed at the source in mdx-wrapper.tsx, but the
+   theme renders it whenever its own wrapper survives, so it is suppressed here
+   too. It is the only `x:print:hidden` button the theme emits. */
+article button.x\:print\:hidden {
+  display: none;
+}
+
+/* ── 4c. The post header — one h1 at the Headline stop, one byline ─────────── */
+
+/*
+ * mdx-wrapper.tsx renders this block. The theme's own post header rendered the
+ * h1 at the prose default, three different date formats, and an always-present
+ * meta block whose empty state still carried a 32px margin on index pages.
+ * Here the h1 sits on the documented Headline stop and the byline is one mono,
+ * muted annotation line: `nanisoft · 2026-08-27`.
+ */
+
+article h1 {
+  font-size: 40px; /* the Headline stop */
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.post-header {
+  margin: 0;
+}
+
+.post-header h1 {
+  margin: 0;
+}
+
+.post-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 8px 0 24px; /* 24px below, so an index page (no byline) keeps none */
+  font-family: var(--x-font-mono);
+  font-size: 12px; /* the Label stop */
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+/* ── 4d. The post list — the card the list never had ────────────────────────── */
+
+/*
+ * The theme's PostCard rendered a bare <div> inside a bare <li>: no surface, no
+ * separation, just floating text. Each entry is now a DESIGN card — elevated
+ * surface, 1px hairline, 20px card radius, 24px padding — separated by the grid
+ * gap rather than a shadow (The Flat Estate Rule).
+ */
+
+.post-list {
+  display: grid;
+  gap: 16px; /* the Gap stop */
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list-empty {
+  color: var(--color-text-muted);
+}
+
+.post-card {
+  padding: 24px; /* the Gutter stop */
+  border: 1px solid var(--color-border);
+  border-radius: 20px; /* the Card stop */
+  background: var(--color-bg-elev);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover is a tonal lift toward the neighbouring surface — sunken — never a
+   shadow, and never a color the palette does not own. */
+.post-card:hover {
+  background: color-mix(in srgb, var(--color-bg-elev) 75%, var(--color-bg-sunken));
+}
+
+.post-card-title {
+  margin: 0;
+  font-size: 18px; /* the Title stop in a tighter card */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.post-card-excerpt {
+  margin: 8px 0 0; /* the Stack stop */
+  color: var(--color-text-muted);
+}
+
+.post-card-more {
+  margin-inline-start: 8px;
+}
+
+.post-card-date {
+  display: block;
+  margin-top: 16px; /* the Gap stop */
+}
+
+/* Identity-package tealBright is 4.37:1 on the dark card's petrolMid surface —
+   a hair under AA for body-size links. Lifting it 15% toward bone (same two
+   tokens, no new hue) puts the card's links at 4.92:1 while the page keeps the
+   documented 5.91:1 mark. */
+.dark .post-card a {
+  color: color-mix(in srgb, var(--color-link) 85%, var(--color-text));
+}
+
+.dark .post-card a:hover {
+  color: var(--color-link-hover);
+}
+
+/* ── 4e. Code — on-brand before the first block arrives ─────────────────────── */
+
+/*
+ * No post carries a code block yet, so these defaults are pre-emptive: the
+ * theme's own pre compiled to a pure-white (light) / pure-black (dark) fill, a
+ * 6px radius, and a 1px inset ring — off the shape lock, off the palette, and
+ * off The Flat Estate Rule. Inner-12 radius, sunken surface, token text, the
+ * data face, and a token scrollbar.
+ */
+
+article pre {
+  padding: 16px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px; /* the Inner stop */
+  background: var(--color-bg-sunken);
+  color: var(--color-text);
+  font-family: var(--x-font-mono);
+  box-shadow: none; /* the theme's ring, silenced */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+article pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+article pre::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+
+article pre code,
+article pre code.nextra-code {
+  color: inherit;
+  background: transparent;
+}
+
+/* Inline code: the Inner stop as well, sunken, hairline — a chip of the same
+   family, not a highlighted box. The `.nextra-code` form out-specifies the
+   theme's own unlayered `:not(pre) > code.nextra-code` (0,1,2), which paints
+   the token fill and border from --x-color-black/--x-color-white. */
+article :not(pre) > code,
+article :not(pre) > code.nextra-code {
+  padding: 0.15em 0.4em;
+  border: 1px solid var(--color-border);
+  border-radius: 12px; /* the Inner stop */
+  background: var(--color-bg-sunken);
+  color: var(--color-text);
+  font-family: var(--x-font-mono);
+}
+
+/* Shiki paints each token span with --shiki-light-bg; left alone that can put
+   a light slab over the sunken well. Token COLOR stays shiki's — that is the
+   one place syntax highlighting is allowed to speak. */
+article pre code.nextra-code span {
+  background-color: transparent;
 }
 
 /* The caret belongs to the map too — the browser default is no design. */
@@ -219,6 +512,11 @@ input, textarea {
  * the app owns its bar — matching the landing's grammar: brand left, links
  * right, theme toggle at the far right, sticky with glass after scroll is NOT
  * needed on a reading surface, so the bar is a quiet solid hairline surface.
+ *
+ * AXIS DECISION (2026-09-12): the bar and the footer stay on the wide 72rem
+ * axis — deliberately. They are chrome that frames the page; only the reading
+ * measure inside the article narrows (the theme's 65ch). Pulling the chrome in
+ * would make every page look indented against its own frame.
  */
 
 .site-nav {
@@ -288,8 +586,17 @@ input, textarea {
 
 /* Narrow viewports fold the bar: the wordmark owns the 64px top row with the
    toggle pinned at its right edge (out of the flex flow), and the links wrap
-   onto their own rows below. */
+   onto their own rows below. The bar also stops being sticky here — wrapping
+   to three rows left ~161px of a small viewport nailed to the top of the
+   scroll, and a non-scrolling bar has no use for a glass surface. */
 @media (max-width: 639px) {
+  .site-nav {
+    position: static;
+    background: var(--color-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .site-nav-rule {
     display: none;
   }
@@ -379,10 +686,15 @@ input, textarea {
  * The not-found route keeps the reading measure and the surveyor's grammar:
  * the coordinate (404) in the mono data face, the verdict in the voice, and
  * one recovery ask as the interactive-base pill. No illustration, no blame.
+ *
+ * AXIS DECISION (2026-09-12): the 404 sits on the article's 65ch axis, not its
+ * own 640px measure — one narrow axis per app, so a recovery page reads like
+ * the pages it recovers from. Nav and footer stay wide on purpose (see the bar
+ * block above).
  */
 
 .nf {
-  max-width: 640px;
+  max-width: 65ch;
   margin-inline: auto;
   padding: 96px 24px 48px;
 }

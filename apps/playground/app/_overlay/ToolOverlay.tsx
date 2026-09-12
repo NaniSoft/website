@@ -15,6 +15,7 @@ import { TOOL_CONTENT } from './tool-content';
  */
 export function ToolOverlay() {
   const overlay = usePlayground((s) => s.overlay);
+  const overlayAuto = usePlayground((s) => s.overlayAuto);
   const closeTool = usePlayground((s) => s.closeTool);
   const ref = useRef<HTMLDivElement>(null);
   // Where focus came from when the overlay opened — restored on close so a
@@ -23,6 +24,19 @@ export function ToolOverlay() {
 
   useEffect(() => {
     if (!overlay) return;
+    // A TOUR-opened overlay (the Compass climax, the only auto-open) announces
+    // through the narrative live region instead of taking focus — yanking focus
+    // mid-run or mid-typing is a focus steal. Its Esc path closes without
+    // restoring focus, because focus never moved in the first place.
+    if (overlayAuto) {
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') closeTool();
+      };
+      window.addEventListener('keydown', onKey);
+      return () => {
+        window.removeEventListener('keydown', onKey);
+      };
+    }
     restoreFocusRef.current = document.activeElement as HTMLElement | null;
     ref.current?.focus();
     const onKey = (e: KeyboardEvent) => {
@@ -36,7 +50,7 @@ export function ToolOverlay() {
       restoreFocusRef.current?.focus?.();
       restoreFocusRef.current = null;
     };
-  }, [overlay, closeTool]);
+  }, [overlay, overlayAuto, closeTool]);
 
   if (!overlay) return null;
   const component = COMPONENT_BY_ID[overlay.componentId];
@@ -95,6 +109,7 @@ export function ToolOverlay() {
         </span>
         <div style={{ flex: 1 }} />
         <button
+          className="pg-overlay-close"
           onClick={closeTool}
           aria-label="Close overlay"
           style={{

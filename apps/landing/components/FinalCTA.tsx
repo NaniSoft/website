@@ -7,7 +7,8 @@ export function FinalCTA() {
   return (
     <section id="final-cta" style={{ padding: '96px 24px', textAlign: 'center' }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h2 style={{ fontSize: 'var(--text-display)', lineHeight: 'var(--lh-heading)', letterSpacing: 'var(--tracking-display)', fontWeight: 700, margin: '0 0 24px' }}>
+        {/* Section h2s use the headline stop — --text-display is hero-only (SPEC §Typography). */}
+        <h2 style={{ fontSize: 'var(--text-2xl)', lineHeight: 'var(--lh-heading)', letterSpacing: 'var(--tracking-display)', fontWeight: 700, margin: '0 0 24px' }}>
           {FINAL_CTA.h2}
         </h2>
         <div>

@@ -54,10 +54,10 @@ export function DataGerryOverlay() {
           height: 7,
           borderRadius: 9999,
           flexShrink: 0,
-          // Done = teal mark (≥3:1 on sunken); idle = the viz-neutral mark —
-          // the old --color-border dot vanished (border IS boneSunken here,
-          // the panel's own background).
-          background: done ? color.teal : 'var(--viz-neutral)',
+          // Done = the viz teal mark (≥3:1 on sunken); idle = the viz-neutral
+          // mark — the old --color-border dot vanished (border IS boneSunken
+          // here, the panel's own background).
+          background: done ? 'var(--viz-secondary)' : 'var(--viz-neutral)',
         }}
       />
       {text}
@@ -74,7 +74,9 @@ export function DataGerryOverlay() {
             style={{
               ...row,
               background: 'var(--color-bg-elev)',
-              border: `1px solid ${color.teal}`,
+              // The drafted-object mark: viz teal, not raw teal — the raw
+              // constant sits at 2.81:1 on the elevated panel in dark mode.
+              border: '1px solid var(--viz-secondary)',
               marginTop: 6,
               fontWeight: 700,
               color: 'var(--color-text)',

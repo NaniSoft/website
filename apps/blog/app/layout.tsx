@@ -10,8 +10,13 @@ import BlogNavbar from './blog-navbar'
 // The blog theme's stylesheet — WITHOUT this import the entire Nextra theme
 // CSS is missing from the build and prose/scaffolding render unstyled (this
 // bit us during the 2026-08-30 rebrand; the assert-themed-css.mjs build guard
-// now catches it). Mirrors apps/docs/app/layout.tsx. Must precede
-// ./globals.css so the brand layer wins same-specificity ties.
+// now catches it). Mirrors apps/docs/app/layout.tsx.
+//
+// NOTE on order: keeping this import first is still the right reading order,
+// but the built export splits the two into separate CSS chunks and ships the
+// theme's SECOND, so same-specificity ties resolve to the THEME, not to us.
+// Brand rules that collide with a theme rule must therefore win on
+// specificity (see the cascade note in globals.css §4b).
 import 'nextra-theme-blog/style.css'
 import './globals.css'
 

@@ -1,41 +1,42 @@
 import { getPageMap } from 'nextra/page-map'
 import { collectPosts, type PageMapItem } from '@/lib/posts'
-import { PostCard } from 'nextra-theme-blog'
+import PostCard from './post-card'
 
 /**
  * Renders the blog's post list. `prefix` filters to one category (e.g.
- * "/engineering"); omit it for the home page (all posts, newest-first).
+ * "/engineering"); `tag` filters to one tag (the /tags/[tag] pages); omit both
+ * for the home page (all posts, newest-first).
  *
- * `PostCard` (nextra-theme-blog@4.6.1) takes a single `post` object shaped as
- * `{ route, frontMatter: BlogMetadata }` — not flat props — so each `Post` from
- * `collectPosts` is mapped into that shape here. `PostCard` only reads `title`,
- * `date`, and `description` from `frontMatter`; `author` is included because the
- * theme types it as `author?: string`. `tags` is omitted because the installed
- * `BlogMetadata` types it as `tags?: []` (empty-tuple), which rejects `string[]`
- * — a theme type bug we sidestep rather than weaken with a cast. The
- * `PageMapItem` interface in `lib/posts.ts` is a minimal structural subset of
- * Nextra's richer union (`Folder | MdxFile | MetaJsonFile`); we bridge the two
- * via `as unknown as` at the call site rather than weakening `collectPosts`'s
- * parameter type.
+ * `collectPosts` is the same enumeration every list on the blog uses — the
+ * Nextra page map, filtered to two-segment routes carrying a frontmatter
+ * `date`. The card markup comes from ./post-card (brand card surface + ISO
+ * date); the surface itself is the `<li class="post-card">`, styled in
+ * globals.css. The `PageMapItem` interface in `lib/posts.ts` is a minimal
+ * structural subset of Nextra's richer union (`Folder | MdxFile | MetaJsonFile`);
+ * we bridge the two via `as unknown as` at the call site rather than weakening
+ * `collectPosts`'s parameter type.
  */
-export default async function PostList({ prefix }: { prefix?: string }) {
+export default async function PostList({
+  prefix,
+  tag,
+}: {
+  prefix?: string
+  tag?: string
+}) {
   const pageMap = (await getPageMap()) as unknown as PageMapItem[]
-  const posts = collectPosts(pageMap, prefix)
+  const posts = collectPosts(pageMap, prefix).filter((post) =>
+    tag ? post.tags.includes(tag) : true,
+  )
+
+  if (posts.length === 0) {
+    return <p className="post-list-empty">Nothing published here yet.</p>
+  }
+
   return (
-    <ul style={{ listStyle: 'none', padding: 0 }}>
-      {posts.map((p) => (
-        <li key={p.route}>
-          <PostCard
-            post={{
-              route: p.route,
-              frontMatter: {
-                title: p.title,
-                date: p.date,
-                description: p.description,
-                author: p.author,
-              },
-            }}
-          />
+    <ul className="post-list">
+      {posts.map((post) => (
+        <li key={post.route} className="post-card">
+          <PostCard post={post} />
         </li>
       ))}
     </ul>
