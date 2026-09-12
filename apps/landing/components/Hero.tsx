@@ -1,12 +1,10 @@
 import { HeroDag } from './hero/HeroDag';
-import { AnnouncementPill } from './AnnouncementPill';
 
 /**
  * The nanisoft hero — the "Living Map" panel: positioning copy on the left,
  * a breathing canvas DAG of the digital-twin pipeline on the right, on a
- * full-bleed dark petrol band in BOTH page modes. ONE story: the announcement
- * pill (an editorial link to the blog, not a product CTA), then no buttons
- * and no ask — the playground CTA lives in the closing section and footer.
+ * full-bleed dark petrol band in BOTH page modes. ONE story, no buttons, no
+ * CTA (the playground ask lives in the nav pill and the closing section).
  *
  * Layout is a two-column grid (Text | DAG, the DAG column widest) that
  * collapses to a single stacked column on narrow screens (<=719px).
@@ -32,7 +30,6 @@ export function Hero() {
       <div className="hero-grain" aria-hidden />
       <div className="hero-inner">
         <div className="hero-text">
-          <AnnouncementPill />
           <p className="hero-eyebrow mono">nanisoft · the living twin</p>
           <h1 id="hero-positioning" className="hero-h1">
             Digital <em>twin</em> of the IT estate.
@@ -83,63 +80,6 @@ export function Hero() {
           flex-direction: column;
           justify-content: center;
           min-width: 0;
-        }
-        /*
-         * The announcement pill — a surveyor's plate above the eyebrow.
-         * Petrol-mid chip (hero-scoped --color-bg-elev), 1px petrol-soft
-         * hairline, full pill. The mono annotation is uppercase at 11px;
-         * the tag reads quieter than the post title. Hover keeps the Flat
-         * Estate: text brightens and the arrow advances — no shadow, no
-         * fill wash.
-         */
-        .announcement-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          align-self: flex-start;
-          max-width: 100%;
-          padding: 6px 14px 6px 12px;
-          background: var(--color-bg-elev);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-pill);
-          color: var(--color-text-muted);
-          transition: color 200ms cubic-bezier(0.32, 0.72, 0, 1), border-color 200ms cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        .announcement-pill:hover {
-          color: var(--color-text);
-          border-color: var(--color-text-muted);
-        }
-        .announcement-dot {
-          flex: none;
-          width: 6px;
-          height: 6px;
-          border-radius: var(--radius-pill);
-          /* Survey teal — the supporting mark, never the accent (One Pulse). */
-          background: var(--color-secondary-on-dark, var(--color-secondary));
-        }
-        .announcement-text {
-          /* min-width: 0 lets the flex item actually shrink so the ellipsis
-             can engage — without it the nowrap text forces page overflow. */
-          min-width: 0;
-          font-size: 11px;
-          letter-spacing: var(--tracking-upper);
-          text-transform: uppercase;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .announcement-tag {
-          margin-right: 10px;
-          padding-right: 10px;
-          border-right: 1px solid var(--color-border);
-          color: var(--color-secondary-on-dark, var(--color-secondary));
-        }
-        .announcement-arrow {
-          flex: none;
-          transition: transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        .announcement-pill:hover .announcement-arrow {
-          transform: translate(1px, -1px);
         }
         .hero-eyebrow {
           margin: 16px 0 0;

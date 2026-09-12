@@ -230,22 +230,6 @@ a[href="#main"]:focus { position: fixed; top: 8px; left: 8px; }
 }
 
 /*
- * The resurvey wipe (theme switch). When the mode flips, the new chart is
- * revealed in a circle expanding from the toggle — the map is redrawn, not
- * swapped. ThemeToggle starts the ViewTransition and animates the clip-path;
- * these rules strip the default cross-fade so the expanding circle is the
- * whole effect. Browsers without View Transitions, and every visitor under
- * prefers-reduced-motion, get the instant swap (guarded in ThemeToggle).
- */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-::view-transition-old(root) { z-index: 1; }
-::view-transition-new(root) { z-index: 2; }
-
-/*
  * W1 wordmark: wordmarkSvg() sets font-family="'Satoshi', …" as a presentation
  * attribute, but next/font/local registers the webfont under a hashed family
  * name exposed via --font-satoshi. A CSS rule reaches into the inline SVG and

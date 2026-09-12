@@ -2,7 +2,6 @@ import { render, screen, act, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Page from '@/app/page';
 import { Hero } from '@/components/Hero';
-import { ANNOUNCEMENT } from '@/lib/data';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
 // antd components used by kept sections schedule async state updates after
@@ -103,17 +102,12 @@ describe('HeroDag — the living map', () => {
     expect(canvas.closest('[data-motion]')?.getAttribute('data-motion')).toBe('live');
   });
 
-  it('is pure spectacle: no buttons, and exactly one editorial link (the pill)', () => {
+  it('is pure spectacle: no buttons or links anywhere in the hero', () => {
     const { container } = renderHero();
     const section = container.querySelector('#hero');
     expect(section).not.toBeNull();
     expect(within(section as HTMLElement).queryAllByRole('button')).toHaveLength(0);
-    // The announcement pill is the hero's ONLY link — an editorial pointer to
-    // the blog, never a product ask. Everything else in the panel is prose.
-    const links = within(section as HTMLElement).queryAllByRole('link');
-    expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute('href', ANNOUNCEMENT.href);
-    expect(links[0].textContent).not.toMatch(/playground/i);
+    expect(within(section as HTMLElement).queryAllByRole('link')).toHaveLength(0);
   });
 });
 
@@ -155,11 +149,7 @@ describe('Hero shell', () => {
     expect(container.querySelector('a[href^="mailto:"]')).toBeNull();
     const hero = document.querySelector('#hero');
     expect(hero).not.toBeNull();
-    // The hero's single link is the editorial announcement pill; the sales
-    // asks (demo copy, mailto, social proof) stay gone everywhere.
-    const heroLinks = within(hero as HTMLElement).queryAllByRole('link');
-    expect(heroLinks).toHaveLength(1);
-    expect(heroLinks[0]).toHaveAttribute('href', ANNOUNCEMENT.href);
+    expect(within(hero as HTMLElement).queryAllByRole('link')).toHaveLength(0);
     expect(within(hero as HTMLElement).queryByText(/Trusted by security teams/i)).not.toBeInTheDocument();
     expect(within(hero as HTMLElement).queryByText(/events\/day/i)).not.toBeInTheDocument();
   });

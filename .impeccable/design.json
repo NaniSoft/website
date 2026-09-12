@@ -37,7 +37,6 @@
       { "name": "traverse", "value": "translateX(0 -> 100%), 900ms infinite", "purpose": "The wavefront flowing through the pipeline as a step advances." },
       { "name": "ripple", "value": "scale(.8 -> 1 -> 1.5), opacity(0 -> 1 -> 0), 600ms infinite", "purpose": "The beckon that invites a click on the active tool node." },
       { "name": "settle", "value": "translateY(-12px -> 0), opacity(0 -> 1), 500ms", "purpose": "Content arriving and landing at its resting place." },
-      { "name": "resurvey-wipe", "value": "clip-path circle(0 -> viewport radius) from pointer, 480ms, View Transitions API", "purpose": "The theme switch redraws the map: the new mode is revealed in a circle expanding from the toggle (landing only). Instant under reduced motion or where the API is absent." },
       { "name": "reduced-motion", "value": "static endState, opacity 1", "purpose": "prefers-reduced-motion shows every variant's static end state; no content is ever removed." }
     ],
     "breakpoints": [
@@ -113,30 +112,6 @@
       "description": "The cartographic annotation: JetBrains Mono, uppercase, +0.16em tracking — marks anything measured, never decorated.",
       "html": "<span class=\"ds-label-mono\">nanisoft · the living twin</span>",
       "css": ".ds-label-mono { font-family: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-text-muted, #4A5E64); }"
-    },
-    {
-      "name": "Announcement Pill (hero)",
-      "kind": "link",
-      "refersTo": "announcement-pill",
-      "description": "The hero's one editorial object: a surveyor's plate above the eyebrow — petrol-mid chip, hairline, teal dot, mono annotation — linking the latest real field note on the blog. Editorial, never a product ask; the dot is survey teal because a changelog is not a live state.",
-      "html": "<a class=\"ds-announcement-pill\" href=\"https://blog.nanisoft.com\"><span class=\"ds-announcement-dot\"></span><span class=\"ds-announcement-text mono\"><span class=\"ds-announcement-tag\">Field note</span>Producing the access twin</span><svg aria-hidden width=\"11\" height=\"11\" viewBox=\"0 0 12 12\"><path d=\"M2.5 9.5 9.5 2.5M4.25 2.5H9.5V7.75\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg></a>",
-      "css": ".ds-announcement-pill { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 12px; background: var(--color-bg-elev, #15414A); border: 1px solid var(--color-border, #3C6770); border-radius: 9999px; color: var(--color-text-muted, #8FB0B6); } .ds-announcement-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-secondary-on-dark, #4DB0BB); } .ds-announcement-text { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; } .ds-announcement-tag { margin-right: 10px; padding-right: 10px; border-right: 1px solid var(--color-border, #3C6770); color: var(--color-secondary-on-dark, #4DB0BB); }"
-    },
-    {
-      "name": "Pillar Tabs (Platform)",
-      "kind": "tabs",
-      "refersTo": "pillar-tabs",
-      "description": "Three capability pillars on an antd Segmented pinned by the shared theme. The active segment follows the Monochrome Inversion Rule — petrol fill + bone text in light, bone fill + petrol text in dark — because a selected tab is a choice, not a live edge; never jade. Panel: two entries over a 1px hairline, closed by the mono components annotation.",
-      "html": "<div class=\"ds-pillars\"><div class=\"ds-pillar-tabs\" role=\"radiogroup\" aria-label=\"Platform pillars\"><span class=\"ds-pillar-tab is-active\">Orchestration</span><span class=\"ds-pillar-tab\">Quality &amp; policy</span><span class=\"ds-pillar-tab\">Operations</span></div><div class=\"ds-pillar-panel\"><article><h3>Orchestrated end to end</h3><p>Trailhead sequences every move.</p></article><article><h3>Versioned at every layer</h3><p>The catalog keeps history.</p></article></div><p class=\"ds-pillar-components mono\">Trailhead · Nessie catalog</p></div>",
-      "css": ".ds-pillar-tabs { display: inline-flex; border: 1px solid var(--color-border, #EAE2D3); border-radius: 9999px; padding: 2px; } .ds-pillar-tab { padding: 4px 12px; border-radius: 9999px; font-size: 14px; color: var(--color-text-muted, #4A5E64); } .ds-pillar-tab.is-active { background: var(--color-primary, #0C2A33); color: var(--color-on-primary, #F4EFE6); } .ds-pillar-panel { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 32px; margin-top: 24px; } .ds-pillar-panel article + article { border-left: 1px solid var(--color-border, #EAE2D3); padding-left: 32px; } .ds-pillar-components { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-text-muted, #4A5E64); margin-top: 16px; }"
-    },
-    {
-      "name": "Survey Plate (specs band)",
-      "kind": "custom",
-      "refersTo": "specs-band",
-      "description": "The platform's own verifiable readings on a hairline-ruled strip: figures in JetBrains Mono with tabular numerals at the Headline stop, labels as mono uppercase annotations. Every figure derivable from the data model; no trend arrows, no user counts (Honest Status Rule).",
-      "html": "<div class=\"ds-specs-band\" role=\"group\" aria-label=\"Platform specifications\"><div class=\"ds-spec\"><span class=\"ds-spec-value mono\">16</span><span class=\"ds-spec-label mono\">oss products carried</span></div><div class=\"ds-spec\"><span class=\"ds-spec-value mono\">0</span><span class=\"ds-spec-label mono\">forks — everything unmodified</span></div></div>",
-      "css": ".ds-specs-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 24px 0; border-top: 1px solid var(--color-border, #EAE2D3); border-bottom: 1px solid var(--color-border, #EAE2D3); } .ds-spec-value { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 40px; line-height: 1.1; font-variant-numeric: tabular-nums; } .ds-spec-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-text-muted, #4A5E64); }"
     }
   ],
   "narrative": {
